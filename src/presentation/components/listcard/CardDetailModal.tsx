@@ -20,7 +20,6 @@ export default function CardDetailModal({
   onClose,
   onEvolve,
   onSell,
-  index,
   isEvolving = false,
   isSelling = false,
 }: CardDetailModalProps) {
@@ -44,7 +43,11 @@ export default function CardDetailModal({
   // Reset evolution section when modal opens/closes
   useEffect(() => {
     if (!isOpen) {
-      setShowEvolutionSection(false);
+      // Use a timeout to avoid setting state during render
+      const timer = setTimeout(() => {
+        setShowEvolutionSection(false);
+      }, 0);
+      return () => clearTimeout(timer);
     }
   }, [isOpen]);
 

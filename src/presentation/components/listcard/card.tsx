@@ -1,4 +1,5 @@
 'use client';
+import Image from 'next/image';
 import { DetailDigimonRepository } from '@/core/repositories/myCardRepository';
 
 interface CardProps {
@@ -47,13 +48,13 @@ export default function Card({ item, onClick }: CardProps) {
 
       <div className="flex items-start gap-4">
         <div className="w-20 h-20 shrink-0 rounded-lg border border-gray-200 bg-gray-50 flex items-center justify-center overflow-hidden">
-          {/* Using img with lazy loading */}
-          <img
+          <Image
             src={imgSrc}
             alt={item.name}
+            width={80}
+            height={80}
             className="h-full w-full object-contain p-1"
             loading="lazy"
-            decoding="async"
           />
         </div>
 

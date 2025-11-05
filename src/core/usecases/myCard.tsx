@@ -71,7 +71,7 @@ export class ListMyCard {
       }
       return true; // simpan item
     });
-    let dataEvolution = await this.dataImpl.getDigimonById(NextEvolution);
+    const dataEvolution = await this.dataImpl.getDigimonById(NextEvolution);
 
     listCard.push({
       id: dataEvolution.id,

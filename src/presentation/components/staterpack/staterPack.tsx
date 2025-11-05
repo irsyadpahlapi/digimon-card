@@ -6,9 +6,10 @@ import Image from 'next/image';
 interface StarterPackComponentProps {
   item: StarterPackProps['item'];
   onBuy?: (item: StarterPackProps['item']) => void;
+  isLoading?: boolean;
 }
 
-export default function StarterPack({ item, onBuy }: StarterPackComponentProps) {
+export default function StarterPack({ item, onBuy, isLoading = false }: StarterPackComponentProps) {
   const handleBuyClick = () => {
     onBuy?.(item);
   };
@@ -65,14 +66,16 @@ export default function StarterPack({ item, onBuy }: StarterPackComponentProps) 
 
           {/* Image Container */}
           <div className="relative h-full flex items-center justify-center p-4">
-            <Image
-              src={item.image}
-              alt={item.name}
-              width={130}
-              height={130}
-              className="object-contain drop-shadow-2xl transition-transform duration-300 group-hover:scale-110"
-              loading="lazy"
-            />
+            <div className="relative w-[130px] h-[130px]">
+              <Image
+                src={item.image}
+                alt={item.name}
+                fill
+                sizes="130px"
+                className="object-contain drop-shadow-2xl transition-transform duration-300 group-hover:scale-110"
+                loading="eager"
+              />
+            </div>
           </div>
         </div>
 
@@ -154,9 +157,40 @@ export default function StarterPack({ item, onBuy }: StarterPackComponentProps) 
           {/* Buy Button */}
           <button
             onClick={handleBuyClick}
-            className="w-full bg-gradient-to-r from-[#443c70] to-[#a76050] text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 hover:shadow-lg hover:scale-105 active:scale-95"
+            disabled={isLoading}
+            className={`w-full font-bold py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 ${
+              isLoading
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-gradient-to-r from-[#443c70] to-[#a76050] hover:shadow-lg hover:scale-105 active:scale-95'
+            } text-white`}
           >
-            Buy Now
+            {isLoading ? (
+              <>
+                <svg
+                  className="animate-spin h-5 w-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
+                </svg>
+                <span>Buying...</span>
+              </>
+            ) : (
+              'Buy Now'
+            )}
           </button>
         </div>
 

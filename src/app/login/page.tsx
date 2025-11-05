@@ -1,16 +1,25 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { ProfileRepository } from '@/core/repositories/profile';
 import useLocalStorage from '@hooks/useLocalStorage';
+import { useAuthCheck } from '@/presentation/hooks/useAuthCheck';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [, setProfile] = useLocalStorage<ProfileRepository>('Profile', {} as ProfileRepository);
   const router = useRouter();
+  const { isAuthenticated, redirectToHome } = useAuthCheck();
+
+  // Redirect to home if already logged in
+  useEffect(() => {
+    if (isAuthenticated) {
+      redirectToHome();
+    }
+  }, [isAuthenticated, redirectToHome]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,13 +29,28 @@ export default function LoginPage() {
     setIsLoading(true);
 
     setProfile({
-      id: 1,
+      id: Date.now(), // Use timestamp for unique ID
       name: username.trim(),
       coin: 100,
     });
 
-    router.push('/');
+    // Small delay for better UX
+    setTimeout(() => {
+      router.push('/');
+    }, 1000);
   };
+
+  // Don't render login form if user is already authenticated
+  if (isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-orange-700 text-lg font-medium">Redirecting to homepage...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50">
@@ -138,7 +162,7 @@ export default function LoginPage() {
                     <>
                       <span>Enter the Digital World</span>
                       <svg
-                        className="w-5 h-5"
+                        className="w-5 w-5"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"

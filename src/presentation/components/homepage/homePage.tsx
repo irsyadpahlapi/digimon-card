@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import STARTER_PACK_ITEMS, { Cateogory } from '@/presentation/hooks/constant';
 import StarterPack from '@components/staterpack/staterPack';
 import useLocalStorage from '@hooks/useLocalStorage';
@@ -9,9 +9,11 @@ import Card from '@components/listcard/card';
 import CardDetailModal from '@components/listcard/CardDetailModal';
 import { ProfileRepository } from '@/core/repositories/profile';
 import { ListGatcha } from '@/core/usecases/listGatcha';
+import { useAuthCheck } from '@/presentation/hooks/useAuthCheck';
 
 export default function HomePage() {
-  const usecase = new ListMyCard();
+  const usecase = useMemo(() => new ListMyCard(), []);
+  const { logout } = useAuthCheck();
   const [Profile, setProfile] = useLocalStorage<ProfileRepository>(
     'Profile',
     {} as ProfileRepository,
@@ -19,7 +21,6 @@ export default function HomePage() {
   const [MyCards, setMyCards] = useLocalStorage<DetailDigimonRepository[]>('MyCard', []);
   const [ListMyCards, setListMyCards] = useState<DetailDigimonRepository[]>([]);
   const [displayedCards, setDisplayedCards] = useState<DetailDigimonRepository[]>([]);
-  const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isDropdownCategory, setisDropdownCategory] = useState(false);
   const [isDropdownType, setisDropdownType] = useState(false);
@@ -29,24 +30,25 @@ export default function HomePage() {
   const [filterBy, setFilterBy] = useState({ none: 'Active', category: '', type: '' });
   const [isEvolving, setIsEvolving] = useState(false);
   const [isSelling, setIsSelling] = useState(false);
+  const [isBuying, setIsBuying] = useState<number | null>(null); // Track which pack is being bought
   const observerTarget = useRef<HTMLDivElement>(null);
 
   const CARDS_PER_PAGE = 20;
 
   useEffect(() => {
-    fetchStarterpack();
-  }, [MyCards, filterBy]);
+    // Use setTimeout to avoid synchronous setState during effect
+    const timer = setTimeout(async () => {
+      const groupedCards = await usecase.getListMyCard(MyCards, filterBy.category, filterBy.type);
+      setListMyCards(groupedCards);
 
-  const fetchStarterpack = async () => {
-    const groupedCards = await usecase.getListMyCard(MyCards, filterBy.category, filterBy.type);
-    setListMyCards(groupedCards);
+      // Reset pagination and load first batch
+      const firstBatch = groupedCards.slice(0, CARDS_PER_PAGE);
+      setDisplayedCards(firstBatch);
+      setHasMore(groupedCards.length > CARDS_PER_PAGE);
+    }, 0);
 
-    // Reset pagination and load first batch
-    setPage(1);
-    const firstBatch = groupedCards.slice(0, CARDS_PER_PAGE);
-    setDisplayedCards(firstBatch);
-    setHasMore(groupedCards.length > CARDS_PER_PAGE);
-  };
+    return () => clearTimeout(timer);
+  }, [MyCards, filterBy.category, filterBy.type, usecase]);
 
   const loadMoreCards = useCallback(() => {
     if (!hasMore || displayedCards.length >= ListMyCards.length) {
@@ -101,7 +103,7 @@ export default function HomePage() {
       // Add delay for smooth loading experience
       await new Promise((resolve) => setTimeout(resolve, 800));
 
-      let evoledCard = await usecase.digimonEvolution(MyCards, id, nextEvolution);
+      const evoledCard = await usecase.digimonEvolution(MyCards, id, nextEvolution);
       setMyCards(evoledCard);
 
       // Success feedback with slight delay, then close modal
@@ -121,7 +123,7 @@ export default function HomePage() {
       // Add delay for smooth loading experience
       await new Promise((resolve) => setTimeout(resolve, 600));
 
-      let sellCard = usecase.sellDigimon(MyCards, id);
+      const sellCard = usecase.sellDigimon(MyCards, id);
       setMyCards(sellCard);
       setProfile({
         ...Profile,
@@ -148,12 +150,28 @@ export default function HomePage() {
       return;
     }
 
-    const data = await new ListGatcha().getListGacha(pack.type);
-    await setMyCards([...MyCards, ...data]);
+    // Set loading state for this specific pack
+    setIsBuying(pack.id);
 
-    // Deduct coins
-    const newCoins = currentCoins - pack.price;
-    setProfile({ ...Profile, coin: newCoins });
+    try {
+      // Add 1 second delay for loading effect
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      const data = await new ListGatcha().getListGacha(pack.type);
+      await setMyCards([...MyCards, ...data]);
+
+      // Deduct coins
+      const newCoins = currentCoins - pack.price;
+      setProfile({ ...Profile, coin: newCoins });
+
+      // Success feedback with slight delay
+      setTimeout(() => {
+        setIsBuying(null);
+      }, 300);
+    } catch (error) {
+      console.error('Buy pack failed:', error);
+      setIsBuying(null);
+    }
   };
 
   const handleFilterBy = (key: string, value: string) => {
@@ -194,8 +212,10 @@ export default function HomePage() {
       <div className="relative z-10 p-6 md:p-12">
         {/* Header with glass effect */}
         <div className="backdrop-blur-sm bg-white/80 rounded-2xl p-6 mb-8 shadow-xl border border-white/20">
-          <div className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#443c70] to-[#a76050] bg-clip-text text-transparent flex justify-end mb-4 mr-2">
-            Hi, {Profile.name}
+          <div className="flex justify-between items-start mb-4">
+            <div className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#443c70] to-[#a76050] bg-clip-text text-transparent">
+              Hi, {Profile.name}
+            </div>
           </div>
           <div className="flex justify-between items-center">
             <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#443c70] to-[#a76050] bg-clip-text text-transparent">
@@ -221,7 +241,12 @@ export default function HomePage() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16">
           {STARTER_PACK_ITEMS.map((item) => (
-            <StarterPack key={item.id} item={item} onBuy={handleBuyPack} />
+            <StarterPack
+              key={item.id}
+              item={item}
+              onBuy={handleBuyPack}
+              isLoading={isBuying === item.id}
+            />
           ))}
         </div>
         <div className="mt-12">

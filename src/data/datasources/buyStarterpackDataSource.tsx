@@ -8,7 +8,7 @@ export class BuyStarterpack {
     const ListDataChild = await getListDigimon(type, 100);
 
     const randomIndex = Math.floor(Math.random() * ListDataChild.content.length);
-    let data = await getDigimonById(ListDataChild.content[randomIndex].id);
+    const data = await getDigimonById(ListDataChild.content[randomIndex].id);
 
     return data;
   }
@@ -21,7 +21,7 @@ export class BuyStarterpack {
     const ListDataUnknown = await getListDigimon('Unknown', 50);
     const ListDataHybrid = await getListDigimon('Hybrid', 50);
 
-    let ListDataAll = [
+    const ListDataAll = [
       ...ListDataAdult.content,
       ...ListDataArmor.content,
       ...ListDataUnknown.content,
@@ -29,7 +29,7 @@ export class BuyStarterpack {
     ];
 
     const randomIndex = Math.floor(Math.random() * ListDataAll.length);
-    let data = await getDigimonById(ListDataAll[randomIndex].id);
+    const data = await getDigimonById(ListDataAll[randomIndex].id);
 
     return data;
   }
@@ -81,7 +81,7 @@ export class BuyStarterpack {
 
   async getDigimonById(id: number): Promise<DetailDigimonEntity> {
     const { getDigimonById } = new DigimonAPI();
-    let data = await getDigimonById(id);
+    const data = await getDigimonById(id);
     return data;
   }
 }
