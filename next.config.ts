@@ -1,7 +1,12 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    remotePatterns: [
+      new URL('https://digi-api.com/images/**'),
+      new URL('https://images.digimoncard.io/images/cards/**'),
+    ],
+  },
 };
 
 export default nextConfig;
