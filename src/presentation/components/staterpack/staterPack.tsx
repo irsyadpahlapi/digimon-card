@@ -156,13 +156,19 @@ export default function StarterPack({ item, onBuy, isLoading = false }: StarterP
 
           {/* Buy Button */}
           <button
+            type="button"
             onClick={handleBuyClick}
+            onTouchStart={() => {}} // Enable touch events for iOS
             disabled={isLoading}
-            className={`w-full font-bold py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 ${
+            className={` w-full font-bold py-4 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 min-h-[48px] touch-manipulation ${
               isLoading
                 ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-gradient-to-r from-[#443c70] to-[#a76050] hover:shadow-lg hover:scale-105 active:scale-95'
-            } text-white`}
+                : 'bg-gradient-to-r from-[#443c70] to-[#a76050] hover:shadow-lg hover:scale-105 active:scale-95 active:bg-gradient-to-r active:from-[#3a3460] active:to-[#965545] cursor-pointer'
+            } text-white select-none `}
+            style={{
+              WebkitTapHighlightColor: 'transparent',
+              touchAction: 'manipulation',
+            }}
           >
             {isLoading ? (
               <>
@@ -195,7 +201,7 @@ export default function StarterPack({ item, onBuy, isLoading = false }: StarterP
         </div>
 
         {/* Shine Effect */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 transform -skew-x-12 group-hover:translate-x-full transition-all duration-700"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 transform -skew-x-12 group-hover:translate-x-full transition-all duration-700 pointer-events-none"></div>
       </div>
     </div>
   );

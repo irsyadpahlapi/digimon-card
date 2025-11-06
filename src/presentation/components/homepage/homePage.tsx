@@ -239,7 +239,7 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 lg:gap-16">
           {STARTER_PACK_ITEMS.map((item) => (
             <StarterPack
               key={item.id}
