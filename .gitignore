@@ -50,5 +50,3 @@ eslint-report.json
 # Debug files
 debug-test*.js
 
-package-lock.json
-yarn.lock
