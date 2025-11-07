@@ -16,7 +16,7 @@ function useLocalStorage<T>(key: string, initialValue: T) {
       setStoredValue(valueToStore);
       window.localStorage.setItem(key, JSON.stringify(valueToStore));
     } catch (error) {
-      console.error('Error writing to localStorage', error);
+      // Error writing to localStorage - silently fail
     }
   };
 

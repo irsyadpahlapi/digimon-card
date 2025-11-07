@@ -112,7 +112,7 @@ export default function HomePage() {
         setIsModalOpen(false); // Close modal after evolution completes
       }, 300);
     } catch (error) {
-      console.error('Evolution failed:', error);
+      // Evolution failed - reset loading state
       setIsEvolving(false);
     }
   };
@@ -136,7 +136,7 @@ export default function HomePage() {
         setIsModalOpen(false); // Close modal after sell completes
       }, 300);
     } catch (error) {
-      console.error('Sell failed:', error);
+      // Sell failed - reset loading state
       setIsSelling(false);
     }
   };
@@ -169,7 +169,7 @@ export default function HomePage() {
         setIsBuying(null);
       }, 300);
     } catch (error) {
-      console.error('Buy pack failed:', error);
+      // Buy pack failed - reset loading state
       setIsBuying(null);
     }
   };
@@ -214,7 +214,7 @@ export default function HomePage() {
         <div className="backdrop-blur-sm bg-white/80 rounded-2xl p-6 mb-8 shadow-xl border border-white/20">
           <div className="flex justify-between items-start mb-4">
             <div className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#443c70] to-[#a76050] bg-clip-text text-transparent">
-              Hi, {Profile.name}
+              Hi, {Profile?.name || 'User'}
             </div>
           </div>
           <div className="flex justify-between items-center">
@@ -235,7 +235,9 @@ export default function HomePage() {
                   clipRule="evenodd"
                 />
               </svg>
-              <h2 className="text-xl md:text-2xl font-bold text-[#643c30]">{Profile.coin} Coins</h2>
+              <h2 className="text-xl md:text-2xl font-bold text-[#643c30]">
+                {Profile?.coin || 0} Coins
+              </h2>
             </div>
           </div>
         </div>

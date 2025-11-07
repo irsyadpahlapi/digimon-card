@@ -12,6 +12,8 @@
 
 # testing
 /coverage
+*.lcov
+test-report.xml
 
 # next.js
 /.next/
@@ -39,6 +41,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# SonarCloud
+.sonarqube/
+.scannerwork/
+eslint-report.json
+
+# Debug files
+debug-test*.js
 
 package-lock.json
 yarn.lock

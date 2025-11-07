@@ -73,7 +73,8 @@ export class BuyStarterpack {
         MyCardSelection.push(this.getListDigimon('Perfect'));
         break;
       default:
-        console.log('Starterpack Not Found');
+        // Starterpack Not Found - return empty array
+        break;
     }
 
     return Promise.all(MyCardSelection);
