@@ -14,13 +14,13 @@ jest.mock('../../../data/repositories/listGatchaRepository', () => ({
 jest.mock('../../../presentation/hooks/utils', () => ({
   Category: jest.fn((level: string) => {
     switch (level) {
-      case 'Rookie':
+      case 'Child':
         return 'Rookie';
-      case 'Champion':
+      case 'Adult':
         return 'Champion';
       case 'Ultimate':
         return 'Ultimate';
-      case 'Mega':
+      case 'Perfect':
         return 'Mega';
       default:
         return 'Unknown';
@@ -36,6 +36,24 @@ jest.mock('../../../presentation/hooks/utils', () => ({
       }[category] || 5;
     return hasEvolution ? basePrice + 5 : basePrice;
   }),
+  highestLevelFromLevels: jest.fn((levels: Array<{ level: string }>) => {
+    if (!levels || levels.length === 0) return '';
+    // Mock the actual behavior: return highest by LEVEL_ORDER
+    const LEVEL_ORDER = ['Child', 'Adult', 'Armor', 'Unknown', 'Hybrid', 'Ultimate', 'Perfect'];
+    const rank = new Map(LEVEL_ORDER.map((n, i) => [n, i]));
+    let best: { level: string } | undefined;
+    let bestRank = -1;
+
+    for (const item of levels) {
+      const r = rank.get(item.level);
+      if (r === undefined) continue;
+      if (r > bestRank) {
+        best = item;
+        bestRank = r;
+      }
+    }
+    return best?.level || '';
+  }),
 }));
 
 describe('ListGatcha Use Case', () => {
@@ -46,7 +64,7 @@ describe('ListGatcha Use Case', () => {
       id: 1,
       name: 'Agumon',
       images: [{ href: 'agumon.jpg', transparent: false }],
-      levels: [{ id: 1, level: 'Rookie' }],
+      levels: [{ id: 1, level: 'Child' }],
       types: [{ id: 1, type: 'Vaccine' }],
       attributes: [{ id: 1, attribute: 'Fire' }],
       fields: [{ id: 1, field: 'Wind Guardians', image: 'field.jpg' }],
@@ -63,13 +81,13 @@ describe('ListGatcha Use Case', () => {
           url: 'greymon-url',
         },
       ],
-      level: { id: 1, level: 'Rookie' },
+      level: { id: 1, level: 'Child' },
     },
     {
       id: 2,
       name: 'Gabumon',
       images: [{ href: 'gabumon.jpg', transparent: false }],
-      levels: [{ id: 2, level: 'Champion' }],
+      levels: [{ id: 2, level: 'Adult' }],
       types: [{ id: 2, type: 'Data' }],
       attributes: [{ id: 2, attribute: 'Ice' }],
       fields: [{ id: 2, field: 'Nature Spirits', image: 'field2.jpg' }],
@@ -77,7 +95,7 @@ describe('ListGatcha Use Case', () => {
         { origin: 'Test', language: 'en', description: 'A fur-covered reptile Digimon' },
       ],
       nextEvolutions: [],
-      level: { id: 2, level: 'Champion' },
+      level: { id: 2, level: 'Adult' },
     },
   ];
 
@@ -100,7 +118,7 @@ describe('ListGatcha Use Case', () => {
       expect(agumon.name).toBe('Agumon');
       expect(agumon.type).toBe('Vaccine');
       expect(agumon.attribute).toBe('Fire');
-      expect(agumon.level).toBe('Rookie');
+      expect(agumon.level).toBe('Child');
       expect(agumon.description).toBe('Latest description'); // Should use the last description
       expect(agumon.category).toBe('Rookie');
       expect(agumon.isEvolution).toBe(false);
@@ -116,7 +134,7 @@ describe('ListGatcha Use Case', () => {
       expect(gabumon.name).toBe('Gabumon');
       expect(gabumon.type).toBe('Data');
       expect(gabumon.attribute).toBe('Ice');
-      expect(gabumon.level).toBe('Champion');
+      expect(gabumon.level).toBe('Adult');
       expect(gabumon.description).toBe('A fur-covered reptile Digimon');
       expect(gabumon.category).toBe('Champion');
       expect(gabumon.sellingDigimon).toBe(10); // 10 base, no evolution bonus
@@ -258,10 +276,10 @@ describe('ListGatcha Use Case', () => {
           name: 'SortTestDigimon',
           images: [{ href: 'sort.jpg', transparent: false }],
           levels: [
-            { id: 1, level: 'Rookie' },
-            { id: 5, level: 'Mega' },
+            { id: 1, level: 'Child' },
+            { id: 5, level: 'Perfect' },
             { id: 3, level: 'Ultimate' },
-            { id: 2, level: 'Champion' },
+            { id: 2, level: 'Adult' },
           ],
           types: [
             { id: 2, type: 'Data' },
@@ -276,7 +294,7 @@ describe('ListGatcha Use Case', () => {
           fields: [],
           descriptions: [],
           nextEvolutions: [],
-          level: { id: 5, level: 'Mega' },
+          level: { id: 5, level: 'Perfect' },
         },
       ];
 
@@ -284,7 +302,7 @@ describe('ListGatcha Use Case', () => {
 
       const result = await listGatcha.getListGacha('Rare');
 
-      expect(result[0].level).toBe('Mega'); // Highest ID level
+      expect(result[0].level).toBe('Perfect'); // Highest by LEVEL_ORDER
       expect(result[0].type).toBe('Virus'); // Highest ID type
       expect(result[0].attribute).toBe('Ice'); // Highest ID attribute
       expect(result[0].category).toBe('Mega');

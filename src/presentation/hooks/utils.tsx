@@ -53,3 +53,48 @@ export const sellingDigimonPrice = (category: string, nextEvolutions: boolean): 
       return 1;
   }
 };
+
+// Urutan prioritas level dari terendah → tertinggi
+export const LEVEL_ORDER = [
+  'Child',
+  'Adult',
+  'Armor',
+  'Unknown',
+  'Hybrid',
+  'Ultimate',
+  'Perfect',
+] as const;
+
+// Ambil 1 item dengan prioritas nama tertinggi berdasar LEVEL_ORDER
+export const pickHighestByOrder = <T extends { name: string }>(
+  items: T[],
+  order: readonly string[] = LEVEL_ORDER,
+): T | undefined => {
+  const rank = new Map(order.map((n, i) => [n, i]));
+  let best: T | undefined;
+  let bestRank = -1;
+
+  for (const item of items) {
+    const r = rank.get(item.name);
+    if (r === undefined) continue; // skip yang tidak ada di urutan
+    if (r > bestRank) {
+      best = item;
+      bestRank = r;
+    }
+  }
+  return best;
+};
+
+// Dari array levels { level: string } ambil nama level tertinggi
+export const highestLevelFromLevels = (levels: Array<{ level: string }>): string => {
+  if (!Array.isArray(levels) || levels.length === 0) return '';
+  const picked = pickHighestByOrder(levels.map((l) => ({ name: l.level })));
+  return picked?.name ?? '';
+};
+
+// Untuk data mentah seperti dataresponse (id, name)
+export const pickHighestLevelObject = <T extends { id: number; name: string }>(
+  items: T[],
+): T | undefined => {
+  return pickHighestByOrder(items);
+};
