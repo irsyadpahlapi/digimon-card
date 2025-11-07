@@ -5345,7 +5345,7 @@ slice-ansi@^7.1.0:
     ansi-styles "^6.2.1"
     is-fullwidth-code-point "^5.0.0"
 
-sonarjs@^1.0.4:
+sonarjs@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/sonarjs/-/sonarjs-1.0.0.tgz#9dee7cdcb05d4dde8bedf1591f9c21e24ebb9632"
   integrity sha512-/VSxLroBXcaG0myVqIPdWl30q7sIga2NyZW8YyVcAr4sgAdUn5jmMtqyNBweXAd/6JCATzvrAzGdMMCJ6GGPnw==
