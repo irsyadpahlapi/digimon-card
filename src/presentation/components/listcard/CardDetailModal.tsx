@@ -254,9 +254,9 @@ export default function CardDetailModal({
                         onEvolve(item.id, evolution.id);
                         // Don't close modal immediately, let loading state show
                       }}
-                      disabled={isEvolving || isSelling}
+                      disabled={isEvolving}
                       className={`w-full ${
-                        isEvolving || isSelling
+                        isEvolving
                           ? 'bg-gray-400 cursor-not-allowed'
                           : 'bg-gradient-to-r from-green-500 to-emerald-600 hover:shadow-lg transform hover:scale-105'
                       } text-white font-bold py-2.5 px-4 rounded-lg shadow-md transition-all duration-200 flex items-center justify-center gap-2`}
@@ -315,60 +315,34 @@ export default function CardDetailModal({
             {item.nextEvolutions && item.nextEvolutions.length > 0 && (
               <button
                 onClick={() => setShowEvolutionSection(!showEvolutionSection)}
-                disabled={isEvolving || isSelling}
+                disabled={isEvolving || item.total < 3}
                 className={`flex-1 ${
                   showEvolutionSection
                     ? 'bg-gradient-to-r from-gray-500 to-gray-600'
-                    : isEvolving || isSelling
+                    : isEvolving || item.total < 3
                       ? 'bg-gray-400 cursor-not-allowed'
                       : 'bg-gradient-to-r from-[#443c70] to-[#a76050] hover:shadow-xl transform hover:scale-105'
                 } text-white font-bold py-4 px-6 rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2`}
               >
-                {isEvolving ? (
-                  <>
-                    <svg
-                      className="animate-spin h-5 w-5"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      />
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      />
-                    </svg>
-                    <span>Evolving...</span>
-                  </>
-                ) : (
-                  <>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className={`h-5 w-5 transition-transform duration-200 ${showEvolutionSection ? 'rotate-180' : ''}`}
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    <span>
-                      {showEvolutionSection
-                        ? 'Hide Evolutions'
-                        : `Evolve (${item.nextEvolutions.length} options)`}
-                    </span>
-                  </>
-                )}
+                <>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className={`h-5 w-5 transition-transform duration-200 ${showEvolutionSection ? 'rotate-180' : ''}`}
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <span>
+                    {showEvolutionSection
+                      ? 'Hide Evolutions'
+                      : `Evolve (${item.nextEvolutions.length} options)`}
+                  </span>
+                </>
               </button>
             )}
 
@@ -377,11 +351,11 @@ export default function CardDetailModal({
                 onSell?.(item.id, item.sellingDigimon);
                 // Don't close modal immediately, let loading state show
               }}
-              disabled={isEvolving || isSelling}
+              disabled={isSelling}
               className={`${
                 item.nextEvolutions && item.nextEvolutions.length > 0 ? 'flex-1' : 'w-full'
               } ${
-                isEvolving || isSelling
+                isSelling
                   ? 'bg-gray-400 cursor-not-allowed'
                   : 'bg-gradient-to-r from-[#f1ba63] to-[#fbf39b] hover:shadow-xl transform hover:scale-105'
               } text-[#643c30] font-bold py-4 px-6 rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2`}

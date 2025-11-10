@@ -2,6 +2,7 @@
 import { StarterPackProps } from '@/core/entities/staterPack';
 import { borderMap, badgeMap, gradientMap } from '@/presentation/hooks/constant';
 import Image from 'next/image';
+import ActionButton from '@/presentation/components/ui/ActionButton';
 
 interface StarterPackComponentProps {
   item: StarterPackProps['item'];
@@ -155,49 +156,17 @@ export default function StarterPack({ item, onBuy, isLoading = false }: StarterP
           </div>
 
           {/* Buy Button */}
-          <button
-            type="button"
+          <ActionButton
             onClick={handleBuyClick}
-            onTouchStart={() => {}} // Enable touch events for iOS
+            variant="success"
+            size="lg"
+            isLoading={isLoading}
+            loadingText="Buying..."
             disabled={isLoading}
-            className={` w-full font-bold py-4 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 min-h-[48px] touch-manipulation ${
-              isLoading
-                ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-gradient-to-r from-[#443c70] to-[#a76050] hover:shadow-lg hover:scale-105 active:scale-95 active:bg-gradient-to-r active:from-[#3a3460] active:to-[#965545] cursor-pointer'
-            } text-white select-none `}
-            style={{
-              WebkitTapHighlightColor: 'transparent',
-              touchAction: 'manipulation',
-            }}
+            className="w-full"
           >
-            {isLoading ? (
-              <>
-                <svg
-                  className="animate-spin h-5 w-5"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  />
-                </svg>
-                <span>Buying...</span>
-              </>
-            ) : (
-              'Buy Now'
-            )}
-          </button>
+            Buy Now
+          </ActionButton>
         </div>
 
         {/* Shine Effect */}

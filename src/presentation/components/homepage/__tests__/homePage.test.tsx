@@ -172,12 +172,6 @@ describe('HomePage Component', () => {
       render(<HomePage />);
       expect(ListMyCard).toHaveBeenCalled();
     });
-
-    it('should call useAuthCheck hook', () => {
-      const { useAuthCheck } = require('../../../hooks/useAuthCheck');
-      render(<HomePage />);
-      expect(useAuthCheck).toHaveBeenCalled();
-    });
   });
 
   describe('Card Loading and Display Functions', () => {
@@ -316,7 +310,11 @@ describe('HomePage Component', () => {
           fireEvent.click(buyButtons[0]);
         });
 
-        expect(window.alert).toHaveBeenCalled();
+        // Instead of checking for alert, check for toast notification
+        await waitFor(() => {
+          const errorToast = screen.getByText(/Not enough coins/i);
+          expect(errorToast).toBeInTheDocument();
+        });
       }
     });
 

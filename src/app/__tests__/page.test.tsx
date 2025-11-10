@@ -3,13 +3,33 @@ import { useAuthCheck } from '@/presentation/hooks/useAuthCheck';
 import Homepage from '../page';
 import React from 'react';
 
-// Mock the dynamic import and HomePage component
+// Mock the dynamic import with more comprehensive implementation
 jest.mock('next/dynamic', () => {
-  return jest.fn(() => {
-    const MockedHomePage = () => (
-      <div data-testid="homepage-component">Mocked HomePage Component</div>
-    );
+  return jest.fn().mockImplementation((importFunc, options = {}) => {
+    // Create a mock component that respects dynamic options
+    const MockedHomePage = (props: any) => {
+      // Simulate loading state if needed
+      if (options.loading && Math.random() > 0.5) {
+        const LoadingComponent = options.loading;
+        return <LoadingComponent />;
+      }
+
+      return (
+        <div data-testid="homepage-component" {...props}>
+          <h1>Mocked HomePage Component</h1>
+          <p>Dynamic import successful</p>
+        </div>
+      );
+    };
+
     MockedHomePage.displayName = 'MockedHomePage';
+
+    // Add properties that dynamic components might have
+    Object.defineProperty(MockedHomePage, '__dynamic', {
+      value: true,
+      writable: false,
+    });
+
     return MockedHomePage;
   });
 });
@@ -18,6 +38,18 @@ jest.mock('next/dynamic', () => {
 jest.mock('@/presentation/hooks/useAuthCheck', () => ({
   useAuthCheck: jest.fn(),
 }));
+
+// Mock AuthRedirectScreen component
+jest.mock('@/presentation/components/ui/AuthRedirectScreen', () => {
+  return function MockAuthRedirectScreen({ variant }: any) {
+    return (
+      <div data-testid="auth-redirect" data-variant={variant}>
+        <div>Redirecting...</div>
+        <p>Redirect variant: {variant}</p>
+      </div>
+    );
+  };
+});
 
 // Mock useEffect
 const mockUseEffect = jest.spyOn(React, 'useEffect');
@@ -62,7 +94,7 @@ describe('Homepage Component', () => {
       expect(container.firstChild).toBeDefined();
     });
 
-    it('should execute LoadingScreen component function', () => {
+    it('should show AuthRedirectScreen when loading', () => {
       mockUseAuthCheck.mockReturnValue(
         createMockAuthReturn({
           isLoading: true,
@@ -71,7 +103,8 @@ describe('Homepage Component', () => {
       );
 
       render(<Homepage />);
-      expect(screen.getByText('Checking authentication...')).toBeInTheDocument();
+      expect(screen.getByTestId('auth-redirect')).toBeInTheDocument();
+      expect(screen.getByTestId('auth-redirect')).toHaveAttribute('data-variant', 'toLogin');
     });
 
     it('should execute useEffect hook function', () => {
@@ -98,7 +131,7 @@ describe('Homepage Component', () => {
       );
 
       const { rerender } = render(<Homepage />);
-      expect(screen.getByText('Checking authentication...')).toBeInTheDocument();
+      expect(screen.getByTestId('auth-redirect')).toBeInTheDocument();
 
       // Test unauthenticated condition
       mockUseAuthCheck.mockReturnValue(
@@ -109,7 +142,7 @@ describe('Homepage Component', () => {
       );
 
       rerender(<Homepage />);
-      expect(screen.getByText('Checking authentication...')).toBeInTheDocument();
+      expect(screen.getByTestId('auth-redirect')).toBeInTheDocument();
 
       // Test authenticated condition
       mockUseAuthCheck.mockReturnValue(
@@ -125,7 +158,7 @@ describe('Homepage Component', () => {
   });
 
   describe('Loading State', () => {
-    it('should render loading screen when isLoading is true', () => {
+    it('should render AuthRedirectScreen when isLoading is true', () => {
       mockUseAuthCheck.mockReturnValue(
         createMockAuthReturn({
           isLoading: true,
@@ -134,20 +167,8 @@ describe('Homepage Component', () => {
       );
 
       render(<Homepage />);
-      expect(screen.getByText('Checking authentication...')).toBeInTheDocument();
-    });
-
-    it('should display loading spinner animation', () => {
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: true,
-          isAuthenticated: false,
-        }),
-      );
-
-      const { container } = render(<Homepage />);
-      const spinner = container.querySelector('.animate-spin');
-      expect(spinner).toBeInTheDocument();
+      expect(screen.getByTestId('auth-redirect')).toBeInTheDocument();
+      expect(screen.getByTestId('auth-redirect')).toHaveAttribute('data-variant', 'toLogin');
     });
 
     it('should not render HomePage component when loading', () => {
@@ -176,7 +197,7 @@ describe('Homepage Component', () => {
       expect(screen.getByTestId('homepage-component')).toBeInTheDocument();
     });
 
-    it('should not render loading screen when authenticated', () => {
+    it('should not render AuthRedirectScreen when authenticated', () => {
       mockUseAuthCheck.mockReturnValue(
         createMockAuthReturn({
           isLoading: false,
@@ -185,7 +206,7 @@ describe('Homepage Component', () => {
       );
 
       render(<Homepage />);
-      expect(screen.queryByText('Checking authentication...')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('auth-redirect')).not.toBeInTheDocument();
     });
 
     it('should execute MapComponent rendering function', () => {
@@ -218,7 +239,7 @@ describe('Homepage Component', () => {
       });
     });
 
-    it('should render loading screen while redirecting', () => {
+    it('should render AuthRedirectScreen while redirecting', () => {
       mockUseAuthCheck.mockReturnValue(
         createMockAuthReturn({
           isLoading: false,
@@ -227,7 +248,8 @@ describe('Homepage Component', () => {
       );
 
       render(<Homepage />);
-      expect(screen.getByText('Checking authentication...')).toBeInTheDocument();
+      expect(screen.getByTestId('auth-redirect')).toBeInTheDocument();
+      expect(screen.getByTestId('auth-redirect')).toHaveAttribute('data-variant', 'toLogin');
     });
 
     it('should execute useEffect with correct dependencies', async () => {
@@ -261,7 +283,7 @@ describe('Homepage Component', () => {
       );
 
       const { rerender } = render(<Homepage />);
-      expect(screen.getByText('Checking authentication...')).toBeInTheDocument();
+      expect(screen.getByTestId('auth-redirect')).toBeInTheDocument();
 
       // Transition to authenticated
       mockUseAuthCheck.mockReturnValue(
@@ -304,7 +326,132 @@ describe('Homepage Component', () => {
     });
   });
 
-  describe('Edge Cases and Function Coverage', () => {
+  describe('Dynamic Component Integration', () => {
+    it('should render dynamic component when authenticated', async () => {
+      mockUseAuthCheck.mockReturnValue(
+        createMockAuthReturn({
+          isLoading: false,
+          isAuthenticated: true,
+        }),
+      );
+
+      render(<Homepage />);
+
+      // Verify the dynamic component renders
+      await waitFor(() => {
+        expect(screen.getByTestId('homepage-component')).toBeInTheDocument();
+        expect(screen.getByText('Mocked HomePage Component')).toBeInTheDocument();
+        expect(screen.getByText('Dynamic import successful')).toBeInTheDocument();
+      });
+    });
+
+    it('should not render dynamic component when not authenticated', () => {
+      mockUseAuthCheck.mockReturnValue(
+        createMockAuthReturn({
+          isLoading: false,
+          isAuthenticated: false,
+        }),
+      );
+
+      render(<Homepage />);
+
+      // Should show redirect screen instead of dynamic component
+      expect(screen.getByTestId('auth-redirect')).toBeInTheDocument();
+      expect(screen.queryByTestId('homepage-component')).not.toBeInTheDocument();
+    });
+
+    it('should render dynamic component with proper structure', () => {
+      mockUseAuthCheck.mockReturnValue(
+        createMockAuthReturn({
+          isLoading: false,
+          isAuthenticated: true,
+        }),
+      );
+
+      render(<Homepage />);
+
+      const dynamicComponent = screen.getByTestId('homepage-component');
+      expect(dynamicComponent).toBeInTheDocument();
+
+      // Check if the component has the expected structure
+      expect(screen.getByText('Mocked HomePage Component')).toBeInTheDocument();
+    });
+
+    it('should handle component mounting and unmounting', () => {
+      mockUseAuthCheck.mockReturnValue(
+        createMockAuthReturn({
+          isLoading: false,
+          isAuthenticated: true,
+        }),
+      );
+
+      const { unmount } = render(<Homepage />);
+
+      expect(screen.getByTestId('homepage-component')).toBeInTheDocument();
+
+      // Test unmounting
+      unmount();
+      expect(screen.queryByTestId('homepage-component')).not.toBeInTheDocument();
+    });
+
+    it('should handle authentication state changes affecting dynamic component', () => {
+      // Start unauthenticated
+      mockUseAuthCheck.mockReturnValue(
+        createMockAuthReturn({
+          isLoading: false,
+          isAuthenticated: false,
+        }),
+      );
+
+      const { rerender } = render(<Homepage />);
+      expect(screen.getByTestId('auth-redirect')).toBeInTheDocument();
+      expect(screen.queryByTestId('homepage-component')).not.toBeInTheDocument();
+
+      // Become authenticated
+      mockUseAuthCheck.mockReturnValue(
+        createMockAuthReturn({
+          isLoading: false,
+          isAuthenticated: true,
+        }),
+      );
+
+      rerender(<Homepage />);
+      expect(screen.getByTestId('homepage-component')).toBeInTheDocument();
+      expect(screen.queryByTestId('auth-redirect')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('New Component Integration', () => {
+    it('should use AuthRedirectScreen with correct variant for loading', () => {
+      mockUseAuthCheck.mockReturnValue(
+        createMockAuthReturn({
+          isLoading: true,
+          isAuthenticated: false,
+        }),
+      );
+
+      render(<Homepage />);
+
+      const redirectScreen = screen.getByTestId('auth-redirect');
+      expect(redirectScreen).toBeInTheDocument();
+      expect(redirectScreen).toHaveAttribute('data-variant', 'toLogin');
+    });
+
+    it('should use AuthRedirectScreen with correct variant for unauthenticated', () => {
+      mockUseAuthCheck.mockReturnValue(
+        createMockAuthReturn({
+          isLoading: false,
+          isAuthenticated: false,
+        }),
+      );
+
+      render(<Homepage />);
+
+      const redirectScreen = screen.getByTestId('auth-redirect');
+      expect(redirectScreen).toBeInTheDocument();
+      expect(redirectScreen).toHaveAttribute('data-variant', 'toLogin');
+    });
+
     it('should handle dynamic import properly', () => {
       mockUseAuthCheck.mockReturnValue(
         createMockAuthReturn({
@@ -319,7 +466,9 @@ describe('Homepage Component', () => {
 
       expect(screen.getByTestId('homepage-component')).toBeInTheDocument();
     });
+  });
 
+  describe('Edge Cases and Function Coverage', () => {
     it('should handle error cases gracefully', () => {
       mockUseAuthCheck.mockImplementation(() => {
         throw new Error('Hook error');
@@ -340,7 +489,7 @@ describe('Homepage Component', () => {
       );
 
       let { rerender } = render(<Homepage />);
-      expect(screen.getByText('Checking authentication...')).toBeInTheDocument();
+      expect(screen.getByTestId('auth-redirect')).toBeInTheDocument();
 
       // Test !isAuthenticated branch (when not loading)
       mockUseAuthCheck.mockReturnValue(
@@ -351,7 +500,7 @@ describe('Homepage Component', () => {
       );
 
       rerender(<Homepage />);
-      expect(screen.getByText('Checking authentication...')).toBeInTheDocument();
+      expect(screen.getByTestId('auth-redirect')).toBeInTheDocument();
 
       // Test authenticated branch
       mockUseAuthCheck.mockReturnValue(
@@ -404,21 +553,6 @@ describe('Homepage Component', () => {
   });
 
   describe('Function Definitions Coverage', () => {
-    it('should test LoadingScreen function definition and execution', () => {
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: true,
-          isAuthenticated: false,
-        }),
-      );
-
-      render(<Homepage />);
-
-      // LoadingScreen function should be executed
-      expect(screen.getByText('Checking authentication...')).toBeInTheDocument();
-      expect(screen.getByLabelText).toBeDefined(); // Ensure the function creates the expected elements
-    });
-
     it('should test Homepage function definition and all return paths', () => {
       const Component = Homepage;
 
@@ -437,7 +571,7 @@ describe('Homepage Component', () => {
       );
 
       const { rerender, container } = render(<Component />);
-      expect(container.innerHTML).toContain('Checking authentication...');
+      expect(screen.getByTestId('auth-redirect')).toBeInTheDocument();
 
       // Return path 2: Unauthenticated state
       mockUseAuthCheck.mockReturnValue(
@@ -448,7 +582,7 @@ describe('Homepage Component', () => {
       );
 
       rerender(<Component />);
-      expect(container.innerHTML).toContain('Checking authentication...');
+      expect(screen.getByTestId('auth-redirect')).toBeInTheDocument();
 
       // Return path 3: Authenticated state
       mockUseAuthCheck.mockReturnValue(

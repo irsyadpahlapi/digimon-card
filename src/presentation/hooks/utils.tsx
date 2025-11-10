@@ -1,3 +1,8 @@
+import { Level_order } from './constant';
+
+// Export LEVEL_ORDER constant for testing
+export const LEVEL_ORDER = Level_order;
+
 export const Category = (data: string): string => {
   switch (data) {
     case 'Child':
@@ -54,21 +59,10 @@ export const sellingDigimonPrice = (category: string, nextEvolutions: boolean): 
   }
 };
 
-// Urutan prioritas level dari terendah → tertinggi
-export const LEVEL_ORDER = [
-  'Child',
-  'Adult',
-  'Armor',
-  'Unknown',
-  'Hybrid',
-  'Ultimate',
-  'Perfect',
-] as const;
-
 // Ambil 1 item dengan prioritas nama tertinggi berdasar LEVEL_ORDER
 export const pickHighestByOrder = <T extends { name: string }>(
   items: T[],
-  order: readonly string[] = LEVEL_ORDER,
+  order: readonly string[] = Level_order,
 ): T | undefined => {
   const rank = new Map(order.map((n, i) => [n, i]));
   let best: T | undefined;
@@ -92,9 +86,9 @@ export const highestLevelFromLevels = (levels: Array<{ level: string }>): string
   return picked?.name ?? '';
 };
 
-// Untuk data mentah seperti dataresponse (id, name)
-export const pickHighestLevelObject = <T extends { id: number; name: string }>(
-  items: T[],
-): T | undefined => {
+// Dari array objek { id, name } ambil objek dengan nama level tertinggi
+export const pickHighestLevelObject = (
+  items: Array<{ id: number; name: string }>,
+): { id: number; name: string } | undefined => {
   return pickHighestByOrder(items);
 };

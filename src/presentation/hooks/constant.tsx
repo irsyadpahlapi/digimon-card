@@ -60,4 +60,28 @@ export const badgeMap: { [key: string]: string } = {
 
 export const Cateogory = ['Rookie', 'Champion', 'Ultimate', 'Mega'];
 
+export const Level_order = ['Child', 'Adult', 'Armor', 'Unknown', 'Hybrid', 'Ultimate', 'Perfect'];
+
+export const Type = [
+  'Reptile',
+  'Mythical Beast',
+  'Angel',
+  'Amphibian',
+  'Giant Bird',
+  'Slime',
+  'Cyborg',
+  'Fallen Angel',
+  'Mammal',
+  'Beast',
+  'Devil Dragon',
+  'Earth Dragon',
+  'Alien',
+  'Enhancement',
+  'Musical Instrument',
+  'Dinosaur',
+  'Space Alien',
+  'Insectivorous Plant',
+  'Plant',
+  'Aquatic',
+];
 export default STATER_PACK_ITEMS;

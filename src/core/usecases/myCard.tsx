@@ -1,6 +1,6 @@
 import { DetailDigimonRepository } from '@core/repositories/myCardRepository';
 import { DigimonImpl } from '@/data/repositories/digimonRepository';
-import { Category, sellingDigimonPrice } from '@/presentation/hooks/utils';
+import { Category, sellingDigimonPrice, highestLevelFromLevels } from '@/presentation/hooks/utils';
 
 export class ListMyCard {
   private readonly dataImpl: DigimonImpl;
@@ -73,6 +73,8 @@ export class ListMyCard {
     });
     const dataEvolution = await this.dataImpl.getDigimonById(NextEvolution);
 
+    const levelName = highestLevelFromLevels(dataEvolution.levels);
+    const category = Category(levelName || '');
     listCard.push({
       id: dataEvolution.id,
       name: dataEvolution.name,
@@ -83,16 +85,13 @@ export class ListMyCard {
       description:
         dataEvolution.descriptions[dataEvolution.descriptions.length - 1]?.description || '',
       nextEvolutions: dataEvolution.nextEvolutions,
-      level: dataEvolution.levels.sort((a, b) => b.id - a.id)[0]?.level || '',
+      level: levelName || '',
       isEvolution: true,
-      category: Category(dataEvolution.levels.sort((a, b) => b.id - a.id)[0]?.level || ''),
+      category: category,
       evolution: 0,
       starterPack: 0,
       total: 0,
-      sellingDigimon: sellingDigimonPrice(
-        Category(dataEvolution.levels.sort((a, b) => b.id - a.id)[0]?.level || ''),
-        dataEvolution.nextEvolutions.length > 0,
-      ),
+      sellingDigimon: sellingDigimonPrice(category, dataEvolution.nextEvolutions.length > 0),
     });
 
     return listCard;
