@@ -177,7 +177,7 @@ export default function HomePage() {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const data = await new ListGatcha().getListGacha(pack.type);
-      await setMyCards([...MyCards, ...data]);
+      setMyCards([...MyCards, ...data]);
 
       // Deduct coins
       const newCoins = currentCoins - pack.price;
