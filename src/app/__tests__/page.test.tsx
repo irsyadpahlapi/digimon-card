@@ -8,12 +8,8 @@ jest.mock('next/dynamic', () => {
   return jest.fn().mockImplementation((importFunc, options = {}) => {
     // Create a mock component that respects dynamic options
     const MockedHomePage = (props: any) => {
-      // Simulate loading state if needed
-      if (options.loading && Math.random() > 0.5) {
-        const LoadingComponent = options.loading;
-        return <LoadingComponent />;
-      }
-
+      // For testing purposes, we don't need the loading state simulation
+      // This ensures predictable test behavior without random values
       return (
         <div data-testid="homepage-component" {...props}>
           <h1>Mocked HomePage Component</h1>
