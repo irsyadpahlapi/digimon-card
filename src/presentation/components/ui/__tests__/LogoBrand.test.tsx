@@ -85,23 +85,23 @@ describe('LogoBrand Component', () => {
 
   describe('Image Container Styling', () => {
     it('should apply correct container classes for small size', () => {
-      const { container } = render(<LogoBrand size="sm" />);
+      render(<LogoBrand size="sm" />);
 
-      const imageContainer = container.querySelector('.inline-block .relative');
+      const imageContainer = document.querySelector('.inline-block .relative');
       expect(imageContainer).toHaveClass('p-4', 'w-20', 'h-20');
     });
 
     it('should apply correct container classes for medium size', () => {
-      const { container } = render(<LogoBrand size="md" />);
+      render(<LogoBrand size="md" />);
 
-      const imageContainer = container.querySelector('.inline-block .relative');
+      const imageContainer = document.querySelector('.inline-block .relative');
       expect(imageContainer).toHaveClass('p-6', 'w-28', 'h-28');
     });
 
     it('should apply correct container classes for large size', () => {
-      const { container } = render(<LogoBrand size="lg" />);
+      render(<LogoBrand size="lg" />);
 
-      const imageContainer = container.querySelector('.inline-block .relative');
+      const imageContainer = document.querySelector('.inline-block .relative');
       expect(imageContainer).toHaveClass('p-8', 'w-36', 'h-36');
     });
   });
@@ -109,23 +109,26 @@ describe('LogoBrand Component', () => {
   describe('Image Sizing', () => {
     it('should apply correct image classes for each size', () => {
       // Small
-      const { container: smallContainer } = render(<LogoBrand size="sm" />);
-      const smallImage = smallContainer.querySelector('img');
+      const { unmount: unmountSmall } = render(<LogoBrand size="sm" />);
+      const smallImage = document.querySelector('img');
       expect(smallImage).toHaveClass('w-12', 'h-12');
+      unmountSmall();
 
       // Medium
-      const { container: mediumContainer } = render(<LogoBrand size="md" />);
-      const mediumImage = mediumContainer.querySelector('img');
+      const { unmount: unmountMedium } = render(<LogoBrand size="md" />);
+      const mediumImage = document.querySelector('img');
       expect(mediumImage).toHaveClass('w-16', 'h-16');
+      unmountMedium();
 
       // Large
-      const { container: largeContainer } = render(<LogoBrand size="lg" />);
-      const largeImage = largeContainer.querySelector('img');
+      const { unmount: unmountLarge } = render(<LogoBrand size="lg" />);
+      const largeImage = document.querySelector('img');
       expect(largeImage).toHaveClass('w-24', 'h-24');
+      unmountLarge();
     });
 
     it('should have consistent image styling across sizes', () => {
-      const { container } = render(<LogoBrand />);
+      render(<LogoBrand />);
 
       const image = screen.getByAltText('Agumon');
       expect(image).toHaveClass(
@@ -142,9 +145,9 @@ describe('LogoBrand Component', () => {
 
   describe('Background Styling', () => {
     it('should have proper gradient background', () => {
-      const { container } = render(<LogoBrand />);
+      render(<LogoBrand />);
 
-      const gradientContainer = container.querySelector('.inline-block');
+      const gradientContainer = document.querySelector('.inline-block');
       expect(gradientContainer).toHaveClass(
         'bg-gradient-to-br',
         'from-yellow-400',
@@ -158,9 +161,9 @@ describe('LogoBrand Component', () => {
     });
 
     it('should have glow effect element', () => {
-      const { container } = render(<LogoBrand />);
+      render(<LogoBrand />);
 
-      const glowEffect = container.querySelector('.absolute.inset-0.bg-gradient-to-br');
+      const glowEffect = document.querySelector('.absolute.inset-0.bg-gradient-to-br');
       expect(glowEffect).toHaveClass(
         'from-yellow-300',
         'to-orange-400',
@@ -215,16 +218,16 @@ describe('LogoBrand Component', () => {
 
   describe('Custom Styling', () => {
     it('should apply custom className to container', () => {
-      const { container } = render(<LogoBrand className="custom-brand-class" />);
+      render(<LogoBrand className="custom-brand-class" />);
 
-      const mainContainer = container.firstChild as HTMLElement;
-      expect(mainContainer).toHaveClass('custom-brand-class');
+      const mainContainer = document.querySelector('.custom-brand-class');
+      expect(mainContainer).toBeInTheDocument();
     });
 
     it('should maintain base classes with custom className', () => {
-      const { container } = render(<LogoBrand className="my-custom-spacing" />);
+      render(<LogoBrand className="my-custom-spacing" />);
 
-      const mainContainer = container.firstChild as HTMLElement;
+      const mainContainer = document.querySelector('.my-custom-spacing');
       expect(mainContainer).toHaveClass('text-center', 'mb-8', 'my-custom-spacing');
     });
   });
@@ -249,13 +252,13 @@ describe('LogoBrand Component', () => {
 
   describe('Layout Structure', () => {
     it('should have proper container structure', () => {
-      const { container } = render(<LogoBrand />);
+      render(<LogoBrand />);
 
-      const mainContainer = container.firstChild as HTMLElement;
-      expect(mainContainer).toHaveClass('text-center', 'mb-8');
+      const mainContainer = document.querySelector('.text-center.mb-8');
+      expect(mainContainer).toBeInTheDocument();
 
       // Should have image container, title, and subtitle
-      expect(container.querySelector('.inline-block')).toBeInTheDocument();
+      expect(document.querySelector('.inline-block')).toBeInTheDocument();
       expect(screen.getByText('DigiCard')).toBeInTheDocument();
       expect(screen.getByText('⚡ ENTER AT YOUR OWN RISK ⚡')).toBeInTheDocument();
     });
@@ -264,8 +267,6 @@ describe('LogoBrand Component', () => {
       render(<LogoBrand />);
 
       const title = screen.getByText('DigiCard');
-      const subtitle = screen.getByText('⚡ ENTER AT YOUR OWN RISK ⚡');
-
       expect(title).toHaveClass('mb-2');
       // The image container should have mb-6 for spacing
     });

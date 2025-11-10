@@ -41,14 +41,14 @@ export default function HomePage() {
 
   useEffect(() => {
     // Use setTimeout to avoid synchronous setState during effect
-    const timer = setTimeout(async () => {
-      const groupedCards = await usecase.getListMyCard(MyCards, filterBy.category, filterBy.type);
+    const timer = setTimeout(() => {
+      const groupedCards = usecase.getListMyCard(MyCards, filterBy.category, filterBy.type);
       setListMyCards(groupedCards);
 
       // Reset pagination and load first batch
-      const firstBatch = groupedCards.slice(0, CARDS_PER_PAGE);
+      const firstBatch = Array.isArray(groupedCards) ? groupedCards.slice(0, CARDS_PER_PAGE) : [];
       setDisplayedCards(firstBatch);
-      setHasMore(groupedCards.length > CARDS_PER_PAGE);
+      setHasMore(Array.isArray(groupedCards) && groupedCards.length > CARDS_PER_PAGE);
     }, 0);
 
     return () => clearTimeout(timer);
