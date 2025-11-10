@@ -7,7 +7,9 @@ export class BuyStarterpack {
     const { getListDigimon, getDigimonById } = new DigimonAPI();
     const ListDataChild = await getListDigimon(type, 100);
 
-    const randomIndex = Math.floor(Math.random() * ListDataChild.content.length);
+    // Using Math.random for game mechanics (card selection) is acceptable for non-cryptographic purposes
+    // This is not used for security-critical operations, only for game randomness
+    const randomIndex = Math.floor(Math.random() * ListDataChild.content.length); // NOSONAR
     const data = await getDigimonById(ListDataChild.content[randomIndex].id);
 
     return data;
@@ -28,7 +30,9 @@ export class BuyStarterpack {
       ...ListDataHybrid.content,
     ];
 
-    const randomIndex = Math.floor(Math.random() * ListDataAll.length);
+    // Using Math.random for game mechanics (card selection) is acceptable for non-cryptographic purposes
+    // This is not used for security-critical operations, only for game randomness
+    const randomIndex = Math.floor(Math.random() * ListDataAll.length); // NOSONAR
     const data = await getDigimonById(ListDataAll[randomIndex].id);
 
     return data;
