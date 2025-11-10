@@ -43,7 +43,7 @@ describe('Constant Hook', () => {
     });
 
     it('should have all required properties for each starter pack', () => {
-      STARTER_PACK_ITEMS.forEach((pack, index) => {
+      for (const [index, pack] of STARTER_PACK_ITEMS.entries()) {
         expect(pack).toHaveProperty('id');
         expect(pack).toHaveProperty('name');
         expect(pack).toHaveProperty('type');
@@ -71,7 +71,7 @@ describe('Constant Hook', () => {
         // Validate unique IDs
         const otherPacks = STARTER_PACK_ITEMS.filter((_, i) => i !== index);
         expect(otherPacks.find((other) => other.id === pack.id)).toBeUndefined();
-      });
+      }
     });
 
     it('should have packs ordered by price ascending', () => {
@@ -87,9 +87,9 @@ describe('Constant Hook', () => {
     });
 
     it('should have valid image paths', () => {
-      STARTER_PACK_ITEMS.forEach((pack) => {
+      for (const pack of STARTER_PACK_ITEMS) {
         expect(pack.image).toMatch(/^\/images\/\w+\.png$/);
-      });
+      }
     });
   });
 
@@ -107,18 +107,18 @@ describe('Constant Hook', () => {
     });
 
     it('should have valid CSS classes for all colors', () => {
-      Object.values(badgeMap).forEach((color: string) => {
+      for (const color of Object.values(badgeMap)) {
         expect(typeof color).toBe('string');
         expect(color.length).toBeGreaterThan(0);
         expect(color).toMatch(/^bg-/); // All should start with 'bg-'
-      });
+      }
     });
 
     it('should map to starter pack types correctly', () => {
-      STARTER_PACK_ITEMS.forEach((pack) => {
+      for (const pack of STARTER_PACK_ITEMS) {
         expect(badgeMap).toHaveProperty(pack.type);
         expect(typeof badgeMap[pack.type as keyof typeof badgeMap]).toBe('string');
-      });
+      }
     });
   });
 
@@ -136,13 +136,13 @@ describe('Constant Hook', () => {
     });
 
     it('should have valid gradient classes', () => {
-      Object.values(gradientMap).forEach((gradient: string) => {
+      for (const gradient of Object.values(gradientMap)) {
         expect(typeof gradient).toBe('string');
         expect(gradient.length).toBeGreaterThan(0);
         expect(gradient).toMatch(/^from-/); // All should start with 'from-'
         expect(gradient).toContain('via-'); // All should contain 'via-'
         expect(gradient).toContain('to-'); // All should contain 'to-'
-      });
+      }
     });
   });
 
@@ -160,11 +160,11 @@ describe('Constant Hook', () => {
     });
 
     it('should have valid border classes', () => {
-      Object.values(borderMap).forEach((border: string) => {
+      for (const border of Object.values(borderMap)) {
         expect(typeof border).toBe('string');
         expect(border.length).toBeGreaterThan(0);
         expect(border).toMatch(/^border-/); // All should start with 'border-'
-      });
+      }
     });
   });
 
@@ -186,10 +186,10 @@ describe('Constant Hook', () => {
 
     it('should be an array of strings', () => {
       expect(Array.isArray(Cateogory)).toBe(true);
-      Cateogory.forEach((category) => {
+      for (const category of Cateogory) {
         expect(typeof category).toBe('string');
         expect(category.length).toBeGreaterThan(0);
-      });
+      }
     });
 
     it('should have unique categories', () => {
@@ -201,9 +201,9 @@ describe('Constant Hook', () => {
   describe('Integration Tests', () => {
     it('should have consistent data across all constants', () => {
       // Check if all starter pack types have corresponding badge colors
-      STARTER_PACK_ITEMS.forEach((pack) => {
+      for (const pack of STARTER_PACK_ITEMS) {
         expect(badgeMap).toHaveProperty(pack.type);
-      });
+      }
 
       // Verify default export is the starter pack items
       expect(Array.isArray(STARTER_PACK_ITEMS)).toBe(true);
@@ -229,10 +229,10 @@ describe('Constant Hook', () => {
         { name: 'Rare', type: 'R' },
       ];
 
-      expectedPacks.forEach((expected, index) => {
+      for (const [index, expected] of expectedPacks.entries()) {
         expect(STARTER_PACK_ITEMS[index].name).toBe(expected.name);
         expect(STARTER_PACK_ITEMS[index].type).toBe(expected.type);
-      });
+      }
     });
 
     it('should have increasing pack values', () => {

@@ -1,6 +1,5 @@
 import { render } from '@testing-library/react';
-import { Metadata } from 'next';
-import LoginLayout from '../layout';
+import Layout from '../layout';
 
 // Mock Next.js metadata
 jest.mock('next', () => ({
@@ -11,13 +10,13 @@ describe('LoginLayout Component', () => {
   const mockChildren = <div data-testid="children-content">Login Page Content</div>;
 
   it('should render children correctly', () => {
-    const { getByTestId } = render(<LoginLayout>{mockChildren}</LoginLayout>);
+    const { getByTestId } = render(<Layout>{mockChildren}</Layout>);
 
     expect(getByTestId('children-content')).toBeInTheDocument();
   });
 
   it('should have proper HTML structure', () => {
-    const { container } = render(<LoginLayout>{mockChildren}</LoginLayout>);
+    const { container } = render(<Layout>{mockChildren}</Layout>);
 
     // LoginLayout uses Fragment, so children are rendered directly
     const child = container.querySelector('[data-testid="children-content"]');
@@ -25,7 +24,7 @@ describe('LoginLayout Component', () => {
   });
 
   it('should render children within the layout wrapper', () => {
-    const { container, getByTestId } = render(<LoginLayout>{mockChildren}</LoginLayout>);
+    const { container, getByTestId } = render(<Layout>{mockChildren}</Layout>);
 
     // With Fragment, children are rendered directly in container
     const children = getByTestId('children-content');
@@ -41,7 +40,7 @@ describe('LoginLayout Component', () => {
       </>
     );
 
-    const { getByTestId } = render(<LoginLayout>{multipleChildren}</LoginLayout>);
+    const { getByTestId } = render(<Layout>{multipleChildren}</Layout>);
 
     expect(getByTestId('child-1')).toBeInTheDocument();
     expect(getByTestId('child-2')).toBeInTheDocument();
@@ -59,7 +58,7 @@ describe('LoginLayout Component', () => {
       </>
     );
 
-    const { getByTestId } = render(<LoginLayout>{mixedChildren}</LoginLayout>);
+    const { getByTestId } = render(<Layout>{mixedChildren}</Layout>);
 
     expect(getByTestId('span-child')).toBeInTheDocument();
     expect(getByTestId('button-child')).toBeInTheDocument();
@@ -68,7 +67,7 @@ describe('LoginLayout Component', () => {
   });
 
   it('should handle empty children gracefully', () => {
-    const { container } = render(<LoginLayout>{null}</LoginLayout>);
+    const { container } = render(<Layout>{null}</Layout>);
 
     // Fragment returns no DOM elements when children are null
     expect(container.firstChild).toBeNull();
@@ -76,7 +75,7 @@ describe('LoginLayout Component', () => {
   });
 
   it('should handle undefined children gracefully', () => {
-    const { container } = render(<LoginLayout>{undefined}</LoginLayout>);
+    const { container } = render(<Layout>{undefined}</Layout>);
 
     // Fragment returns no DOM elements when children are undefined
     expect(container.firstChild).toBeNull();
@@ -85,7 +84,7 @@ describe('LoginLayout Component', () => {
 
   it('should handle string children', () => {
     const stringChild = 'Simple string content';
-    const { container } = render(<LoginLayout>{stringChild}</LoginLayout>);
+    const { container } = render(<Layout>{stringChild}</Layout>);
 
     expect(container.textContent).toContain(stringChild);
   });
@@ -117,7 +116,7 @@ describe('LoginLayout Component', () => {
       </div>
     );
 
-    const { getByTestId } = render(<LoginLayout>{complexChildren}</LoginLayout>);
+    const { getByTestId } = render(<Layout>{complexChildren}</Layout>);
 
     expect(getByTestId('complex-wrapper')).toBeInTheDocument();
     expect(getByTestId('header')).toBeInTheDocument();
@@ -140,7 +139,7 @@ describe('LoginLayout Component', () => {
       </div>
     );
 
-    const { getByTestId } = render(<LoginLayout>{hierarchicalChildren}</LoginLayout>);
+    const { getByTestId } = render(<Layout>{hierarchicalChildren}</Layout>);
 
     const level1 = getByTestId('level-1');
     const level2 = getByTestId('level-2');
@@ -153,23 +152,23 @@ describe('LoginLayout Component', () => {
   });
 
   it('should render consistently across multiple renders', () => {
-    const { rerender, getByTestId } = render(<LoginLayout>{mockChildren}</LoginLayout>);
+    const { rerender, getByTestId } = render(<Layout>{mockChildren}</Layout>);
 
     // First render check
     expect(getByTestId('children-content')).toBeInTheDocument();
 
     // Re-render with same children
-    rerender(<LoginLayout>{mockChildren}</LoginLayout>);
+    rerender(<Layout>{mockChildren}</Layout>);
     expect(getByTestId('children-content')).toBeInTheDocument();
 
     // Re-render with different children
     const newChildren = <div data-testid="new-children">New Content</div>;
-    rerender(<LoginLayout>{newChildren}</LoginLayout>);
+    rerender(<Layout>{newChildren}</Layout>);
     expect(getByTestId('new-children')).toBeInTheDocument();
   });
 
   it('should handle component unmounting gracefully', () => {
-    const { unmount } = render(<LoginLayout>{mockChildren}</LoginLayout>);
+    const { unmount } = render(<Layout>{mockChildren}</Layout>);
 
     expect(() => {
       unmount();
@@ -189,7 +188,7 @@ describe('LoginLayout Component', () => {
       </div>
     );
 
-    const { getByTestId } = render(<LoginLayout>{childrenWithProps}</LoginLayout>);
+    const { getByTestId } = render(<Layout>{childrenWithProps}</Layout>);
 
     const child = getByTestId('props-child');
     expect(child).toHaveClass('test-class');
@@ -206,7 +205,7 @@ describe('LoginLayout Component', () => {
       </>
     );
 
-    const { getByTestId } = render(<LoginLayout>{fragmentChildren}</LoginLayout>);
+    const { getByTestId } = render(<Layout>{fragmentChildren}</Layout>);
 
     expect(getByTestId('fragment-child-1')).toBeInTheDocument();
     expect(getByTestId('fragment-child-2')).toBeInTheDocument();
@@ -218,9 +217,9 @@ describe('LoginLayout Component', () => {
     );
 
     const { getByTestId } = render(
-      <LoginLayout>
+      <Layout>
         <FunctionalChild />
-      </LoginLayout>,
+      </Layout>,
     );
 
     expect(getByTestId('functional-child')).toBeInTheDocument();
@@ -231,7 +230,7 @@ describe('LoginLayout Component', () => {
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
-    render(<LoginLayout>{mockChildren}</LoginLayout>);
+    render(<Layout>{mockChildren}</Layout>);
 
     expect(consoleSpy).not.toHaveBeenCalled();
     expect(consoleWarnSpy).not.toHaveBeenCalled();
@@ -241,14 +240,14 @@ describe('LoginLayout Component', () => {
   });
 
   it('should be performant with frequent re-renders', () => {
-    const { rerender } = render(<LoginLayout>{mockChildren}</LoginLayout>);
+    const { rerender } = render(<Layout>{mockChildren}</Layout>);
 
     // Simulate frequent re-renders
     for (let i = 0; i < 50; i++) {
       const dynamicChildren = <div data-testid={`child-${i}`}>Content {i}</div>;
 
       expect(() => {
-        rerender(<LoginLayout>{dynamicChildren}</LoginLayout>);
+        rerender(<Layout>{dynamicChildren}</Layout>);
       }).not.toThrow();
     }
   });

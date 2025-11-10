@@ -286,9 +286,9 @@ describe('DigimonImpl Repository', () => {
       const results = await Promise.all(promises);
 
       expect(results).toHaveLength(3);
-      results.forEach((result) => {
+      for (const result of results) {
         expect(result).toEqual(mockDetailDigimon);
-      });
+      }
     });
   });
 
@@ -296,22 +296,18 @@ describe('DigimonImpl Repository', () => {
     it('should handle very large response objects', async () => {
       const largeDigimon = {
         ...mockDetailDigimon,
-        descriptions: Array(100)
-          .fill(0)
-          .map((_, index) => ({
-            origin: `Origin${index}`,
-            language: 'en',
-            description: `Very long description ${index}`.repeat(100),
-          })),
-        nextEvolutions: Array(50)
-          .fill(0)
-          .map((_, index) => ({
-            id: index,
-            digimon: `Evolution${index}`,
-            condition: `Condition${index}`,
-            image: `evolution${index}.jpg`,
-            url: `/evolution/${index}`,
-          })),
+        descriptions: new Array(100).fill(0).map((_, index) => ({
+          origin: `Origin${index}`,
+          language: 'en',
+          description: `Very long description ${index}`.repeat(100),
+        })),
+        nextEvolutions: new Array(50).fill(0).map((_, index) => ({
+          id: index,
+          digimon: `Evolution${index}`,
+          condition: `Condition${index}`,
+          image: `evolution${index}.jpg`,
+          url: `/evolution/${index}`,
+        })),
       };
 
       mockBuyStarterpack.getDigimonById.mockResolvedValue(largeDigimon);
@@ -344,7 +340,7 @@ describe('DigimonImpl Repository', () => {
     it('should handle rapid successive calls', async () => {
       mockBuyStarterpack.getDigimonById.mockResolvedValue(mockDetailDigimon);
 
-      const rapidCalls = Array(10)
+      const rapidCalls = new Array(10)
         .fill(0)
         .map((_, index) => digimonRepository.getDigimonById(index));
 

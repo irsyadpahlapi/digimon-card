@@ -142,12 +142,12 @@ describe('MyCardRepository', () => {
         sellingDigimon: 25,
       };
 
-      repository.images.forEach((image) => {
+      for (const image of repository.images) {
         expect(typeof image.href).toBe('string');
         expect(typeof image.transparent).toBe('boolean');
         expect(image.href.length).toBeGreaterThan(0);
         expect(image.href).toMatch(/\.(jpg|jpeg|png|gif)$/);
-      });
+      }
     });
 
     it('should validate Field structure within repository', () => {
@@ -173,7 +173,7 @@ describe('MyCardRepository', () => {
         sellingDigimon: 12,
       };
 
-      repository.fields.forEach((field) => {
+      for (const field of repository.fields) {
         expect(typeof field.id).toBe('number');
         expect(typeof field.field).toBe('string');
         expect(typeof field.image).toBe('string');
@@ -181,7 +181,7 @@ describe('MyCardRepository', () => {
         expect(field.id).toBeGreaterThan(0);
         expect(field.field.length).toBeGreaterThan(0);
         expect(field.image.length).toBeGreaterThan(0);
-      });
+      }
     });
 
     it('should validate NextEvolution structure within repository', () => {
@@ -218,7 +218,7 @@ describe('MyCardRepository', () => {
         sellingDigimon: 5,
       };
 
-      repository.nextEvolutions.forEach((evolution) => {
+      for (const evolution of repository.nextEvolutions) {
         expect(typeof evolution.id).toBe('number');
         expect(typeof evolution.digimon).toBe('string');
         expect(typeof evolution.condition).toBe('string');
@@ -230,7 +230,7 @@ describe('MyCardRepository', () => {
         expect(evolution.condition.length).toBeGreaterThan(0);
         expect(evolution.image.length).toBeGreaterThan(0);
         expect(evolution.url.length).toBeGreaterThan(0);
-      });
+      }
     });
 
     it('should validate evolution logic consistency', () => {
@@ -288,7 +288,7 @@ describe('MyCardRepository', () => {
         { level: 'Mega', category: 'Mega' },
       ];
 
-      validCombinations.forEach(({ level, category }) => {
+      for (const { level, category } of validCombinations) {
         const repository: DetailDigimonRepository = {
           id: 1,
           name: `${level}Digimon`,
@@ -308,7 +308,7 @@ describe('MyCardRepository', () => {
         };
 
         expect(repository.level).toBe(repository.category);
-      });
+      }
     });
 
     it('should validate selling price logic', () => {
@@ -388,10 +388,10 @@ describe('MyCardRepository', () => {
         expect(repositories[i].sellingDigimon).toBeGreaterThan(repositories[i - 1].sellingDigimon);
       }
 
-      repositories.forEach((repo) => {
+      for (const repo of repositories) {
         expect(repo.sellingDigimon).toBeGreaterThan(0);
         expect(Number.isInteger(repo.sellingDigimon)).toBe(true);
-      });
+      }
     });
 
     it('should validate numeric properties constraints', () => {

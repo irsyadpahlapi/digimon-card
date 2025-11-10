@@ -6,6 +6,16 @@ import { DetailDigimonEntity, ListDigimonEntity } from '@/core/entities/digimon'
 jest.mock('../digimonDataSource');
 const MockedDigimonAPI = DigimonAPI as jest.MockedClass<typeof DigimonAPI>;
 
+// Helper functions to reduce nesting
+const getCallsForLevel = (mock: jest.MockedFunction<any>, level: string) => {
+  return mock.mock.calls.filter((call: any[]) => call[0] === level);
+};
+
+const expectCallCount = (mock: jest.MockedFunction<any>, level: string, expectedCount: number) => {
+  const calls = getCallsForLevel(mock, level);
+  expect(calls).toHaveLength(expectedCount);
+};
+
 describe('BuyStarterpack DataSource', () => {
   let buyStarterpack: BuyStarterpack;
   let mockDigimonAPI: jest.Mocked<DigimonAPI>;
@@ -297,12 +307,12 @@ describe('BuyStarterpack DataSource', () => {
       it('should return all DetailDigimonEntity objects for pack C', async () => {
         const result = await buyStarterpack.getListGacha('C');
 
-        result.forEach((digimon) => {
+        for (const digimon of result) {
           expect(digimon).toHaveProperty('id');
           expect(digimon).toHaveProperty('name');
           expect(digimon).toHaveProperty('images');
           expect(digimon).toEqual(mockDetailDigimon);
-        });
+        }
       });
     });
 
@@ -315,16 +325,9 @@ describe('BuyStarterpack DataSource', () => {
         expect(buyStarterpack.getListDigimon).toHaveBeenCalledWith('Ultimate');
         expect(buyStarterpack.getListChampion).toHaveBeenCalledTimes(2);
 
-        // Verify exact call counts
-        const childCalls = (buyStarterpack.getListDigimon as jest.Mock).mock.calls.filter(
-          (call) => call[0] === 'Child',
-        );
-        const ultimateCalls = (buyStarterpack.getListDigimon as jest.Mock).mock.calls.filter(
-          (call) => call[0] === 'Ultimate',
-        );
-
-        expect(childCalls).toHaveLength(2);
-        expect(ultimateCalls).toHaveLength(1);
+        // Verify exact call counts using helper functions
+        expectCallCount(buyStarterpack.getListDigimon as jest.MockedFunction<any>, 'Child', 2);
+        expectCallCount(buyStarterpack.getListDigimon as jest.MockedFunction<any>, 'Ultimate', 1);
       });
     });
 
@@ -335,15 +338,8 @@ describe('BuyStarterpack DataSource', () => {
         expect(result).toHaveLength(5);
         expect(buyStarterpack.getListChampion).toHaveBeenCalledTimes(2);
 
-        const childCalls = (buyStarterpack.getListDigimon as jest.Mock).mock.calls.filter(
-          (call) => call[0] === 'Child',
-        );
-        const ultimateCalls = (buyStarterpack.getListDigimon as jest.Mock).mock.calls.filter(
-          (call) => call[0] === 'Ultimate',
-        );
-
-        expect(childCalls).toHaveLength(1);
-        expect(ultimateCalls).toHaveLength(2);
+        expectCallCount(buyStarterpack.getListDigimon as jest.MockedFunction<any>, 'Child', 1);
+        expectCallCount(buyStarterpack.getListDigimon as jest.MockedFunction<any>, 'Ultimate', 2);
       });
     });
 
@@ -354,15 +350,8 @@ describe('BuyStarterpack DataSource', () => {
         expect(result).toHaveLength(4);
         expect(buyStarterpack.getListChampion).toHaveBeenCalledTimes(1);
 
-        const ultimateCalls = (buyStarterpack.getListDigimon as jest.Mock).mock.calls.filter(
-          (call) => call[0] === 'Ultimate',
-        );
-        const perfectCalls = (buyStarterpack.getListDigimon as jest.Mock).mock.calls.filter(
-          (call) => call[0] === 'Perfect',
-        );
-
-        expect(ultimateCalls).toHaveLength(2);
-        expect(perfectCalls).toHaveLength(1);
+        expectCallCount(buyStarterpack.getListDigimon as jest.MockedFunction<any>, 'Ultimate', 2);
+        expectCallCount(buyStarterpack.getListDigimon as jest.MockedFunction<any>, 'Perfect', 1);
       });
     });
 
@@ -481,9 +470,9 @@ describe('BuyStarterpack DataSource', () => {
       const results = await Promise.all(operations);
 
       expect(results).toHaveLength(4);
-      results.forEach((result) => {
+      for (const result of results) {
         expect(result).toEqual(mockDetailDigimon);
-      });
+      }
     });
   });
 });

@@ -3,18 +3,20 @@ import Image from 'next/image';
 import { DetailDigimonRepository } from '@/core/repositories/myCardRepository';
 
 interface CardProps {
-  item: DetailDigimonRepository;
-  onClick?: () => void;
+  readonly item: DetailDigimonRepository;
+  readonly onClick?: () => void;
 }
 
-export default function Card({ item, onClick }: CardProps) {
+export default function Card({ item, onClick }: Readonly<CardProps>) {
   const imgSrc = item.images?.[0]?.href || 'https://via.placeholder.com/96x96?text=Digimon';
   const isRare = item.total >= 3;
 
   return (
-    <article
+    <button
+      type="button"
       onClick={onClick}
-      className={`relative border rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer hover:scale-105 ${
+      aria-label={`View details for ${item.name}`}
+      className={`w-full text-left relative border rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
         isRare
           ? 'bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 border-amber-300 animate-pulse-slow'
           : 'bg-white'
@@ -87,6 +89,6 @@ export default function Card({ item, onClick }: CardProps) {
           </div>
         </div>
       </div>
-    </article>
+    </button>
   );
 }

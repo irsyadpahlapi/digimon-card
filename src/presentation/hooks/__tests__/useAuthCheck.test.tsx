@@ -26,7 +26,7 @@ import useLocalStorage from '../useLocalStorage';
 const mockUseLocalStorage = useLocalStorage as jest.MockedFunction<typeof useLocalStorage>;
 
 // Mock localStorage
-Object.defineProperty(window, 'localStorage', {
+Object.defineProperty(globalThis, 'localStorage', {
   value: {
     removeItem: jest.fn(),
   },

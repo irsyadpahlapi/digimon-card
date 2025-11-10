@@ -1,10 +1,10 @@
 import React from 'react';
 
 interface HeaderProps {
-  userName?: string;
-  title: string;
-  coins?: number;
-  showCoins?: boolean;
+  readonly userName?: string;
+  readonly title: string;
+  readonly coins?: number;
+  readonly showCoins?: boolean;
 }
 
 export default function Header({
@@ -12,7 +12,7 @@ export default function Header({
   title,
   coins = 0,
   showCoins = true,
-}: HeaderProps) {
+}: Readonly<HeaderProps>) {
   return (
     <div className="backdrop-blur-sm bg-white/80 rounded-2xl p-6 mb-8 shadow-xl border border-white/20">
       <div className="flex justify-end items-start mb-4 pr-2">

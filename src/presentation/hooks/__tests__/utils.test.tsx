@@ -5,7 +5,6 @@ import {
   pickHighestByOrder,
   highestLevelFromLevels,
   pickHighestLevelObject,
-  LEVEL_ORDER,
 } from '../utils';
 
 describe('Utils Functions', () => {
@@ -131,34 +130,34 @@ describe('Utils Functions', () => {
         },
       ];
 
-      testCases.forEach(({ digimonLevel, expectedCategory, hasEvolution, expectedPrice }) => {
+      for (const { digimonLevel, expectedCategory, hasEvolution, expectedPrice } of testCases) {
         const category = Category(digimonLevel);
         const price = sellingDigimonPrice(category, hasEvolution);
 
         expect(category).toBe(expectedCategory);
         expect(price).toBe(expectedPrice);
-      });
+      }
     });
 
     it('should handle starter pack pricing separately', () => {
       const starterPackTypes = ['C', 'B', 'A', 'R'];
       const expectedPrices = [5, 10, 15, 20];
 
-      starterPackTypes.forEach((type, index) => {
+      for (const [index, type] of starterPackTypes.entries()) {
         expect(PriceStarterpack(type)).toBe(expectedPrices[index]);
-      });
+      }
     });
 
     it('should correctly handle max selling price for non-evolvable cards', () => {
       const categories = ['Rookie', 'Champion', 'Ultimate', 'Mega'];
 
-      categories.forEach((category) => {
+      for (const category of categories) {
         const priceWithEvolution = sellingDigimonPrice(category, true);
         const priceWithoutEvolution = sellingDigimonPrice(category, false);
 
         expect(priceWithoutEvolution).toBe(100); // God price
         expect(priceWithEvolution).toBeLessThan(priceWithoutEvolution);
-      });
+      }
     });
   });
 
@@ -277,24 +276,6 @@ describe('Utils Functions', () => {
     it('should return undefined for empty array', () => {
       const result = pickHighestLevelObject([]);
       expect(result).toBeUndefined();
-    });
-  });
-
-  describe('LEVEL_ORDER constant', () => {
-    it('should have correct order from lowest to highest', () => {
-      expect(LEVEL_ORDER).toEqual([
-        'Child',
-        'Adult',
-        'Armor',
-        'Unknown',
-        'Hybrid',
-        'Ultimate',
-        'Perfect',
-      ]);
-    });
-
-    it('should have 7 levels', () => {
-      expect(LEVEL_ORDER).toHaveLength(7);
     });
   });
 });

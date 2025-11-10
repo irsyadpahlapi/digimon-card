@@ -310,12 +310,12 @@ describe('StarterPack Component', () => {
         { ...mockStarterPack, type: 'R', name: 'Rare' },
       ];
 
-      testPacks.forEach((pack) => {
+      for (const pack of testPacks) {
         const { rerender } = render(<StarterPack item={pack} onBuy={mockOnBuy} />);
         expect(screen.getByText(`${pack.name} Pack`)).toBeInTheDocument();
         expect(screen.getByText(pack.type)).toBeInTheDocument();
         rerender(<div />); // Clear for next render
-      });
+      }
     });
 
     it('should handle loading state transitions', () => {

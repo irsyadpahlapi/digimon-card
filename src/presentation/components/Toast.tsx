@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 
 interface ToastProps {
-  message: string;
-  type?: 'success' | 'error' | 'info';
-  isVisible: boolean;
-  onClose: () => void;
-  duration?: number;
+  readonly message: string;
+  readonly type?: 'success' | 'error' | 'info';
+  readonly isVisible: boolean;
+  readonly onClose: () => void;
+  readonly duration?: number;
 }
 
 export default function Toast({
@@ -14,7 +14,7 @@ export default function Toast({
   isVisible,
   onClose,
   duration = 3000,
-}: ToastProps) {
+}: Readonly<ToastProps>) {
   useEffect(() => {
     if (isVisible && duration > 0) {
       const timer = setTimeout(() => {

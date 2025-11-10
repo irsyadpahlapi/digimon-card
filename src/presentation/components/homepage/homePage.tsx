@@ -28,7 +28,6 @@ export default function HomePage() {
   const [isDropdownType, setisDropdownType] = useState(false);
   const [selectedCard, setSelectedCard] = useState<DetailDigimonRepository | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [indexSelected, setIndex] = useState(0);
   const [filterBy, setFilterBy] = useState({ none: 'Active', category: '', type: '' });
   const [isEvolving, setIsEvolving] = useState(false);
   const [isSelling, setIsSelling] = useState(false);
@@ -99,7 +98,6 @@ export default function HomePage() {
   const handleCardClick = (item: DetailDigimonRepository, index: number) => {
     setSelectedCard(item);
     setIsModalOpen(true);
-    setIndex(index);
   };
 
   const handleEvolve = async (id: number, nextEvolution: number) => {
@@ -117,8 +115,14 @@ export default function HomePage() {
         setIsModalOpen(false); // Close modal after evolution completes
       }, 300);
     } catch (error) {
-      // Evolution failed - reset loading state
+      // Evolution failed - handle error properly
+      console.error('Evolution failed:', error);
       setIsEvolving(false);
+
+      // Show error toast for user feedback
+      setToastMessage('Evolution failed. Please try again.');
+      setToastType('error');
+      setShowToast(true);
     }
   };
 
@@ -141,8 +145,14 @@ export default function HomePage() {
         setIsModalOpen(false); // Close modal after sell completes
       }, 300);
     } catch (error) {
-      // Sell failed - reset loading state
+      // Sell failed - handle error properly
+      console.error('Sell failed:', error);
       setIsSelling(false);
+
+      // Show error toast for user feedback
+      setToastMessage('Failed to sell card. Please try again.');
+      setToastType('error');
+      setShowToast(true);
     }
   };
 
@@ -185,7 +195,8 @@ export default function HomePage() {
         setIsBuying(null);
       }, 300);
     } catch (error) {
-      // Buy pack failed - show error toast
+      // Buy pack failed - handle error properly
+      console.error('Purchase failed:', error);
       setToastMessage('Failed to purchase starter pack. Please try again.');
       setToastType('error');
       setShowToast(true);
@@ -194,13 +205,8 @@ export default function HomePage() {
   };
 
   const handleFilterBy = (key: string, value: string) => {
-    if (key !== 'none') {
-      setFilterBy({
-        ...filterBy,
-        [key]: value,
-        none: '',
-      });
-    } else {
+    if (key === 'none') {
+      // Reset filters when 'none' is selected
       setFilterBy({
         ...filterBy,
         [key]: value,
@@ -209,6 +215,12 @@ export default function HomePage() {
       });
       setisDropdownCategory(false);
       setisDropdownType(false);
+    } else {
+      setFilterBy({
+        ...filterBy,
+        [key]: value,
+        none: '',
+      });
     }
   };
 
@@ -288,7 +300,6 @@ export default function HomePage() {
         onClose={() => setIsModalOpen(false)}
         onEvolve={handleEvolve}
         onSell={handleSell}
-        index={indexSelected}
         isEvolving={isEvolving}
         isSelling={isSelling}
       />

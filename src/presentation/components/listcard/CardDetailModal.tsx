@@ -9,7 +9,6 @@ interface CardDetailModalProps {
   onClose: () => void;
   onEvolve: (id: number, nextEvolution: number) => void;
   onSell: (index: number, coin: number) => void;
-  index: number;
   isEvolving?: boolean;
   isSelling?: boolean;
 }
@@ -22,7 +21,7 @@ export default function CardDetailModal({
   onSell,
   isEvolving = false,
   isSelling = false,
-}: CardDetailModalProps) {
+}: Readonly<CardDetailModalProps>) {
   const [showEvolutionSection, setShowEvolutionSection] = useState(false);
 
   // Close on ESC key
@@ -31,11 +30,11 @@ export default function CardDetailModal({
       if (e.key === 'Escape') onClose();
     };
     if (isOpen) {
-      window.addEventListener('keydown', handleEsc);
+      globalThis.addEventListener('keydown', handleEsc);
       document.body.style.overflow = 'hidden';
     }
     return () => {
-      window.removeEventListener('keydown', handleEsc);
+      globalThis.removeEventListener('keydown', handleEsc);
       document.body.style.overflow = 'unset';
     };
   }, [isOpen, onClose]);
@@ -161,9 +160,9 @@ export default function CardDetailModal({
             <div>
               <h3 className="text-lg font-bold text-gray-900 mb-3">Fields</h3>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                {item.fields.map((field, index) => (
+                {item.fields.map((field) => (
                   <div
-                    key={index}
+                    key={`field-${field.id}-${field.field}`}
                     className="bg-gray-50 rounded-lg p-3 border border-gray-200 hover:border-gray-300 transition-colors"
                   >
                     <div className="flex items-center gap-2">
@@ -312,39 +311,46 @@ export default function CardDetailModal({
           {/* Action Buttons */}
           <div className="flex gap-4 pt-4 border-t border-gray-200">
             {/* Always show evolve button if there are next evolutions */}
-            {item.nextEvolutions && item.nextEvolutions.length > 0 && (
-              <button
-                onClick={() => setShowEvolutionSection(!showEvolutionSection)}
-                disabled={isEvolving || item.total < 3}
-                className={`flex-1 ${
-                  showEvolutionSection
-                    ? 'bg-gradient-to-r from-gray-500 to-gray-600'
-                    : isEvolving || item.total < 3
-                      ? 'bg-gray-400 cursor-not-allowed'
-                      : 'bg-gradient-to-r from-[#443c70] to-[#a76050] hover:shadow-xl transform hover:scale-105'
-                } text-white font-bold py-4 px-6 rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2`}
-              >
-                <>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className={`h-5 w-5 transition-transform duration-200 ${showEvolutionSection ? 'rotate-180' : ''}`}
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
+            {item.nextEvolutions &&
+              item.nextEvolutions.length > 0 &&
+              (() => {
+                const isDisabled = isEvolving || item.total < 3;
+                let buttonClass = '';
+                if (showEvolutionSection) {
+                  buttonClass = 'bg-gradient-to-r from-gray-500 to-gray-600';
+                } else if (isDisabled) {
+                  buttonClass = 'bg-gray-400 cursor-not-allowed';
+                } else {
+                  buttonClass =
+                    'bg-gradient-to-r from-[#443c70] to-[#a76050] hover:shadow-xl transform hover:scale-105';
+                }
+
+                return (
+                  <button
+                    onClick={() => setShowEvolutionSection(!showEvolutionSection)}
+                    disabled={isDisabled}
+                    className={`flex-1 ${buttonClass} text-white font-bold py-4 px-6 rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2`}
                   >
-                    <path
-                      fillRule="evenodd"
-                      d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <span>
-                    {showEvolutionSection
-                      ? 'Hide Evolutions'
-                      : `Evolve (${item.nextEvolutions.length} options)`}
-                  </span>
-                </>
-              </button>
-            )}
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className={`h-5 w-5 transition-transform duration-200 ${showEvolutionSection ? 'rotate-180' : ''}`}
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <span>
+                      {showEvolutionSection
+                        ? 'Hide Evolutions'
+                        : `Evolve (${item.nextEvolutions.length} options)`}
+                    </span>
+                  </button>
+                );
+              })()}
 
             <button
               onClick={() => {

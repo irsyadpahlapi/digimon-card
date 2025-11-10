@@ -5,12 +5,16 @@ import Image from 'next/image';
 import ActionButton from '@/presentation/components/ui/ActionButton';
 
 interface StarterPackComponentProps {
-  item: StarterPackProps['item'];
-  onBuy?: (item: StarterPackProps['item']) => void;
-  isLoading?: boolean;
+  readonly item: StarterPackProps['item'];
+  readonly onBuy?: (item: StarterPackProps['item']) => void;
+  readonly isLoading?: boolean;
 }
 
-export default function StarterPack({ item, onBuy, isLoading = false }: StarterPackComponentProps) {
+export default function StarterPack({
+  item,
+  onBuy,
+  isLoading = false,
+}: Readonly<StarterPackComponentProps>) {
   const handleBuyClick = () => {
     onBuy?.(item);
   };

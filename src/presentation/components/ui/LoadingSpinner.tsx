@@ -10,7 +10,7 @@ export default function LoadingSpinner({
   size = 'md',
   color = 'white',
   className = '',
-}: LoadingSpinnerProps) {
+}: Readonly<LoadingSpinnerProps>) {
   const sizeClasses = {
     sm: 'w-4 h-4',
     md: 'w-16 h-16',
@@ -24,9 +24,8 @@ export default function LoadingSpinner({
   };
 
   return (
-    <div
+    <output
       className={`${sizeClasses[size]} border-4 ${colorClasses[color]} rounded-full animate-spin ${className}`}
-      role="status"
       aria-label="Loading"
     />
   );

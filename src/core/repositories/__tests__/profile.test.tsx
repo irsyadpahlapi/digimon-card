@@ -54,10 +54,10 @@ describe('ProfileRepository', () => {
         { id: 100, name: 'User100', coin: 1000 },
       ];
 
-      profiles.forEach((profile) => {
+      for (const profile of profiles) {
         expect(profile.id).toBeGreaterThan(0);
         expect(Number.isInteger(profile.id)).toBe(true);
-      });
+      }
 
       const ids = profiles.map((p) => p.id);
       const uniqueIds = [...new Set(ids)];
@@ -67,7 +67,7 @@ describe('ProfileRepository', () => {
     it('should validate name is not empty string', () => {
       const validNames = ['Alice', 'Bob', 'Charlie123', 'User_Name', 'test-user'];
 
-      validNames.forEach((name) => {
+      for (const name of validNames) {
         const profile: ProfileRepository = {
           id: 1,
           name: name,
@@ -77,13 +77,13 @@ describe('ProfileRepository', () => {
         expect(profile.name.length).toBeGreaterThan(0);
         expect(profile.name.trim()).toBe(profile.name); // No leading/trailing spaces
         expect(typeof profile.name).toBe('string');
-      });
+      }
     });
 
     it('should validate coin value constraints', () => {
       const validCoinValues = [0, 1, 50, 100, 1000, 9999];
 
-      validCoinValues.forEach((coinValue) => {
+      for (const coinValue of validCoinValues) {
         const profile: ProfileRepository = {
           id: 1,
           name: 'TestUser',
@@ -93,7 +93,7 @@ describe('ProfileRepository', () => {
         expect(profile.coin).toBeGreaterThanOrEqual(0);
         expect(Number.isInteger(profile.coin)).toBe(true);
         expect(typeof profile.coin).toBe('number');
-      });
+      }
     });
 
     it('should handle zero coin balance', () => {
@@ -130,7 +130,7 @@ describe('ProfileRepository', () => {
         'VeryLongUserNameThatShouldStillBeValid',
       ];
 
-      validNames.forEach((name) => {
+      for (const name of validNames) {
         const profile: ProfileRepository = {
           id: 1,
           name: name,
@@ -140,7 +140,7 @@ describe('ProfileRepository', () => {
         expect(profile.name).toBe(name);
         expect(profile.name.length).toBeGreaterThan(0);
         expect(typeof profile.name).toBe('string');
-      });
+      }
     });
 
     it('should maintain data consistency for profile operations', () => {
@@ -229,9 +229,9 @@ describe('ProfileRepository', () => {
       const requiredKeys = ['id', 'name', 'coin'];
       const profileKeys = Object.keys(profile);
 
-      requiredKeys.forEach((key) => {
+      for (const key of requiredKeys) {
         expect(profileKeys).toContain(key);
-      });
+      }
 
       expect(profileKeys).toHaveLength(requiredKeys.length);
     });

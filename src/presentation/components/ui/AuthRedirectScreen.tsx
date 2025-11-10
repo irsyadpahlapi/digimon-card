@@ -13,7 +13,7 @@ interface AuthRedirectScreenProps {
 export default function AuthRedirectScreen({
   variant = 'toHome',
   className = '',
-}: AuthRedirectScreenProps) {
+}: Readonly<AuthRedirectScreenProps>) {
   const router = useRouter();
 
   const config = {

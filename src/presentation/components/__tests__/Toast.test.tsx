@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import Toast from '../Toast';
 
 describe('Toast Component', () => {
@@ -251,7 +251,7 @@ describe('Toast Component', () => {
 
   describe('Multiple Toast Scenarios', () => {
     it('can render multiple toasts with different types', () => {
-      const { container } = render(
+      render(
         <>
           <Toast message="Success 1" isVisible={true} onClose={jest.fn()} type="success" />
           <Toast message="Error 1" isVisible={true} onClose={jest.fn()} type="error" />

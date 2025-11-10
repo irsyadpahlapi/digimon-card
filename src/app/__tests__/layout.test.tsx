@@ -10,6 +10,21 @@ const MockRootLayoutContent = ({ children }: { children: React.ReactNode }) => {
   return <div data-testid="layout-content">{children}</div>;
 };
 
+// Helper component to reduce function nesting
+const LargeContentComponent = () => {
+  const items = Array.from({ length: 100 }, (_, i) => ({ key: i, content: `Item ${i}` }));
+
+  return (
+    <div data-testid="large-content">
+      {items.map((item) => (
+        <div key={item.key} data-testid={`item-${item.key}`}>
+          {item.content}
+        </div>
+      ))}
+    </div>
+  );
+};
+
 describe('RootLayout', () => {
   describe('Component Structure', () => {
     it('should have proper component definition', () => {
@@ -48,11 +63,11 @@ describe('RootLayout', () => {
         [<span key="1">Array element 1</span>, <span key="2">Array element 2</span>],
       ];
 
-      testCases.forEach((child, index) => {
+      for (const child of testCases) {
         expect(() => {
           RootLayout({ children: child });
         }).not.toThrow();
-      });
+      }
     });
 
     it('should render correct HTML structure from RootLayout', () => {
@@ -256,20 +271,10 @@ describe('RootLayout', () => {
     });
 
     it('should handle large content efficiently', () => {
-      const LargeContent = () => (
-        <div data-testid="large-content">
-          {Array.from({ length: 100 }, (_, i) => (
-            <div key={i} data-testid={`item-${i}`}>
-              Item {i}
-            </div>
-          ))}
-        </div>
-      );
-
       const startTime = performance.now();
       const { getByTestId } = render(
         <MockRootLayoutContent>
-          <LargeContent />
+          <LargeContentComponent />
         </MockRootLayoutContent>,
       );
       const endTime = performance.now();
@@ -347,11 +352,12 @@ describe('Metadata Export', () => {
 
     it('should have non-empty title', () => {
       expect(metadata.title).toBeTruthy();
-      expect(String(metadata.title).length).toBeGreaterThan(0);
+      expect(typeof metadata.title === 'string' ? metadata.title.length : 0).toBeGreaterThan(0);
     });
 
     it('should have meaningful title content', () => {
-      expect(String(metadata.title)).toMatch(/digimon/i);
+      const titleString = typeof metadata.title === 'string' ? metadata.title : '';
+      expect(titleString).toMatch(/digimon/i);
     });
   });
 
@@ -393,9 +399,9 @@ describe('Metadata Export', () => {
       const knownProps = ['title', 'description'];
       const metadataKeys = Object.keys(metadata);
 
-      metadataKeys.forEach((key) => {
+      for (const key of metadataKeys) {
         expect(knownProps).toContain(key);
-      });
+      }
     });
   });
 });
@@ -481,16 +487,22 @@ describe('Integration', () => {
 
   describe('SEO Compliance', () => {
     it('should have SEO-friendly metadata', () => {
-      expect(String(metadata.title).length).toBeGreaterThan(10);
-      expect(String(metadata.title).length).toBeLessThanOrEqual(60);
-      expect(String(metadata.description).length).toBeGreaterThan(20);
-      expect(String(metadata.description).length).toBeLessThanOrEqual(160);
+      const titleString = typeof metadata.title === 'string' ? metadata.title : '';
+      const descString = typeof metadata.description === 'string' ? metadata.description : '';
+
+      expect(titleString.length).toBeGreaterThan(10);
+      expect(titleString.length).toBeLessThanOrEqual(60);
+      expect(descString.length).toBeGreaterThan(20);
+      expect(descString.length).toBeLessThanOrEqual(160);
     });
 
     it('should support proper document structure for SEO', () => {
       // This test ensures the layout supports proper SEO structure
-      expect(String(metadata.title)).toMatch(/^[A-Z]/); // Should start with capital letter
-      expect(String(metadata.description)).toMatch(/^[A-Z]/); // Should start with capital letter
+      const titleString = typeof metadata.title === 'string' ? metadata.title : '';
+      const descString = typeof metadata.description === 'string' ? metadata.description : '';
+
+      expect(titleString).toMatch(/^[A-Z]/); // Should start with capital letter
+      expect(descString).toMatch(/^[A-Z]/); // Should start with capital letter
       // Note: Description doesn't need to end with period for card viewing apps
     });
   });

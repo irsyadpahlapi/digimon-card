@@ -10,7 +10,7 @@ export default function GradientBackground({
   variant,
   children,
   className = '',
-}: GradientBackgroundProps) {
+}: Readonly<GradientBackgroundProps>) {
   const gradients = {
     homepage: 'bg-gradient-to-br from-[#443c70] via-[#a76050] to-[#f1ba63]',
     login: 'bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50',

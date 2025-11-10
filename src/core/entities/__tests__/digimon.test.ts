@@ -186,11 +186,11 @@ describe('Digimon Entities', () => {
         level: { id: 1, level: 'Test' },
       };
 
-      mockDetailEntity.images.forEach((image) => {
+      for (const image of mockDetailEntity.images) {
         expect(typeof image.href).toBe('string');
         expect(typeof image.transparent).toBe('boolean');
         expect(image.href.length).toBeGreaterThan(0);
-      });
+      }
     });
 
     it('should validate Level structure', () => {
@@ -210,12 +210,12 @@ describe('Digimon Entities', () => {
         level: { id: 1, level: 'Rookie' },
       };
 
-      mockDetailEntity.levels.forEach((level) => {
+      for (const level of mockDetailEntity.levels) {
         expect(typeof level.id).toBe('number');
         expect(typeof level.level).toBe('string');
         expect(level.id).toBeGreaterThan(0);
         expect(level.level.length).toBeGreaterThan(0);
-      });
+      }
     });
 
     it('should validate Type structure', () => {
@@ -236,12 +236,12 @@ describe('Digimon Entities', () => {
         level: { id: 1, level: 'Test' },
       };
 
-      mockDetailEntity.types.forEach((type) => {
+      for (const type of mockDetailEntity.types) {
         expect(typeof type.id).toBe('number');
         expect(typeof type.type).toBe('string');
         expect(type.id).toBeGreaterThan(0);
         expect(['Vaccine', 'Data', 'Virus']).toContain(type.type);
-      });
+      }
     });
 
     it('should validate Attribute structure', () => {
@@ -261,12 +261,12 @@ describe('Digimon Entities', () => {
         level: { id: 1, level: 'Test' },
       };
 
-      mockDetailEntity.attributes.forEach((attribute) => {
+      for (const attribute of mockDetailEntity.attributes) {
         expect(typeof attribute.id).toBe('number');
         expect(typeof attribute.attribute).toBe('string');
         expect(attribute.id).toBeGreaterThan(0);
         expect(attribute.attribute.length).toBeGreaterThan(0);
-      });
+      }
     });
 
     it('should validate Field structure', () => {
@@ -286,14 +286,14 @@ describe('Digimon Entities', () => {
         level: { id: 1, level: 'Test' },
       };
 
-      mockDetailEntity.fields.forEach((field) => {
+      for (const field of mockDetailEntity.fields) {
         expect(typeof field.id).toBe('number');
         expect(typeof field.field).toBe('string');
         expect(typeof field.image).toBe('string');
         expect(field.id).toBeGreaterThan(0);
         expect(field.field.length).toBeGreaterThan(0);
         expect(field.image.length).toBeGreaterThan(0);
-      });
+      }
     });
 
     it('should validate NextEvolution structure', () => {
@@ -318,7 +318,7 @@ describe('Digimon Entities', () => {
         level: { id: 1, level: 'Test' },
       };
 
-      mockDetailEntity.nextEvolutions.forEach((evolution) => {
+      for (const evolution of mockDetailEntity.nextEvolutions) {
         expect(typeof evolution.id).toBe('number');
         expect(typeof evolution.digimon).toBe('string');
         expect(typeof evolution.condition).toBe('string');
@@ -330,7 +330,7 @@ describe('Digimon Entities', () => {
         expect(evolution.condition.length).toBeGreaterThan(0);
         expect(evolution.image.length).toBeGreaterThan(0);
         expect(evolution.url.length).toBeGreaterThan(0);
-      });
+      }
     });
 
     it('should validate Description structure', () => {
@@ -358,7 +358,7 @@ describe('Digimon Entities', () => {
         level: { id: 1, level: 'Test' },
       };
 
-      mockDetailEntity.descriptions.forEach((desc) => {
+      for (const desc of mockDetailEntity.descriptions) {
         expect(typeof desc.origin).toBe('string');
         expect(typeof desc.language).toBe('string');
         expect(typeof desc.description).toBe('string');
@@ -366,7 +366,7 @@ describe('Digimon Entities', () => {
         expect(desc.origin.length).toBeGreaterThan(0);
         expect(desc.language.length).toBeGreaterThan(0);
         expect(desc.description.length).toBeGreaterThan(0);
-      });
+      }
     });
 
     it('should handle empty arrays in DetailDigimonEntity', () => {

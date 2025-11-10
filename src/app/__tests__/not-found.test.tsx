@@ -41,7 +41,7 @@ describe('NotFound Page', () => {
     expect(groups.length).toBeGreaterThan(0);
 
     // Check for specific known groups
-    const layer12 = container.querySelector('#Layer_12\\ yellow-back-fig');
+    const layer12 = container.querySelector(String.raw`#Layer_12\ yellow-back-fig`);
     expect(layer12).toBeInTheDocument();
 
     const fortyfour = container.querySelector('#fortyfour');

@@ -2,7 +2,6 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import HomePage from '../homePage';
-import userEvent from '@testing-library/user-event';
 
 // Console error suppression
 const originalError = console.error;
@@ -41,11 +40,16 @@ jest.mock('next/image', () => {
   const MockedImage = (props: any) => {
     const { src, alt, className, onClick, ...rest } = props;
     return (
-      <img
-        src={typeof src === 'string' ? src : '/mock-image.jpg'}
-        alt={alt}
-        className={className}
+      <button
         onClick={onClick}
+        className={className}
+        aria-label={alt}
+        style={{
+          backgroundImage: `url(${typeof src === 'string' ? src : '/mock-image.jpg'})`,
+          border: 'none',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
         {...rest}
       />
     );
@@ -61,10 +65,10 @@ mockIntersectionObserver.mockReturnValue({
   unobserve: jest.fn(),
   disconnect: jest.fn(),
 });
-window.IntersectionObserver = mockIntersectionObserver;
+globalThis.IntersectionObserver = mockIntersectionObserver;
 
-// Mock window.alert
-window.alert = jest.fn();
+// Mock globalThis.alert
+globalThis.alert = jest.fn();
 
 // Mock data
 const mockCardsState = [
@@ -241,7 +245,6 @@ describe('HomePage Component', () => {
     });
 
     it('should execute handleEvolve function', async () => {
-      const user = userEvent.setup();
       render(<HomePage />);
 
       // Test the evolution function directly through component instance

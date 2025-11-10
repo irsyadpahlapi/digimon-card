@@ -1,8 +1,5 @@
 import { Level_order } from './constant';
 
-// Export LEVEL_ORDER constant for testing
-export const LEVEL_ORDER = Level_order;
-
 export const Category = (data: string): string => {
   switch (data) {
     case 'Child':

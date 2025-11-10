@@ -214,7 +214,7 @@ describe('FilterSection Component', () => {
 
   describe('Dropdown Icons', () => {
     it('renders dropdown icons for Categories button', () => {
-      const { container } = render(<FilterSection {...defaultProps} />);
+      render(<FilterSection {...defaultProps} />);
 
       const categoryButton = screen.getByRole('button', { name: /Categories/i });
       const svg = categoryButton.querySelector('svg');
@@ -224,7 +224,7 @@ describe('FilterSection Component', () => {
     });
 
     it('renders dropdown icons for Types button', () => {
-      const { container } = render(<FilterSection {...defaultProps} />);
+      render(<FilterSection {...defaultProps} />);
 
       const typeButton = screen.getByRole('button', { name: /Types/i });
       const svg = typeButton.querySelector('svg');
@@ -258,18 +258,18 @@ describe('FilterSection Component', () => {
       const props = { ...defaultProps, isDropdownCategory: true };
       render(<FilterSection {...props} />);
 
-      defaultProps.categories.forEach((category) => {
+      for (const category of defaultProps.categories) {
         expect(screen.getByText(category)).toBeInTheDocument();
-      });
+      }
     });
 
     it('renders all provided types', () => {
       const props = { ...defaultProps, isDropdownType: true };
       render(<FilterSection {...props} />);
 
-      defaultProps.types.forEach((type) => {
+      for (const type of defaultProps.types) {
         expect(screen.getByText(type)).toBeInTheDocument();
-      });
+      }
     });
 
     it('handles empty categories array', () => {

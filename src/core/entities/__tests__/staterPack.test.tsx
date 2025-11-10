@@ -67,7 +67,7 @@ describe('StarterPack Entity', () => {
       const packNames = ['Common', 'Balance', 'Advanced', 'Rare'];
       const prices = [5, 10, 15, 20];
 
-      packTypes.forEach((type, index) => {
+      for (const [index, type] of packTypes.entries()) {
         const pack: StarterPackProps = {
           item: {
             id: index + 1,
@@ -83,7 +83,7 @@ describe('StarterPack Entity', () => {
         expect(pack.item.price).toBe(prices[index]);
         expect(pack.item.name).toContain(packNames[index]);
         expect(pack.item.image).toContain(packNames[index].toLowerCase());
-      });
+      }
     });
 
     it('should validate price is a positive number', () => {
@@ -122,7 +122,7 @@ describe('StarterPack Entity', () => {
     it('should validate pack type is single character', () => {
       const validTypes = ['C', 'B', 'A', 'R'];
 
-      validTypes.forEach((type) => {
+      for (const type of validTypes) {
         const pack: StarterPackProps = {
           item: {
             id: 1,
@@ -136,7 +136,8 @@ describe('StarterPack Entity', () => {
 
         expect(pack.item.type).toHaveLength(1);
         expect(validTypes).toContain(pack.item.type);
-      });
+        expect(typeof pack.item.type).toBe('string');
+      }
     });
 
     it('should validate description is not empty', () => {
@@ -196,10 +197,10 @@ describe('StarterPack Entity', () => {
 
       expect(uniqueIds).toHaveLength(ids.length); // All IDs should be unique
 
-      packs.forEach((pack) => {
+      for (const pack of packs) {
         expect(pack.item.id).toBeGreaterThan(0);
         expect(Number.isInteger(pack.item.id)).toBe(true);
-      });
+      }
     });
 
     it('should validate name is descriptive and not empty', () => {
@@ -294,9 +295,9 @@ describe('StarterPack Entity', () => {
 
       // Type hierarchy should match price hierarchy
       const typeHierarchy = ['C', 'B', 'A', 'R'];
-      packs.forEach((pack, index) => {
+      for (const [index, pack] of packs.entries()) {
         expect(pack.item.type).toBe(typeHierarchy[index]);
-      });
+      }
     });
   });
 });

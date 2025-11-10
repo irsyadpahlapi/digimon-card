@@ -1,18 +1,18 @@
 import React from 'react';
 
 interface FilterSectionProps {
-  filterBy: {
-    none: string;
-    category: string;
-    type: string;
+  readonly filterBy: {
+    readonly none: string;
+    readonly category: string;
+    readonly type: string;
   };
-  isDropdownCategory: boolean;
-  isDropdownType: boolean;
-  categories: string[];
-  types: string[];
-  onFilterChange: (key: string, value: string) => void;
-  onToggleCategory: () => void;
-  onToggleType: () => void;
+  readonly isDropdownCategory: boolean;
+  readonly isDropdownType: boolean;
+  readonly categories: readonly string[];
+  readonly types: readonly string[];
+  readonly onFilterChange: (key: string, value: string) => void;
+  readonly onToggleCategory: () => void;
+  readonly onToggleType: () => void;
 }
 
 export default function FilterSection({
@@ -24,7 +24,7 @@ export default function FilterSection({
   onFilterChange,
   onToggleCategory,
   onToggleType,
-}: FilterSectionProps) {
+}: Readonly<FilterSectionProps>) {
   return (
     <div className="flex justify-between flex-wrap mb-6">
       <h2 className="text-2xl font-bold text-gray-800 mb-4">Filter By</h2>

@@ -13,37 +13,57 @@ export class ListMyCard {
     filterCategory?: string,
     filterType?: string,
   ): DetailDigimonRepository[] {
+    const filtered = this.filterDigimons(datas, filterCategory, filterType);
+    const groupedMap = this.groupDigimons(filtered);
+    return Array.from(groupedMap.values());
+  }
+
+  private filterDigimons(
+    datas: DetailDigimonRepository[],
+    filterCategory?: string,
+    filterType?: string,
+  ): DetailDigimonRepository[] {
+    return datas.filter((data) => {
+      if (filterCategory && data.category !== filterCategory) return false;
+      if (filterType && data.type?.toLowerCase() !== filterType.toLowerCase()) return false;
+      return true;
+    });
+  }
+
+  private groupDigimons(datas: DetailDigimonRepository[]): Map<number, DetailDigimonRepository> {
     const groupedMap = new Map<number, DetailDigimonRepository>();
 
-    datas.forEach((data) => {
-      if (filterCategory && data.category !== filterCategory) return;
-
-      // Filter berdasarkan types (bisa lebih dari satu)
-      if (filterType && data.type?.toLowerCase() !== filterType.toLowerCase()) return;
-
+    for (const data of datas) {
       const existing = groupedMap.get(data.id);
+      this.updateGroupedDigimon(groupedMap, data, existing);
+    }
 
-      if (existing) {
-        // Jika sudah ada, tambahkan total
-        groupedMap.set(data.id, {
-          ...data,
-          total: existing.total + 1,
-          evolution: existing.isEvolution ? existing.evolution + 1 : existing.evolution,
-          starterPack: !existing.isEvolution ? existing.starterPack + 1 : existing.starterPack,
-        });
-      } else {
-        // Jika belum ada, buat data baru dengan total = 1
-        groupedMap.set(data.id, {
-          ...data,
-          total: 1,
-          evolution: data.isEvolution ? data.evolution + 1 : data.evolution,
-          starterPack: !data.isEvolution ? data.starterPack + 1 : data.starterPack,
-        });
-      }
-    });
+    return groupedMap;
+  }
 
-    // Ubah hasil Map menjadi array
-    return Array.from(groupedMap.values());
+  private updateGroupedDigimon(
+    groupedMap: Map<number, DetailDigimonRepository>,
+    data: DetailDigimonRepository,
+    existing?: DetailDigimonRepository,
+  ): void {
+    const addEvolution = data.isEvolution ? 1 : 0;
+    const addStarter = data.isEvolution ? 0 : 1;
+
+    if (existing) {
+      groupedMap.set(data.id, {
+        ...existing,
+        total: (existing.total ?? 0) + 1,
+        evolution: (existing.evolution ?? 0) + addEvolution,
+        starterPack: (existing.starterPack ?? 0) + addStarter,
+      });
+    } else {
+      groupedMap.set(data.id, {
+        ...data,
+        total: 1,
+        evolution: (data.evolution ?? 0) + addEvolution,
+        starterPack: (data.starterPack ?? 0) + addStarter,
+      });
+    }
   }
 
   sellDigimon(listDigimons: DetailDigimonRepository[], id: number) {
@@ -75,15 +95,17 @@ export class ListMyCard {
 
     const levelName = highestLevelFromLevels(dataEvolution.levels);
     const category = Category(levelName || '');
+    const sortedTypes = dataEvolution.types.toSorted((a, b) => b.id - a.id);
+    const sortedAttributes = dataEvolution.attributes.toSorted((a, b) => b.id - a.id);
+
     listCard.push({
       id: dataEvolution.id,
       name: dataEvolution.name,
       images: dataEvolution.images,
-      type: dataEvolution.types.sort((a, b) => b.id - a.id)[0]?.type || '',
-      attribute: dataEvolution.attributes.sort((a, b) => b.id - a.id)[0]?.attribute || '',
+      type: sortedTypes[0]?.type || '',
+      attribute: sortedAttributes[0]?.attribute || '',
       fields: dataEvolution.fields,
-      description:
-        dataEvolution.descriptions[dataEvolution.descriptions.length - 1]?.description || '',
+      description: dataEvolution.descriptions.at(-1)?.description || '',
       nextEvolutions: dataEvolution.nextEvolutions,
       level: levelName || '',
       isEvolution: true,

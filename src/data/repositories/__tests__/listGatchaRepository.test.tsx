@@ -6,6 +6,15 @@ import { DetailDigimonEntity } from '@/core/entities/digimon';
 jest.mock('@/data/datasources/buyStarterpackDataSource');
 const MockedBuyStarterpack = BuyStarterpack as jest.MockedClass<typeof BuyStarterpack>;
 
+// Helper function to create large test data arrays
+const createLargeDigimonArray = (baseDigimon: DetailDigimonEntity, size: number) => {
+  return new Array(size).fill(0).map((_, index) => ({
+    ...baseDigimon,
+    id: index + 1,
+    name: `Digimon${index + 1}`,
+  }));
+};
+
 describe('ListGatchaImpl Repository', () => {
   let listGatchaRepository: ListGatchaImpl;
   let mockBuyStarterpack: jest.Mocked<BuyStarterpack>;
@@ -89,13 +98,13 @@ describe('ListGatchaImpl Repository', () => {
       it('should return array of DetailDigimonEntity for pack C', async () => {
         const result = await listGatchaRepository.getListGacha('C');
 
-        result.forEach((digimon, index) => {
+        for (const [index, digimon] of result.entries()) {
           expect(digimon).toHaveProperty('id');
           expect(digimon).toHaveProperty('name');
           expect(digimon).toHaveProperty('images');
           expect(digimon).toHaveProperty('level');
           expect(digimon.id).toBe(index + 1);
-        });
+        }
       });
     });
 
@@ -291,7 +300,7 @@ describe('ListGatchaImpl Repository', () => {
         const result = await listGatchaRepository.getListGacha('C');
 
         expect(Array.isArray(result)).toBe(true);
-        result.forEach((digimon) => {
+        for (const digimon of result) {
           expect(digimon).toHaveProperty('id');
           expect(digimon).toHaveProperty('name');
           expect(digimon).toHaveProperty('images');
@@ -314,7 +323,7 @@ describe('ListGatchaImpl Repository', () => {
           expect(Array.isArray(digimon.descriptions)).toBe(true);
           expect(Array.isArray(digimon.nextEvolutions)).toBe(true);
           expect(typeof digimon.level).toBe('object');
-        });
+        }
       });
 
       it('should handle empty result array', async () => {
@@ -337,13 +346,7 @@ describe('ListGatchaImpl Repository', () => {
       });
 
       it('should handle large result arrays', async () => {
-        const largeResult = Array(100)
-          .fill(0)
-          .map((_, index) => ({
-            ...mockDetailDigimon,
-            id: index + 1,
-            name: `Digimon${index + 1}`,
-          }));
+        const largeResult = createLargeDigimonArray(mockDetailDigimon, 100);
 
         mockBuyStarterpack.getListGacha.mockResolvedValue(largeResult);
 
@@ -380,10 +383,10 @@ describe('ListGatchaImpl Repository', () => {
       });
 
       it('should handle mixed pack types in sequence', async () => {
-        const packCResult = Array(5).fill(mockDetailDigimon);
-        const packBResult = Array(5).fill(mockDetailDigimon);
-        const packAResult = Array(5).fill(mockDetailDigimon);
-        const packRResult = Array(4).fill(mockDetailDigimon);
+        const packCResult = new Array(5).fill(mockDetailDigimon);
+        const packBResult = new Array(5).fill(mockDetailDigimon);
+        const packAResult = new Array(5).fill(mockDetailDigimon);
+        const packRResult = new Array(4).fill(mockDetailDigimon);
 
         mockBuyStarterpack.getListGacha
           .mockResolvedValueOnce(packCResult)
@@ -429,15 +432,13 @@ describe('ListGatchaImpl Repository', () => {
       const results = await Promise.all(promises);
 
       expect(results).toHaveLength(3);
-      results.forEach((result) => {
+      for (const result of results) {
         expect(result).toEqual(mockGatchaResult);
-      });
+      }
     });
 
     it('should maintain state isolation between instances', async () => {
-      const repository1 = new ListGatchaImpl();
-      const repository2 = new ListGatchaImpl();
-
+      // Create multiple instances to test independence
       const result1 = [{ ...mockDetailDigimon, name: 'Repo1Result' }];
       const result2 = [{ ...mockDetailDigimon, name: 'Repo2Result' }];
 
@@ -475,7 +476,7 @@ describe('ListGatchaImpl Repository', () => {
     it('should handle rapid successive calls', async () => {
       mockBuyStarterpack.getListGacha.mockResolvedValue(mockGatchaResult);
 
-      const rapidCalls = Array(10)
+      const rapidCalls = new Array(10)
         .fill(0)
         .map((_, index) => listGatchaRepository.getListGacha(['C', 'B', 'A', 'R'][index % 4]));
 
@@ -488,16 +489,16 @@ describe('ListGatchaImpl Repository', () => {
     it('should handle large concurrent requests', async () => {
       mockBuyStarterpack.getListGacha.mockResolvedValue(mockGatchaResult);
 
-      const concurrentCalls = Array(50)
+      const concurrentCalls = new Array(50)
         .fill(0)
         .map(() => listGatchaRepository.getListGacha('C'));
 
       const results = await Promise.all(concurrentCalls);
 
       expect(results).toHaveLength(50);
-      results.forEach((result) => {
+      for (const result of results) {
         expect(result).toEqual(mockGatchaResult);
-      });
+      }
     });
   });
 

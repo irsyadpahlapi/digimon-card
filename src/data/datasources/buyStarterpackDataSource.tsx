@@ -39,37 +39,37 @@ export class BuyStarterpack {
     switch (select) {
       // Starterpack C
       case 'C': {
-        [...Array(4)].forEach(() => {
+        for (let i = 0; i < 4; i++) {
           MyCardSelection.push(this.getListDigimon('Child'));
-        });
+        }
         MyCardSelection.push(this.getListChampion());
         break;
       }
       // Starterpack B
       case 'B':
-        [...Array(2)].forEach(() => {
+        for (let i = 0; i < 2; i++) {
           MyCardSelection.push(this.getListDigimon('Child'));
-        });
-        [...Array(2)].forEach(() => {
+        }
+        for (let i = 0; i < 2; i++) {
           MyCardSelection.push(this.getListChampion());
-        });
+        }
         MyCardSelection.push(this.getListDigimon('Ultimate'));
         break;
       // Starterpack A
       case 'A':
         MyCardSelection.push(this.getListDigimon('Child'));
-        [...Array(2)].forEach(() => {
+        for (let i = 0; i < 2; i++) {
           MyCardSelection.push(this.getListChampion());
-        });
-        [...Array(2)].forEach(() => {
+        }
+        for (let i = 0; i < 2; i++) {
           MyCardSelection.push(this.getListDigimon('Ultimate'));
-        });
+        }
         break;
       case 'R':
         MyCardSelection.push(this.getListChampion());
-        [...Array(2)].forEach(() => {
+        for (let i = 0; i < 2; i++) {
           MyCardSelection.push(this.getListDigimon('Ultimate'));
-        });
+        }
         MyCardSelection.push(this.getListDigimon('Perfect'));
         break;
       default:

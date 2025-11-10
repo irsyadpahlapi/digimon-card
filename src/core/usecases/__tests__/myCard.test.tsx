@@ -109,8 +109,8 @@ describe('ListMyCard Use Case', () => {
     });
 
     it('should execute Map constructor and methods', () => {
-      const mapSpy = jest.spyOn(global.Map.prototype, 'set');
-      const getSpy = jest.spyOn(global.Map.prototype, 'get');
+      const mapSpy = jest.spyOn(globalThis.Map.prototype, 'set');
+      const getSpy = jest.spyOn(globalThis.Map.prototype, 'get');
 
       listMyCard.getListMyCard(mockCards, '', '');
 
@@ -131,14 +131,12 @@ describe('ListMyCard Use Case', () => {
       fromSpy.mockRestore();
     });
 
-    it('should execute forEach callback function', () => {
-      const forEachSpy = jest.spyOn(Array.prototype, 'forEach');
+    it('should process data array correctly', () => {
+      const result = listMyCard.getListMyCard(mockCards, '', '');
 
-      listMyCard.getListMyCard(mockCards, '', '');
-
-      expect(forEachSpy).toHaveBeenCalled();
-
-      forEachSpy.mockRestore();
+      // Test that function processes the array and returns results
+      expect(result).toBeDefined();
+      expect(Array.isArray(result)).toBe(true);
     });
   });
 
@@ -149,7 +147,7 @@ describe('ListMyCard Use Case', () => {
       // Expected values should match implementation logic (starterPack + 1 for non-evolution cards)
       const expectedCards = mockCards.map((card) => ({
         ...card,
-        starterPack: !card.isEvolution ? card.starterPack + 1 : card.starterPack,
+        starterPack: card.isEvolution ? card.starterPack : card.starterPack + 1,
       }));
 
       expect(result).toEqual(expectedCards);
@@ -163,7 +161,7 @@ describe('ListMyCard Use Case', () => {
       // Expected values should match implementation logic (starterPack + 1 for non-evolution cards)
       const expectedCards = rookieCards.map((card) => ({
         ...card,
-        starterPack: !card.isEvolution ? card.starterPack + 1 : card.starterPack,
+        starterPack: card.isEvolution ? card.starterPack : card.starterPack + 1,
       }));
 
       expect(result).toEqual(expectedCards);
@@ -177,7 +175,7 @@ describe('ListMyCard Use Case', () => {
       // Expected values should match implementation logic (starterPack + 1 for non-evolution cards)
       const expectedCards = vaccineCards.map((card) => ({
         ...card,
-        starterPack: !card.isEvolution ? card.starterPack + 1 : card.starterPack,
+        starterPack: card.isEvolution ? card.starterPack : card.starterPack + 1,
       }));
 
       expect(result).toEqual(expectedCards);
@@ -535,9 +533,9 @@ describe('ListMyCard Use Case', () => {
       expect(result).toHaveLength(2);
 
       // All remaining cards should have the target ID
-      result.forEach((card) => {
+      for (const card of result) {
         expect(card.id).toBe(7);
-      });
+      }
     });
 
     it('should execute both branches of filter condition', () => {

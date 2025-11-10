@@ -83,7 +83,7 @@ describe('Card Component', () => {
     const user = userEvent.setup();
     render(<Card item={mockDigimonCard} onClick={mockOnClick} />);
 
-    const cardElement = screen.getByRole('article');
+    const cardElement = screen.getByRole('button');
 
     if (cardElement) {
       await user.click(cardElement);

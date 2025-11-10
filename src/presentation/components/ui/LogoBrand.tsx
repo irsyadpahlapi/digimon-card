@@ -18,7 +18,7 @@ export default function LogoBrand({
   imageAlt = 'Agumon',
   size = 'md',
   className = '',
-}: LogoBrandProps) {
+}: Readonly<LogoBrandProps>) {
   const sizes = {
     sm: {
       container: 'p-4 w-20 h-20',

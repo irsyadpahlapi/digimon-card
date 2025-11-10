@@ -1,12 +1,12 @@
 import React from 'react';
 
 interface EmptyStateProps {
-  title?: string;
-  description?: string;
-  actionText?: string;
-  totalPacks?: number;
-  cardsPerPack?: string;
-  userCoins?: number;
+  readonly title?: string;
+  readonly description?: string;
+  readonly actionText?: string;
+  readonly totalPacks?: number;
+  readonly cardsPerPack?: string;
+  readonly userCoins?: number;
 }
 
 export default function EmptyState({
@@ -16,7 +16,7 @@ export default function EmptyState({
   totalPacks = 4,
   cardsPerPack = '5-10',
   userCoins = 0,
-}: EmptyStateProps) {
+}: Readonly<EmptyStateProps>) {
   return (
     <div className="flex flex-col items-center justify-center py-16 px-4">
       <div className="backdrop-blur-sm bg-white/90 rounded-3xl p-12 shadow-2xl border border-white/30 max-w-2xl w-full text-center">

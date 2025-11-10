@@ -24,7 +24,7 @@ export default function ActionButton({
   disabled = false,
   className = '',
   loadingText = 'Loading...',
-}: ActionButtonProps) {
+}: Readonly<ActionButtonProps>) {
   const baseStyles =
     'font-bold rounded-lg shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 flex items-center justify-center gap-2';
 

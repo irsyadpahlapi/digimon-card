@@ -30,7 +30,7 @@ export default function FormInput({
   disabled = false,
   error,
   className = '',
-}: FormInputProps) {
+}: Readonly<FormInputProps>) {
   return (
     <div className={`space-y-2 ${className}`}>
       {label && (

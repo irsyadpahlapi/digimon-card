@@ -107,7 +107,7 @@ describe('CardDetailModal Component', () => {
   it('should call onClose when ESC key is pressed', async () => {
     render(<CardDetailModal {...defaultProps} />);
 
-    fireEvent.keyDown(window, { key: 'Escape' });
+    fireEvent.keyDown(document, { key: 'Escape' });
 
     expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
@@ -216,8 +216,6 @@ describe('CardDetailModal Component', () => {
   });
 
   it('should show loading state for evolving', async () => {
-    const user = userEvent.setup();
-
     // Render with isEvolving=true
     render(<CardDetailModal {...defaultProps} isEvolving={true} />);
 

@@ -67,7 +67,7 @@ export const mockLocalStorage = (data: Record<string, any>) => {
     clear: jest.fn(),
   };
 
-  Object.defineProperty(window, 'localStorage', {
+  Object.defineProperty(globalThis, 'localStorage', {
     value: localStorageMock,
     writable: true,
   });

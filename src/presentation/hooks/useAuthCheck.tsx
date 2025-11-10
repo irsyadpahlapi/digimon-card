@@ -47,7 +47,8 @@ export function useAuthCheck() {
           });
         }
       } catch (error) {
-        // Auth check error - reset to unauthenticated state
+        // Auth check error - log and reset to unauthenticated state
+        console.error('Authentication check failed:', error);
         setAuthState({
           isLoading: false,
           isAuthenticated: false,

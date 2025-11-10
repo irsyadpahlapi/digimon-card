@@ -570,7 +570,7 @@ describe('Homepage Component', () => {
         }),
       );
 
-      const { rerender, container } = render(<Component />);
+      const { rerender } = render(<Component />);
       expect(screen.getByTestId('auth-redirect')).toBeInTheDocument();
 
       // Return path 2: Unauthenticated state

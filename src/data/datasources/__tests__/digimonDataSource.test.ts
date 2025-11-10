@@ -2,7 +2,7 @@ import DigimonAPI from '../digimonDataSource';
 import { ListDigimonEntity, DetailDigimonEntity } from '@/core/entities/digimon';
 
 // Mock global fetch
-global.fetch = jest.fn();
+globalThis.fetch = jest.fn();
 
 describe('DigimonAPI DataSource', () => {
   let digimonAPI: DigimonAPI;
@@ -255,9 +255,9 @@ describe('DigimonAPI DataSource', () => {
       await digimonAPI.getDigimonById(1);
 
       const calls = mockFetch.mock.calls;
-      calls.forEach((call) => {
+      for (const call of calls) {
         expect(call[0]).toContain('https://digi-api.com/api/v1/digimon');
-      });
+      }
     });
 
     it('should construct URLs correctly with multiple parameters', async () => {
