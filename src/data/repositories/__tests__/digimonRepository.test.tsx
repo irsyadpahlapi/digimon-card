@@ -269,7 +269,7 @@ describe('DigimonImpl Repository', () => {
           description: `Very long description ${index}`.repeat(100),
         })),
         nextEvolutions: new Array(50).fill(0).map((_, index) => ({
-          id: index as number,
+          id: index,
           digimon: `Evolution${index}`,
           condition: `Condition${index}`,
           image: `evolution${index}.jpg`,

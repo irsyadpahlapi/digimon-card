@@ -1,7 +1,8 @@
 import { render, RenderOptions } from '@testing-library/react';
 import { ReactElement } from 'react';
-import type { DetailDigimonEntity } from '@/core/entities/digimon';
+import type { DetailDigimonEntity, ListDigimonEntity } from '@/core/entities/digimon';
 import type { BuyStarterpack } from '@/data/datasources/buyStarterpackDataSource';
+import type { DetailDigimonRepository } from '@/core/repositories/myCardRepository';
 
 // Custom render function that includes common providers
 const customRender = (ui: ReactElement, options?: Omit<RenderOptions, 'wrapper'>) => {
@@ -144,6 +145,61 @@ export function createMockBuyStarterpack(): jest.Mocked<BuyStarterpack> {
     getListGacha: jest.fn(),
     getDigimonById: jest.fn(),
   } as unknown as jest.Mocked<BuyStarterpack>;
+}
+
+export function makeListDigimonEntity(
+  content: Array<{ id: number; name: string; href: string; image: string }> = [
+    { id: 1, name: 'Agumon', href: '/api/digimon/1', image: 'agumon.jpg' },
+    { id: 2, name: 'Gabumon', href: '/api/digimon/2', image: 'gabumon.jpg' },
+    { id: 3, name: 'Patamon', href: '/api/digimon/3', image: 'patamon.jpg' },
+  ],
+  pageable: ListDigimonEntity['pageable'] = {
+    currentPage: 1,
+    elementsOnPage: content.length,
+    totalElements: 100,
+    totalPages: 34,
+    previousPage: '',
+    nextPage: '/api/v1/digimon?level=Child&page=2',
+  },
+): ListDigimonEntity {
+  return { content, pageable };
+}
+
+export function makeRepoCard(
+  overrides: Partial<DetailDigimonRepository> = {},
+): DetailDigimonRepository {
+  const base: DetailDigimonRepository = {
+    id: 1,
+    name: 'Agumon',
+    images: [{ href: 'https://example.com/agumon.jpg', transparent: false }],
+    type: 'Vaccine',
+    attribute: 'Fire',
+    level: 'Rookie',
+    description: 'A small dinosaur Digimon',
+    nextEvolutions: [
+      {
+        id: 2,
+        digimon: 'Greymon',
+        condition: 'Level up',
+        image: 'https://example.com/greymon.jpg',
+        url: 'https://example.com/greymon',
+      },
+    ],
+    fields: [
+      {
+        id: 1,
+        field: 'Dragon Roar',
+        image: 'https://example.com/dragon-roar.jpg',
+      },
+    ],
+    category: 'Rookie',
+    evolution: 0,
+    starterPack: 1,
+    isEvolution: false,
+    total: 1,
+    sellingDigimon: 5,
+  };
+  return { ...base, ...overrides };
 }
 
 // Re-export everything

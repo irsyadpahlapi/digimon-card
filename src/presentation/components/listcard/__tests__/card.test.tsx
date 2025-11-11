@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import Card from '../card';
+import { makeRepoCard } from '@/__tests__/test-utils';
 
 // Mock Next.js Image component
 jest.mock('next/image', () => ({
@@ -12,42 +13,7 @@ jest.mock('next/image', () => ({
   ),
 }));
 
-const mockDigimonCard = {
-  id: 1,
-  name: 'Agumon',
-  images: [
-    {
-      href: 'https://example.com/agumon.jpg',
-      transparent: false,
-    },
-  ],
-  type: 'Vaccine',
-  attribute: 'Fire',
-  level: 'Rookie',
-  description: 'A small dinosaur Digimon',
-  nextEvolutions: [
-    {
-      id: 2,
-      digimon: 'Greymon',
-      condition: 'Level up',
-      image: 'https://example.com/greymon.jpg',
-      url: 'https://example.com/greymon',
-    },
-  ],
-  fields: [
-    {
-      id: 1,
-      field: 'Dragon Roar',
-      image: 'https://example.com/dragon-roar.jpg',
-    },
-  ],
-  category: 'Rookie',
-  evolution: 0,
-  starterPack: 1,
-  isEvolution: false,
-  total: 1,
-  sellingDigimon: 5,
-};
+const mockDigimonCard = makeRepoCard();
 
 describe('Card Component', () => {
   const mockOnClick = jest.fn();
@@ -92,10 +58,7 @@ describe('Card Component', () => {
   });
 
   it('should handle missing image gracefully', () => {
-    const cardWithNoImage = {
-      ...mockDigimonCard,
-      images: [],
-    };
+    const cardWithNoImage = makeRepoCard({ images: [] });
 
     render(<Card item={cardWithNoImage} onClick={mockOnClick} />);
 
@@ -104,8 +67,7 @@ describe('Card Component', () => {
   });
 
   it('should display evolution indicator when card can evolve', () => {
-    const evolvableCard = {
-      ...mockDigimonCard,
+    const evolvableCard = makeRepoCard({
       nextEvolutions: [
         {
           id: 2,
@@ -115,7 +77,7 @@ describe('Card Component', () => {
           url: 'https://example.com/greymon',
         },
       ],
-    };
+    });
 
     render(<Card item={evolvableCard} onClick={mockOnClick} />);
 
@@ -131,11 +93,7 @@ describe('Card Component', () => {
   });
 
   it('should display correct category styling for different levels', () => {
-    const championCard = {
-      ...mockDigimonCard,
-      level: 'Champion',
-      category: 'Champion',
-    };
+    const championCard = makeRepoCard({ level: 'Champion', category: 'Champion' });
 
     render(<Card item={championCard} onClick={mockOnClick} />);
 
@@ -150,10 +108,9 @@ describe('Card Component', () => {
   });
 
   it('should handle long card names gracefully', () => {
-    const cardWithLongName = {
-      ...mockDigimonCard,
+    const cardWithLongName = makeRepoCard({
       name: 'VeryVeryVeryLongDigimonNameThatShouldBeHandledProperly',
-    };
+    });
 
     render(<Card item={cardWithLongName} onClick={mockOnClick} />);
 
@@ -163,15 +120,10 @@ describe('Card Component', () => {
   });
 
   it('should handle missing optional fields', () => {
-    const minimalCard = {
+    const minimalCard = makeRepoCard({
       id: 1,
       name: 'TestMon',
-      images: [
-        {
-          href: 'test.jpg',
-          transparent: false,
-        },
-      ],
+      images: [{ href: 'test.jpg', transparent: false }],
       type: 'Unknown',
       attribute: 'Neutral',
       level: 'Unknown',
@@ -184,7 +136,7 @@ describe('Card Component', () => {
       isEvolution: false,
       total: 1,
       sellingDigimon: 0,
-    };
+    });
 
     render(<Card item={minimalCard} onClick={mockOnClick} />);
 

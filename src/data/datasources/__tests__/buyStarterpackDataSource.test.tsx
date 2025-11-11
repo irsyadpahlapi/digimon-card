@@ -1,6 +1,7 @@
 import { BuyStarterpack } from '../buyStarterpackDataSource';
 import DigimonAPI from '../digimonDataSource';
 import { DetailDigimonEntity, ListDigimonEntity } from '@/core/entities/digimon';
+import { makeDetailDigimonEntity, makeListDigimonEntity } from '@/__tests__/test-utils';
 
 // Mock DigimonAPI
 jest.mock('../digimonDataSource');
@@ -20,48 +21,9 @@ describe('BuyStarterpack DataSource', () => {
   let buyStarterpack: BuyStarterpack;
   let mockDigimonAPI: jest.Mocked<DigimonAPI>;
 
-  const mockDetailDigimon: DetailDigimonEntity = {
-    id: 1,
-    name: 'Agumon',
-    images: [{ href: 'agumon.jpg', transparent: false }],
-    levels: [{ id: 1, level: 'Rookie' }],
-    types: [{ id: 1, type: 'Vaccine' }],
-    attributes: [{ id: 1, attribute: 'Fire' }],
-    fields: [{ id: 1, field: 'Wind Guardians', image: 'field.jpg' }],
-    descriptions: [
-      {
-        origin: 'Digital Monster Ver. 1',
-        language: 'en',
-        description: 'A small dinosaur Digimon',
-      },
-    ],
-    nextEvolutions: [
-      {
-        id: 2,
-        digimon: 'Greymon',
-        condition: 'Level up',
-        image: 'greymon.jpg',
-        url: '/digimon/greymon',
-      },
-    ],
-    level: { id: 1, level: 'Rookie' },
-  };
+  const mockDetailDigimon: DetailDigimonEntity = makeDetailDigimonEntity();
 
-  const mockListDigimonResponse: ListDigimonEntity = {
-    content: [
-      { id: 1, name: 'Agumon', href: '/api/digimon/1', image: 'agumon.jpg' },
-      { id: 2, name: 'Gabumon', href: '/api/digimon/2', image: 'gabumon.jpg' },
-      { id: 3, name: 'Patamon', href: '/api/digimon/3', image: 'patamon.jpg' },
-    ],
-    pageable: {
-      currentPage: 1,
-      elementsOnPage: 3,
-      totalElements: 100,
-      totalPages: 34,
-      previousPage: '',
-      nextPage: '/api/v1/digimon?level=Child&page=2',
-    },
-  };
+  const mockListDigimonResponse: ListDigimonEntity = makeListDigimonEntity();
 
   beforeEach(() => {
     mockDigimonAPI = {
@@ -144,12 +106,12 @@ describe('BuyStarterpack DataSource', () => {
   });
 
   describe('getListChampion', () => {
-    const mockAdultList: ListDigimonEntity = {
-      content: [
+    const mockAdultList = makeListDigimonEntity(
+      [
         { id: 10, name: 'Greymon', href: '/api/digimon/10', image: 'greymon.jpg' },
         { id: 11, name: 'Garurumon', href: '/api/digimon/11', image: 'garurumon.jpg' },
       ],
-      pageable: {
+      {
         currentPage: 1,
         elementsOnPage: 2,
         totalElements: 20,
@@ -157,11 +119,11 @@ describe('BuyStarterpack DataSource', () => {
         previousPage: '',
         nextPage: '',
       },
-    };
+    );
 
-    const mockArmorList: ListDigimonEntity = {
-      content: [{ id: 20, name: 'Flamedramon', href: '/api/digimon/20', image: 'flamedramon.jpg' }],
-      pageable: {
+    const mockArmorList = makeListDigimonEntity(
+      [{ id: 20, name: 'Flamedramon', href: '/api/digimon/20', image: 'flamedramon.jpg' }],
+      {
         currentPage: 1,
         elementsOnPage: 1,
         totalElements: 10,
@@ -169,11 +131,11 @@ describe('BuyStarterpack DataSource', () => {
         previousPage: '',
         nextPage: '',
       },
-    };
+    );
 
-    const mockUnknownList: ListDigimonEntity = {
-      content: [{ id: 30, name: 'UnknownMon', href: '/api/digimon/30', image: 'unknown.jpg' }],
-      pageable: {
+    const mockUnknownList = makeListDigimonEntity(
+      [{ id: 30, name: 'UnknownMon', href: '/api/digimon/30', image: 'unknown.jpg' }],
+      {
         currentPage: 1,
         elementsOnPage: 1,
         totalElements: 5,
@@ -181,14 +143,14 @@ describe('BuyStarterpack DataSource', () => {
         previousPage: '',
         nextPage: '',
       },
-    };
+    );
 
-    const mockHybridList: ListDigimonEntity = {
-      content: [
+    const mockHybridList = makeListDigimonEntity(
+      [
         { id: 40, name: 'Agunimon', href: '/api/digimon/40', image: 'agunimon.jpg' },
         { id: 41, name: 'Lobomon', href: '/api/digimon/41', image: 'lobomon.jpg' },
       ],
-      pageable: {
+      {
         currentPage: 1,
         elementsOnPage: 2,
         totalElements: 15,
@@ -196,7 +158,7 @@ describe('BuyStarterpack DataSource', () => {
         previousPage: '',
         nextPage: '',
       },
-    };
+    );
 
     beforeEach(() => {
       mockDigimonAPI.getListDigimon

@@ -1,5 +1,6 @@
 import DigimonAPI from '../digimonDataSource';
 import { ListDigimonEntity, DetailDigimonEntity } from '@/core/entities/digimon';
+import { makeDetailDigimonEntity, makeListDigimonEntity } from '@/__tests__/test-utils';
 
 // Mock global fetch
 globalThis.fetch = jest.fn();
@@ -18,22 +19,12 @@ describe('DigimonAPI DataSource', () => {
   });
 
   describe('getListDigimon', () => {
-    const mockListDigimonResponse: ListDigimonEntity = {
-      content: [
-        {
-          id: 1,
-          name: 'Agumon',
-          href: '/api/digimon/1',
-          image: 'agumon.jpg',
-        },
-        {
-          id: 2,
-          name: 'Gabumon',
-          href: '/api/digimon/2',
-          image: 'gabumon.jpg',
-        },
+    const mockListDigimonResponse: ListDigimonEntity = makeListDigimonEntity(
+      [
+        { id: 1, name: 'Agumon', href: '/api/digimon/1', image: 'agumon.jpg' },
+        { id: 2, name: 'Gabumon', href: '/api/digimon/2', image: 'gabumon.jpg' },
       ],
-      pageable: {
+      {
         currentPage: 1,
         elementsOnPage: 2,
         totalElements: 100,
@@ -41,7 +32,7 @@ describe('DigimonAPI DataSource', () => {
         previousPage: '',
         nextPage: '/api/v1/digimon?level=Rookie&page=2',
       },
-    };
+    );
 
     it('should fetch list of digimon with level parameter', async () => {
       mockFetch.mockResolvedValueOnce({
@@ -120,32 +111,7 @@ describe('DigimonAPI DataSource', () => {
   });
 
   describe('getDigimonById', () => {
-    const mockDetailDigimonResponse: DetailDigimonEntity = {
-      id: 1,
-      name: 'Agumon',
-      images: [{ href: 'agumon.jpg', transparent: false }],
-      levels: [{ id: 1, level: 'Rookie' }],
-      types: [{ id: 1, type: 'Vaccine' }],
-      attributes: [{ id: 1, attribute: 'Fire' }],
-      fields: [{ id: 1, field: 'Wind Guardians', image: 'field.jpg' }],
-      descriptions: [
-        {
-          origin: 'Digital Monster Ver. 1',
-          language: 'en',
-          description: 'A small dinosaur Digimon',
-        },
-      ],
-      nextEvolutions: [
-        {
-          id: 2,
-          digimon: 'Greymon',
-          condition: 'Level up',
-          image: 'greymon.jpg',
-          url: '/digimon/greymon',
-        },
-      ],
-      level: { id: 1, level: 'Rookie' },
-    };
+    const mockDetailDigimonResponse: DetailDigimonEntity = makeDetailDigimonEntity();
 
     it('should fetch digimon by ID', async () => {
       mockFetch.mockResolvedValueOnce({
