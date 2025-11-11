@@ -60,16 +60,19 @@ export default function HomePage() {
       return;
     }
 
-    const startIndex = displayedCards.length;
-    const endIndex = startIndex + CARDS_PER_PAGE;
-    const newCards = ListMyCards.slice(startIndex, endIndex);
+    // Add 2 second delay before loading more cards
+    setTimeout(() => {
+      const startIndex = displayedCards.length;
+      const endIndex = startIndex + CARDS_PER_PAGE;
+      const newCards = ListMyCards.slice(startIndex, endIndex);
 
-    if (newCards.length > 0) {
-      setDisplayedCards((prev) => [...prev, ...newCards]);
-      setHasMore(endIndex < ListMyCards.length);
-    } else {
-      setHasMore(false);
-    }
+      if (newCards.length > 0) {
+        setDisplayedCards((prev) => [...prev, ...newCards]);
+        setHasMore(endIndex < ListMyCards.length);
+      } else {
+        setHasMore(false);
+      }
+    }, 2000);
   }, [displayedCards.length, ListMyCards, hasMore]);
 
   // Intersection Observer for infinite scroll
