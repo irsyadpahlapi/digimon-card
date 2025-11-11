@@ -14,7 +14,10 @@
     "test:ci": "jest --ci --coverage --watchAll=false",
     "sonar": "sonar-scanner",
     "analyze": "npm run test:ci && npm run lint:report && npm run sonar",
-    "prepare": "husky"
+    "prepare": "husky",
+    "security:audit": "npm audit --audit-level=moderate",
+    "security:check": "npm run security:audit && npm run lint",
+    "security:fix": "npm audit fix"
   },
   "lint-staged": {
     "*.{js,ts,tsx,json,css,md}": [

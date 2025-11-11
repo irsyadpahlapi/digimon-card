@@ -1,6 +1,6 @@
 import DigimonAPI from '../digimonDataSource';
-import { ListDigimonEntity, DetailDigimonEntity } from '@/core/entities/digimon';
-import { makeDetailDigimonEntity, makeListDigimonEntity } from '@/__tests__/test-utils';
+import { ListDigimonEntity, DetailDigimonEntity } from '../../../core/entities/digimon';
+import { makeDetailDigimonEntity, makeListDigimonEntity } from '../../../__tests__/test-utils';
 
 // Mock global fetch
 globalThis.fetch = jest.fn();
@@ -46,7 +46,13 @@ describe('DigimonAPI DataSource', () => {
 
       const result = await digimonAPI.getListDigimon('Rookie');
 
-      expect(mockFetch).toHaveBeenCalledWith('https://digi-api.com/api/v1/digimon?level=Rookie');
+      expect(mockFetch).toHaveBeenCalledWith(
+        'https://digi-api.com/api/v1/digimon?level=Rookie',
+        expect.objectContaining({
+          headers: { 'Content-Type': 'application/json' },
+          signal: expect.any(Object),
+        }),
+      );
       expect(result).toEqual(mockListDigimonResponse);
       expect(result.content).toHaveLength(2);
       expect(result.content[0].name).toBe('Agumon');
@@ -65,6 +71,10 @@ describe('DigimonAPI DataSource', () => {
 
       expect(mockFetch).toHaveBeenCalledWith(
         'https://digi-api.com/api/v1/digimon?level=Champion&pageSize=50',
+        expect.objectContaining({
+          headers: { 'Content-Type': 'application/json' },
+          signal: expect.any(Object),
+        }),
       );
       expect(result).toEqual(mockListDigimonResponse);
     });
@@ -80,7 +90,13 @@ describe('DigimonAPI DataSource', () => {
 
       const result = await digimonAPI.getListDigimon('');
 
-      expect(mockFetch).toHaveBeenCalledWith('https://digi-api.com/api/v1/digimon?');
+      expect(mockFetch).toHaveBeenCalledWith(
+        'https://digi-api.com/api/v1/digimon?',
+        expect.objectContaining({
+          headers: { 'Content-Type': 'application/json' },
+          signal: expect.any(Object),
+        }),
+      );
       expect(result).toEqual(mockListDigimonResponse);
     });
 
@@ -97,6 +113,10 @@ describe('DigimonAPI DataSource', () => {
 
       expect(mockFetch).toHaveBeenCalledWith(
         'https://digi-api.com/api/v1/digimon?level=Ultimate&pageSize=0',
+        expect.objectContaining({
+          headers: { 'Content-Type': 'application/json' },
+          signal: expect.any(Object),
+        }),
       );
       expect(result).toEqual(mockListDigimonResponse);
     });
@@ -139,7 +159,13 @@ describe('DigimonAPI DataSource', () => {
 
       const result = await digimonAPI.getDigimonById(1);
 
-      expect(mockFetch).toHaveBeenCalledWith('https://digi-api.com/api/v1/digimon/1');
+      expect(mockFetch).toHaveBeenCalledWith(
+        'https://digi-api.com/api/v1/digimon/1',
+        expect.objectContaining({
+          headers: { 'Content-Type': 'application/json' },
+          signal: expect.any(Object),
+        }),
+      );
       expect(result).toEqual(mockDetailDigimonResponse);
       expect(result.id).toBe(1);
       expect(result.name).toBe('Agumon');
@@ -158,7 +184,13 @@ describe('DigimonAPI DataSource', () => {
 
       const result = await digimonAPI.getDigimonById(42);
 
-      expect(mockFetch).toHaveBeenCalledWith('https://digi-api.com/api/v1/digimon/42');
+      expect(mockFetch).toHaveBeenCalledWith(
+        'https://digi-api.com/api/v1/digimon/42',
+        expect.objectContaining({
+          headers: { 'Content-Type': 'application/json' },
+          signal: expect.any(Object),
+        }),
+      );
       expect(result.id).toBe(42);
       expect(result.name).toBe('TestDigimon');
     });
@@ -190,7 +222,13 @@ describe('DigimonAPI DataSource', () => {
       mockFetch.mockRejectedValueOnce(new Error('Digimon not found'));
 
       await expect(digimonAPI.getDigimonById(999)).rejects.toThrow('Digimon not found');
-      expect(mockFetch).toHaveBeenCalledWith('https://digi-api.com/api/v1/digimon/999');
+      expect(mockFetch).toHaveBeenCalledWith(
+        'https://digi-api.com/api/v1/digimon/999',
+        expect.objectContaining({
+          headers: { 'Content-Type': 'application/json' },
+          signal: expect.any(Object),
+        }),
+      );
     });
 
     it('should handle invalid JSON response for detail', async () => {
@@ -208,37 +246,13 @@ describe('DigimonAPI DataSource', () => {
     });
 
     it('should handle zero ID', async () => {
-      mockFetch.mockResolvedValueOnce(
-        makeResponse({
-          json: jest
-            .fn()
-            .mockResolvedValue(mockDetailDigimonResponse) as unknown as Response['json'],
-          ok: true,
-          status: 200,
-        }),
-      );
-
-      const result = await digimonAPI.getDigimonById(0);
-
-      expect(mockFetch).toHaveBeenCalledWith('https://digi-api.com/api/v1/digimon/0');
-      expect(result).toEqual(mockDetailDigimonResponse);
+      await expect(digimonAPI.getDigimonById(0)).rejects.toThrow('Invalid Digimon ID');
+      expect(mockFetch).not.toHaveBeenCalled();
     });
 
     it('should handle negative ID', async () => {
-      mockFetch.mockResolvedValueOnce(
-        makeResponse({
-          json: jest
-            .fn()
-            .mockResolvedValue(mockDetailDigimonResponse) as unknown as Response['json'],
-          ok: true,
-          status: 200,
-        }),
-      );
-
-      const result = await digimonAPI.getDigimonById(-1);
-
-      expect(mockFetch).toHaveBeenCalledWith('https://digi-api.com/api/v1/digimon/-1');
-      expect(result).toEqual(mockDetailDigimonResponse);
+      await expect(digimonAPI.getDigimonById(-1)).rejects.toThrow('Invalid Digimon ID');
+      expect(mockFetch).not.toHaveBeenCalled();
     });
   });
 
@@ -273,7 +287,13 @@ describe('DigimonAPI DataSource', () => {
       await digimonAPI.getListDigimon('Ultimate', 25);
 
       const expectedUrl = 'https://digi-api.com/api/v1/digimon?level=Ultimate&pageSize=25';
-      expect(mockFetch).toHaveBeenCalledWith(expectedUrl);
+      expect(mockFetch).toHaveBeenCalledWith(
+        expectedUrl,
+        expect.objectContaining({
+          headers: { 'Content-Type': 'application/json' },
+          signal: expect.any(Object),
+        }),
+      );
     });
 
     it('should handle special characters in level parameter', async () => {
@@ -289,6 +309,10 @@ describe('DigimonAPI DataSource', () => {
 
       expect(mockFetch).toHaveBeenCalledWith(
         'https://digi-api.com/api/v1/digimon?level=In-Training',
+        expect.objectContaining({
+          headers: { 'Content-Type': 'application/json' },
+          signal: expect.any(Object),
+        }),
       );
     });
   });
@@ -312,7 +336,7 @@ describe('DigimonAPI DataSource', () => {
       mockFetch.mockResolvedValueOnce(undefined as unknown as Response);
 
       await expect(digimonAPI.getDigimonById(9999)).rejects.toThrow(
-        "Cannot read properties of undefined (reading 'json')",
+        "Cannot read properties of undefined (reading 'ok')",
       );
     });
   });

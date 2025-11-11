@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ProfileRepository } from '@/core/repositories/profile';
 import useLocalStorage from '@hooks/useLocalStorage';
 import { useAuthCheck } from '@/presentation/hooks/useAuthCheck';
+import { validateUsername, sanitizeInput } from '@/presentation/hooks/security';
 import GradientBackground from '@/presentation/components/ui/GradientBackground';
 import LogoBrand from '@/presentation/components/ui/LogoBrand';
 import FormInput from '@/presentation/components/ui/FormInput';
@@ -14,6 +15,7 @@ import AuthRedirectScreen from '@/presentation/components/ui/AuthRedirectScreen'
 export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const [, setProfile] = useLocalStorage<ProfileRepository>('Profile', {} as ProfileRepository);
   const router = useRouter();
   const { isAuthenticated, redirectToHome } = useAuthCheck();
@@ -28,13 +30,25 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!username.trim()) return;
+    const trimmedUsername = username.trim();
+    if (!trimmedUsername) return;
+
+    // Validate username using security utilities
+    const validation = validateUsername(trimmedUsername);
+    if (!validation.valid) {
+      setError(validation.error ?? 'Invalid username');
+      return;
+    }
+
+    // Sanitize the username
+    const sanitizedUsername = sanitizeInput(trimmedUsername);
 
     setIsLoading(true);
+    setError('');
 
     setProfile({
       id: Date.now(), // Use timestamp for unique ID
-      name: username.trim(),
+      name: sanitizedUsername,
       coin: 100,
     });
 
@@ -82,6 +96,13 @@ export default function LoginPage() {
           {/* Login Form Card */}
           <div className="bg-white rounded-2xl shadow-xl p-8 md:p-10 border border-gray-100">
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Error Message */}
+              {error && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                  {error}
+                </div>
+              )}
+
               {/* Username Input */}
               <FormInput
                 id="username"

@@ -13,6 +13,7 @@ import EmptyState from '@components/EmptyState';
 import FilterSection from '@components/FilterSection';
 import Header from '@components/Header';
 import Toast from '@components/Toast';
+import { checkRateLimit, sanitizeNumber } from '@/presentation/hooks/security';
 
 export default function HomePage() {
   const usecase = useMemo(() => new ListMyCard(), []);
@@ -104,12 +105,28 @@ export default function HomePage() {
   };
 
   const handleEvolve = async (id: number, nextEvolution: number) => {
+    // Check rate limit for evolution (max 5 evolutions per minute)
+    if (!checkRateLimit('evolve', 5, 60000)) {
+      setToastMessage('Too many evolution attempts. Please wait a moment.');
+      setToastType('error');
+      setShowToast(true);
+      return;
+    }
+
+    // Sanitize inputs
+    const sanitizedId = sanitizeNumber(id, 1);
+    const sanitizedNextEvolution = sanitizeNumber(nextEvolution, 1);
+
     setIsEvolving(true);
     try {
       // Add delay for smooth loading experience
       await new Promise((resolve) => setTimeout(resolve, 800));
 
-      const evoledCard = await usecase.digimonEvolution(MyCards, id, nextEvolution);
+      const evoledCard = await usecase.digimonEvolution(
+        MyCards,
+        sanitizedId,
+        sanitizedNextEvolution,
+      );
       setMyCards(evoledCard);
 
       // Success feedback with slight delay, then close modal
@@ -130,16 +147,28 @@ export default function HomePage() {
   };
 
   const handleSell = async (id: number, coin: number) => {
+    // Check rate limit for selling (max 10 sells per minute)
+    if (!checkRateLimit('sell', 10, 60000)) {
+      setToastMessage('Too many sell attempts. Please wait a moment.');
+      setToastType('error');
+      setShowToast(true);
+      return;
+    }
+
+    // Sanitize inputs
+    const sanitizedId = sanitizeNumber(id, 1);
+    const sanitizedCoin = sanitizeNumber(coin, 0);
+
     setIsSelling(true);
     try {
       // Add delay for smooth loading experience
       await new Promise((resolve) => setTimeout(resolve, 600));
 
-      const sellCard = usecase.sellDigimon(MyCards, id);
+      const sellCard = usecase.sellDigimon(MyCards, sanitizedId);
       setMyCards(sellCard);
       setProfile({
         ...Profile,
-        coin: Profile.coin + coin,
+        coin: sanitizeNumber(Profile.coin + sanitizedCoin, 0),
       });
 
       // Success feedback with slight delay, then close modal
@@ -160,12 +189,21 @@ export default function HomePage() {
   };
 
   const handleBuyPack = async (pack: (typeof STARTER_PACK_ITEMS)[0]) => {
-    // Check if user has enough coins
-    const currentCoins = Profile?.coin || 0;
+    // Check rate limit for buying packs (max 3 purchases per minute)
+    if (!checkRateLimit('buyPack', 3, 60000)) {
+      setToastMessage('Too many purchase attempts. Please wait a moment.');
+      setToastType('error');
+      setShowToast(true);
+      return;
+    }
 
-    if (currentCoins < pack.price) {
+    // Check if user has enough coins
+    const currentCoins = sanitizeNumber(Profile?.coin || 0, 0);
+    const packPrice = sanitizeNumber(pack.price, 0);
+
+    if (currentCoins < packPrice) {
       setToastMessage(
-        `Not enough coins! You need ${pack.price} coins but only have ${currentCoins} coins.`,
+        `Not enough coins! You need ${packPrice} coins but only have ${currentCoins} coins.`,
       );
       setToastType('error');
       setShowToast(true);
@@ -182,8 +220,8 @@ export default function HomePage() {
       const data = await new ListGatcha().getListGacha(pack.type);
       setMyCards([...MyCards, ...data]);
 
-      // Deduct coins
-      const newCoins = currentCoins - pack.price;
+      // Deduct coins with sanitization
+      const newCoins = sanitizeNumber(currentCoins - packPrice, 0);
       setProfile({ ...Profile, coin: newCoins });
 
       // Success feedback with toast notification

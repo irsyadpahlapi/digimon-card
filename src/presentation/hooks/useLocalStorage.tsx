@@ -1,10 +1,11 @@
 import { useState } from 'react';
+import { safeJsonParse } from './security';
 
 function useLocalStorage<T>(key: string, initialValue: T) {
   const [storedValue, setStoredValue] = useState<T>(() => {
     try {
       const item = globalThis.localStorage.getItem(key);
-      return item ? JSON.parse(item) : initialValue;
+      return item ? safeJsonParse<T>(item, initialValue) : initialValue;
     } catch {
       return initialValue;
     }
