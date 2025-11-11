@@ -39,6 +39,11 @@ jobs:
       - name: Run tests with coverage
         run: yarn test:ci
 
+      - name: Debug coverage artifacts
+        run: |
+          echo "Listing coverage directory" && ls -la coverage || echo "No coverage dir"
+          echo "Show LCOV header" && head -40 coverage/lcov.info || echo "No lcov.info"
+
       - name: Upload coverage to Codecov (optional)
         uses: codecov/codecov-action@e28ff129e5465c2c0dcc6f003fc735cb6ae0c673 # v4.5.0
         with:
