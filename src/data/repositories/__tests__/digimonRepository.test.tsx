@@ -1,6 +1,7 @@
 import { DigimonImpl } from '../digimonRepository';
 import { BuyStarterpack } from '@/data/datasources/buyStarterpackDataSource';
 import { DetailDigimonEntity } from '@/core/entities/digimon';
+import { makeDetailDigimonEntity, createMockBuyStarterpack } from '@/__tests__/test-utils';
 
 // Mock BuyStarterpack
 jest.mock('@/data/datasources/buyStarterpackDataSource');
@@ -10,40 +11,10 @@ describe('DigimonImpl Repository', () => {
   let digimonRepository: DigimonImpl;
   let mockBuyStarterpack: jest.Mocked<BuyStarterpack>;
 
-  const mockDetailDigimon: DetailDigimonEntity = {
-    id: 1,
-    name: 'Agumon',
-    images: [{ href: 'agumon.jpg', transparent: false }],
-    levels: [{ id: 1, level: 'Rookie' }],
-    types: [{ id: 1, type: 'Vaccine' }],
-    attributes: [{ id: 1, attribute: 'Fire' }],
-    fields: [{ id: 1, field: 'Wind Guardians', image: 'field.jpg' }],
-    descriptions: [
-      {
-        origin: 'Digital Monster Ver. 1',
-        language: 'en',
-        description: 'A small dinosaur Digimon',
-      },
-    ],
-    nextEvolutions: [
-      {
-        id: 2,
-        digimon: 'Greymon',
-        condition: 'Level up',
-        image: 'greymon.jpg',
-        url: '/digimon/greymon',
-      },
-    ],
-    level: { id: 1, level: 'Rookie' },
-  };
+  const mockDetailDigimon: DetailDigimonEntity = makeDetailDigimonEntity();
 
   beforeEach(() => {
-    mockBuyStarterpack = {
-      getListDigimon: jest.fn(),
-      getListChampion: jest.fn(),
-      getListGacha: jest.fn(),
-      getDigimonById: jest.fn(),
-    } as jest.Mocked<BuyStarterpack>;
+    mockBuyStarterpack = createMockBuyStarterpack();
 
     MockedBuyStarterpack.mockImplementation(() => mockBuyStarterpack);
     digimonRepository = new DigimonImpl();
@@ -80,12 +51,11 @@ describe('DigimonImpl Repository', () => {
     });
 
     it('should handle different digimon IDs', async () => {
-      const differentDigimon = {
-        ...mockDetailDigimon,
+      const differentDigimon = makeDetailDigimonEntity({
         id: 25,
         name: 'Patamon',
         level: { id: 2, level: 'Rookie' },
-      };
+      });
 
       mockBuyStarterpack.getDigimonById.mockResolvedValue(differentDigimon);
 
@@ -190,8 +160,7 @@ describe('DigimonImpl Repository', () => {
     });
 
     it('should handle digimon with empty arrays', async () => {
-      const digimonWithEmptyArrays = {
-        ...mockDetailDigimon,
+      const digimonWithEmptyArrays = makeDetailDigimonEntity({
         images: [],
         levels: [],
         types: [],
@@ -199,7 +168,7 @@ describe('DigimonImpl Repository', () => {
         fields: [],
         descriptions: [],
         nextEvolutions: [],
-      };
+      });
 
       mockBuyStarterpack.getDigimonById.mockResolvedValue(digimonWithEmptyArrays);
 
@@ -215,8 +184,7 @@ describe('DigimonImpl Repository', () => {
     });
 
     it('should handle digimon with complex nested data', async () => {
-      const complexDigimon = {
-        ...mockDetailDigimon,
+      const complexDigimon = makeDetailDigimonEntity({
         images: [
           { href: 'image1.jpg', transparent: true },
           { href: 'image2.png', transparent: false },
@@ -248,7 +216,7 @@ describe('DigimonImpl Repository', () => {
           { origin: 'Origin1', language: 'en', description: 'Description1' },
           { origin: 'Origin2', language: 'jp', description: 'Description2' },
         ],
-      };
+      });
 
       mockBuyStarterpack.getDigimonById.mockResolvedValue(complexDigimon);
 
@@ -294,21 +262,20 @@ describe('DigimonImpl Repository', () => {
 
   describe('Edge cases', () => {
     it('should handle very large response objects', async () => {
-      const largeDigimon = {
-        ...mockDetailDigimon,
+      const largeDigimon = makeDetailDigimonEntity({
         descriptions: new Array(100).fill(0).map((_, index) => ({
           origin: `Origin${index}`,
           language: 'en',
           description: `Very long description ${index}`.repeat(100),
         })),
         nextEvolutions: new Array(50).fill(0).map((_, index) => ({
-          id: index,
+          id: index as number,
           digimon: `Evolution${index}`,
           condition: `Condition${index}`,
           image: `evolution${index}.jpg`,
           url: `/evolution/${index}`,
         })),
-      };
+      });
 
       mockBuyStarterpack.getDigimonById.mockResolvedValue(largeDigimon);
 
@@ -319,12 +286,11 @@ describe('DigimonImpl Repository', () => {
     });
 
     it('should handle null/undefined values in response', async () => {
-      const digimonWithNulls = {
-        ...mockDetailDigimon,
+      const digimonWithNulls = makeDetailDigimonEntity({
         name: '',
         images: [{ href: '', transparent: false }],
         level: { id: 0, level: '' },
-      };
+      });
 
       mockBuyStarterpack.getDigimonById.mockResolvedValue(digimonWithNulls);
 

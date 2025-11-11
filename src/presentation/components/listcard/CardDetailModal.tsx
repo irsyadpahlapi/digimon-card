@@ -1,6 +1,13 @@
 'use client';
 import { DetailDigimonRepository } from '@/core/repositories/myCardRepository';
 import { useEffect, useState } from 'react';
+import {
+  BACKDROP_CARD_MODAL_HEADER,
+  BADGE_BLUR_WHITE,
+  GRADIENT_SUCCESS_BUTTON,
+  GRADIENT_WARNING_BUTTON,
+  GRADIENT_BRAND_BUTTON,
+} from '@/presentation/styles/gradients';
 import Image from 'next/image';
 
 interface CardDetailModalProps {
@@ -81,7 +88,7 @@ export default function CardDetailModal({
         </button>
 
         {/* Header with gradient */}
-        <div className="bg-gradient-to-br from-[#443c70] via-[#a76050] to-[#f1ba63] p-6 rounded-t-2xl">
+        <div className={BACKDROP_CARD_MODAL_HEADER}>
           <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
             {/* Image */}
             <div className="w-40 h-40 shrink-0 rounded-xl bg-white/90 backdrop-blur-sm p-4 shadow-lg">
@@ -102,19 +109,9 @@ export default function CardDetailModal({
 
               {/* Stats badges */}
               <div className="flex flex-wrap gap-2">
-                <span className="px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-sm rounded-full border border-white/30">
-                  Level: {item.level}
-                </span>
-                {item.attribute && (
-                  <span className="px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-sm rounded-full border border-white/30">
-                    {item.attribute}
-                  </span>
-                )}
-                {item.type && (
-                  <span className="px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-sm rounded-full border border-white/30">
-                    {item.type}
-                  </span>
-                )}
+                <span className={BADGE_BLUR_WHITE}>Level: {item.level}</span>
+                {item.attribute && <span className={BADGE_BLUR_WHITE}>{item.attribute}</span>}
+                {item.type && <span className={BADGE_BLUR_WHITE}>{item.type}</span>}
               </div>
             </div>
           </div>
@@ -257,7 +254,7 @@ export default function CardDetailModal({
                       className={`w-full ${
                         isEvolving
                           ? 'bg-gray-400 cursor-not-allowed'
-                          : 'bg-gradient-to-r from-green-500 to-emerald-600 hover:shadow-lg transform hover:scale-105'
+                          : `${GRADIENT_SUCCESS_BUTTON} hover:shadow-lg transform hover:scale-105`
                       } text-white font-bold py-2.5 px-4 rounded-lg shadow-md transition-all duration-200 flex items-center justify-center gap-2`}
                     >
                       {isEvolving ? (
@@ -321,8 +318,7 @@ export default function CardDetailModal({
                 } else if (isDisabled) {
                   buttonClass = 'bg-gray-400 cursor-not-allowed';
                 } else {
-                  buttonClass =
-                    'bg-gradient-to-r from-[#443c70] to-[#a76050] hover:shadow-xl transform hover:scale-105';
+                  buttonClass = `${GRADIENT_BRAND_BUTTON} hover:shadow-xl transform hover:scale-105`;
                 }
 
                 return (
@@ -363,7 +359,7 @@ export default function CardDetailModal({
               } ${
                 isSelling
                   ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-[#f1ba63] to-[#fbf39b] hover:shadow-xl transform hover:scale-105'
+                  : `${GRADIENT_WARNING_BUTTON} hover:shadow-xl transform hover:scale-105`
               } text-[#643c30] font-bold py-4 px-6 rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2`}
             >
               {isSelling ? (

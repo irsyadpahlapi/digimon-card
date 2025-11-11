@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import StarterPack from '../staterPack';
+import { makeStarterPack, STARTER_PACKS } from '@/__tests__/test-utils';
 
 // Mock Next.js Image component
 jest.mock('next/image', () => ({
@@ -38,14 +39,7 @@ jest.mock('@/presentation/components/ui/ActionButton', () => {
   };
 });
 
-const mockStarterPack = {
-  id: 1,
-  name: 'Common',
-  type: 'C',
-  price: 5,
-  image: '/images/common.png',
-  description: 'Perfect for beginners! Get 4 Rookie cards to start your collection.',
-};
+const mockStarterPack = makeStarterPack();
 
 describe('StarterPack Component', () => {
   const mockOnBuy = jest.fn();
@@ -122,11 +116,7 @@ describe('StarterPack Component', () => {
     });
 
     it('should display correct pack contents for Balance pack (type B)', () => {
-      const balancePack = {
-        ...mockStarterPack,
-        type: 'B',
-        name: 'Balance',
-      };
+      const balancePack = makeStarterPack({ type: 'B', name: 'Balance', price: 10 });
 
       render(<StarterPack item={balancePack} onBuy={mockOnBuy} />);
 
@@ -136,11 +126,7 @@ describe('StarterPack Component', () => {
     });
 
     it('should display correct pack contents for Advanced pack (type A)', () => {
-      const advancedPack = {
-        ...mockStarterPack,
-        type: 'A',
-        name: 'Advanced',
-      };
+      const advancedPack = makeStarterPack({ type: 'A', name: 'Advanced', price: 15 });
 
       render(<StarterPack item={advancedPack} onBuy={mockOnBuy} />);
 
@@ -150,11 +136,7 @@ describe('StarterPack Component', () => {
     });
 
     it('should display correct pack contents for Rare pack (type R)', () => {
-      const rarePack = {
-        ...mockStarterPack,
-        type: 'R',
-        name: 'Rare',
-      };
+      const rarePack = makeStarterPack({ type: 'R', name: 'Rare', price: 20 });
 
       render(<StarterPack item={rarePack} onBuy={mockOnBuy} />);
 
@@ -303,12 +285,7 @@ describe('StarterPack Component', () => {
 
   describe('State Management', () => {
     it('should handle different pack types correctly', () => {
-      const testPacks = [
-        { ...mockStarterPack, type: 'C', name: 'Common' },
-        { ...mockStarterPack, type: 'B', name: 'Balance' },
-        { ...mockStarterPack, type: 'A', name: 'Advanced' },
-        { ...mockStarterPack, type: 'R', name: 'Rare' },
-      ];
+      const testPacks = STARTER_PACKS;
 
       for (const pack of testPacks) {
         const { rerender } = render(<StarterPack item={pack} onBuy={mockOnBuy} />);

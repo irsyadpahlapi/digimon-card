@@ -5,7 +5,7 @@ export interface Content {
   image: string;
 }
 
-interface Pageable {
+export interface Pageable {
   currentPage: number;
   elementsOnPage: number;
   totalElements: number;
@@ -14,33 +14,33 @@ interface Pageable {
   nextPage: string;
 }
 
-interface Image {
+export interface Image {
   href: string;
   transparent: boolean;
 }
 
-interface Level {
+export interface Level {
   id: number;
   level: string;
 }
 
-interface Type {
+export interface Type {
   id: number;
   type: string;
 }
 
-interface Attribute {
+export interface Attribute {
   id: number;
   attribute: string;
 }
 
-interface Field {
+export interface Field {
   id: number;
   field: string;
   image: string;
 }
 
-interface NextEvolution {
+export interface NextEvolution {
   id: number;
   digimon: string;
   condition: string;
@@ -48,7 +48,7 @@ interface NextEvolution {
   url: string;
 }
 
-interface Description {
+export interface Description {
   origin: string;
   language: string;
   description: string;

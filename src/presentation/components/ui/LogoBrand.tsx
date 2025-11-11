@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { GRADIENT_LOGO_TEXT } from '@/presentation/styles/gradients';
 
 interface LogoBrandProps {
   title?: string;
@@ -61,7 +62,7 @@ export default function LogoBrand({
       </div>
 
       <h1
-        className={`${currentSize.title} font-bold bg-gradient-to-r from-yellow-600 via-orange-600 to-amber-600 bg-clip-text text-transparent mb-2 drop-shadow-lg tracking-tight`}
+        className={`${currentSize.title} font-bold ${GRADIENT_LOGO_TEXT} mb-2 drop-shadow-lg tracking-tight`}
       >
         {title}
       </h1>

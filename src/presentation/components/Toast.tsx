@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { GRADIENT_SUCCESS_BUTTON } from '@/presentation/styles/gradients';
 
 interface ToastProps {
   readonly message: string;
@@ -28,7 +29,7 @@ export default function Toast({
   if (!isVisible) return null;
 
   const bgColor = {
-    success: 'bg-gradient-to-r from-green-500 to-emerald-600',
+    success: GRADIENT_SUCCESS_BUTTON,
     error: 'bg-gradient-to-r from-red-500 to-rose-600',
     info: 'bg-gradient-to-r from-blue-500 to-indigo-600',
   };

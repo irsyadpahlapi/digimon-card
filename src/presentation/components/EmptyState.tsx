@@ -1,4 +1,5 @@
 import React from 'react';
+import { BACKDROP_EMPTY_STATE, GRADIENT_HOMEPAGE_TEXT } from '@/presentation/styles/gradients';
 
 interface EmptyStateProps {
   readonly title?: string;
@@ -19,7 +20,7 @@ export default function EmptyState({
 }: Readonly<EmptyStateProps>) {
   return (
     <div className="flex flex-col items-center justify-center py-16 px-4">
-      <div className="backdrop-blur-sm bg-white/90 rounded-3xl p-12 shadow-2xl border border-white/30 max-w-2xl w-full text-center">
+      <div className={`${BACKDROP_EMPTY_STATE} max-w-2xl w-full text-center`}>
         {/* Animated SVG Illustration */}
         <div className="mb-8 relative">
           <svg
@@ -121,9 +122,7 @@ export default function EmptyState({
         </div>
 
         {/* Text content */}
-        <h2 className="text-3xl font-bold bg-gradient-to-r from-[#443c70] via-[#a76050] to-[#f1ba63] bg-clip-text text-transparent mb-4">
-          {title}
-        </h2>
+        <h2 className={`text-3xl font-bold ${GRADIENT_HOMEPAGE_TEXT} mb-4`}>{title}</h2>
         <p className="text-gray-600 text-lg mb-8 leading-relaxed">{description}</p>
 
         {/* Call to action */}

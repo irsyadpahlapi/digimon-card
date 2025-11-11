@@ -1,4 +1,9 @@
 import React from 'react';
+import {
+  BACKDROP_PANEL,
+  GRADIENT_HEADER_TEXT,
+  GRADIENT_COIN_BADGE,
+} from '@/presentation/styles/gradients';
 
 interface HeaderProps {
   readonly userName?: string;
@@ -14,18 +19,20 @@ export default function Header({
   showCoins = true,
 }: Readonly<HeaderProps>) {
   return (
-    <div className="backdrop-blur-sm bg-white/80 rounded-2xl p-6 mb-8 shadow-xl border border-white/20">
+    <div className={BACKDROP_PANEL}>
       <div className="flex justify-end items-start mb-4 pr-2">
-        <div className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#443c70] to-[#a76050] bg-clip-text text-transparent">
+        <div className={'text-2xl md:text-3xl font-bold ' + GRADIENT_HEADER_TEXT}>
           Hi, {userName}
         </div>
       </div>
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#443c70] to-[#a76050] bg-clip-text text-transparent">
-          {title}
-        </h1>
+        <h1 className={'text-2xl md:text-3xl font-bold ' + GRADIENT_HEADER_TEXT}>{title}</h1>
         {showCoins && (
-          <div className="flex items-center gap-2 bg-gradient-to-r from-[#f1ba63] to-[#fbf39b] px-4 py-2 rounded-full shadow-lg">
+          <div
+            className={
+              'flex items-center gap-2 ' + GRADIENT_COIN_BADGE + ' px-4 py-2 rounded-full shadow-lg'
+            }
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5 text-[#643c30]"

@@ -1,36 +1,4 @@
-interface Image {
-  href: string;
-  transparent: boolean;
-}
-
-interface Level {
-  id: number;
-  level: string;
-}
-
-interface Type {
-  id: number;
-  type: string;
-}
-
-interface Attribute {
-  id: number;
-  attribute: string;
-}
-
-interface Field {
-  id: number;
-  field: string;
-  image: string;
-}
-
-interface NextEvolution {
-  id: number;
-  digimon: string;
-  condition: string;
-  image: string;
-  url: string;
-}
+import type { Image, Field, NextEvolution } from '@/core/entities/digimon';
 
 export interface DetailDigimonRepository {
   id: number;

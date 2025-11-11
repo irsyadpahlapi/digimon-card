@@ -1,6 +1,11 @@
 'use client';
 
 import LoadingSpinner from './LoadingSpinner';
+import {
+  GRADIENT_PRIMARY_BUTTON,
+  GRADIENT_SUCCESS_BUTTON,
+  GRADIENT_WARNING_BUTTON,
+} from '@/presentation/styles/gradients';
 
 interface ActionButtonProps {
   children: React.ReactNode;
@@ -29,13 +34,10 @@ export default function ActionButton({
     'font-bold rounded-lg shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 flex items-center justify-center gap-2';
 
   const variants = {
-    primary:
-      'bg-gradient-to-r from-yellow-500 via-orange-500 to-amber-500 text-white hover:from-yellow-600 hover:via-orange-600 hover:to-amber-600 hover:shadow-xl focus:ring-orange-500/50',
+    primary: `${GRADIENT_PRIMARY_BUTTON} text-white hover:from-yellow-600 hover:via-orange-600 hover:to-amber-600 hover:shadow-xl focus:ring-orange-500/50`,
     secondary: 'bg-gray-500 text-white hover:bg-gray-600 hover:shadow-xl focus:ring-gray-500/50',
-    success:
-      'bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:shadow-lg transform hover:scale-105 focus:ring-green-500/50',
-    warning:
-      'bg-gradient-to-r from-[#f1ba63] to-[#fbf39b] text-[#643c30] hover:shadow-xl transform hover:scale-105 focus:ring-yellow-500/50',
+    success: `${GRADIENT_SUCCESS_BUTTON} text-white hover:shadow-lg transform hover:scale-105 focus:ring-green-500/50`,
+    warning: `${GRADIENT_WARNING_BUTTON} text-[#643c30] hover:shadow-xl transform hover:scale-105 focus:ring-yellow-500/50`,
     danger: 'bg-red-500 text-white hover:bg-red-600 hover:shadow-xl focus:ring-red-500/50',
   };
 
