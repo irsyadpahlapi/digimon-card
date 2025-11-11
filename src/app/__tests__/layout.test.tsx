@@ -236,12 +236,9 @@ describe('RootLayout', () => {
   });
 
   describe('CSS Import Validation', () => {
-    it('should import globals.css without errors', () => {
-      // This test ensures the CSS import doesn't cause compilation errors
-      // The mock prevents actual file loading during tests
-      expect(() => {
-        require('../layout');
-      }).not.toThrow();
+    it('should import layout module without errors', async () => {
+      // Replace CommonJS require with dynamic ESM import for lint compatibility
+      await expect(import('../layout')).resolves.toBeDefined();
     });
   });
 

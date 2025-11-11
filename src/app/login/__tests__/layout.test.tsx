@@ -255,10 +255,8 @@ describe('LoginLayout Component', () => {
 
 // Test metadata export (this would typically be tested differently in a real app)
 describe('LoginLayout Metadata', () => {
-  it('should export metadata configuration', () => {
-    // Note: In a real application, you would test metadata differently
-    // This is a simplified test to ensure the export exists
-    const loginLayoutModule = require('../layout');
-    expect(loginLayoutModule).toBeDefined();
+  it('should export metadata configuration', async () => {
+    // Use dynamic import to avoid CommonJS require in tests
+    await expect(import('../layout')).resolves.toBeDefined();
   });
 });

@@ -17,7 +17,7 @@ mockUseRouter.mockReturnValue({
   forward: jest.fn(),
   refresh: jest.fn(),
   prefetch: jest.fn(),
-} as any);
+} as ReturnType<typeof useRouter>);
 
 // Mock useLocalStorage
 jest.mock('../useLocalStorage');

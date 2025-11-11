@@ -1,4 +1,5 @@
 import { render, screen, act } from '@testing-library/react';
+import type React from 'react';
 import userEvent from '@testing-library/user-event';
 import LoginPage from '../page';
 import { useRouter } from 'next/navigation';
@@ -22,12 +23,28 @@ jest.mock('@/presentation/hooks/useLocalStorage', () => {
 
 // Mock Next.js Image component
 jest.mock('next/image', () => {
-  return function MockImage({ src, alt, ...props }: any) {
+  return function MockImage({
+    src,
+    alt,
+    ...props
+  }: { src: string; alt: string } & Record<string, unknown>) {
+    // eslint-disable-next-line @next/next/no-img-element
     return <img src={src} alt={alt} {...props} />;
   };
 });
 
 // Mock new UI components
+interface MockFormInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
+  label: string;
+  placeholder?: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  disabled?: boolean;
+  iconPath?: string;
+  error?: string;
+  id: string;
+}
+
 jest.mock('@/presentation/components/ui/FormInput', () => {
   return function MockFormInput({
     label,
@@ -35,11 +52,10 @@ jest.mock('@/presentation/components/ui/FormInput', () => {
     value,
     onChange,
     disabled,
-    iconPath,
     error,
     id,
     ...props
-  }: any) {
+  }: MockFormInputProps) {
     return (
       <div>
         <label htmlFor={id}>{label}</label>
@@ -58,6 +74,11 @@ jest.mock('@/presentation/components/ui/FormInput', () => {
   };
 });
 
+interface MockActionButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  isLoading?: boolean;
+  loadingText?: string;
+}
+
 jest.mock('@/presentation/components/ui/ActionButton', () => {
   return function MockActionButton({
     children,
@@ -67,7 +88,7 @@ jest.mock('@/presentation/components/ui/ActionButton', () => {
     loadingText,
     type,
     ...props
-  }: any) {
+  }: MockActionButtonProps) {
     return (
       <button
         onClick={onClick}
@@ -83,13 +104,13 @@ jest.mock('@/presentation/components/ui/ActionButton', () => {
 });
 
 jest.mock('@/presentation/components/ui/LogoBrand', () => {
-  return function MockLogoBrand({ title }: any) {
+  return function MockLogoBrand({ title }: { title?: string }) {
     return <div data-testid="logo-brand">{title || 'DigiCard'}</div>;
   };
 });
 
 jest.mock('@/presentation/components/ui/AuthRedirectScreen', () => {
-  return function MockAuthRedirectScreen({ variant }: any) {
+  return function MockAuthRedirectScreen({ variant }: { variant?: string }) {
     return (
       <div data-testid="auth-redirect" data-variant={variant}>
         Redirecting...
@@ -99,7 +120,13 @@ jest.mock('@/presentation/components/ui/AuthRedirectScreen', () => {
 });
 
 jest.mock('@/presentation/components/ui/GradientBackground', () => {
-  return function MockGradientBackground({ children, variant }: any) {
+  return function MockGradientBackground({
+    children,
+    variant,
+  }: {
+    children?: React.ReactNode;
+    variant?: string;
+  }) {
     return (
       <div data-testid="gradient-background" data-variant={variant}>
         {children}

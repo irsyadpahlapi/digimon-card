@@ -7,13 +7,22 @@ import { makeStarterPack, STARTER_PACKS } from '@/__tests__/test-utils';
 // Mock Next.js Image component
 jest.mock('next/image', () => ({
   __esModule: true,
-  default: ({ src, alt, ...props }: any) => (
+  // Provide a minimal typed mock without using any
+  default: ({ src, alt, ...props }: { src: string; alt: string } & Record<string, unknown>) => (
     // eslint-disable-next-line @next/next/no-img-element
     <img src={src} alt={alt} {...props} />
   ),
 }));
 
 // Mock ActionButton component
+interface MockActionButtonProps
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onClick'> {
+  onClick?: () => void;
+  isLoading?: boolean;
+  variant?: string;
+  size?: string;
+}
+
 jest.mock('@/presentation/components/ui/ActionButton', () => {
   return function MockActionButton({
     children,
@@ -23,7 +32,7 @@ jest.mock('@/presentation/components/ui/ActionButton', () => {
     variant,
     size,
     ...props
-  }: any) {
+  }: MockActionButtonProps) {
     return (
       <button
         onClick={onClick}

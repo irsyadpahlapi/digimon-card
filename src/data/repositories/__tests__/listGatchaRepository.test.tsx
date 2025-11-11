@@ -254,7 +254,13 @@ describe('ListGatchaImpl Repository', () => {
       });
 
       it('should handle malformed data gracefully', async () => {
-        const malformedData = [makeDetailDigimonEntity({ id: null as any, name: null as any })];
+        const malformedData = [
+          makeDetailDigimonEntity({
+            // Deliberately malformed values cast through unknown to avoid any
+            id: null as unknown as number,
+            name: null as unknown as string,
+          }),
+        ];
 
         mockBuyStarterpack.getListGacha.mockResolvedValue(malformedData);
 
@@ -433,8 +439,8 @@ describe('ListGatchaImpl Repository', () => {
       };
 
       MockedBuyStarterpack.mockImplementationOnce(
-        () => mockInstance1 as any,
-      ).mockImplementationOnce(() => mockInstance2 as any);
+        () => mockInstance1 as unknown as BuyStarterpack,
+      ).mockImplementationOnce(() => mockInstance2 as unknown as BuyStarterpack);
 
       const repo1 = new ListGatchaImpl();
       const repo2 = new ListGatchaImpl();

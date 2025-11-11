@@ -8,32 +8,11 @@ import {
 } from '../utils';
 
 // Helper tables to reduce duplication
-const LEVEL_CATEGORY_CASES: Array<[string, string]> = [
-  ['Child', 'Rookie'],
-  ['Adult', 'Champion'],
-  ['Armor', 'Champion'],
-  ['Unknown', 'Champion'],
-  ['Hybrid', 'Champion'],
-  ['Ultimate', 'Ultimate'],
-  ['Perfect', 'Mega'],
-];
-
-const INVALID_CATEGORY_INPUTS: string[] = ['Rookie', 'Champion', '', 'Invalid'];
-
 const STARTER_PACK_PRICE_CASES: Array<[string, number]> = [
   ['C', 5],
   ['B', 10],
   ['A', 15],
   ['R', 20],
-];
-
-const UNKNOWN_PACK_TYPES: string[] = ['X', '', 'Invalid'];
-
-const SELLING_PRICE_EVOLUTION_CASES: Array<[string, number]> = [
-  ['Rookie', 5],
-  ['Champion', 10],
-  ['Ultimate', 20],
-  ['Mega', 30],
 ];
 
 const SELLING_PRICE_NO_EVOLUTION_CATEGORIES: string[] = ['Rookie', 'Champion', 'Ultimate', 'Mega'];

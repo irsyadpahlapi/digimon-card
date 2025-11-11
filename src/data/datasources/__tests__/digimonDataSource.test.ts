@@ -8,6 +8,7 @@ globalThis.fetch = jest.fn();
 describe('DigimonAPI DataSource', () => {
   let digimonAPI: DigimonAPI;
   const mockFetch = fetch as jest.MockedFunction<typeof fetch>;
+  const makeResponse = (overrides: Partial<Response>): Response => overrides as unknown as Response;
 
   beforeEach(() => {
     digimonAPI = new DigimonAPI();
@@ -35,11 +36,13 @@ describe('DigimonAPI DataSource', () => {
     );
 
     it('should fetch list of digimon with level parameter', async () => {
-      mockFetch.mockResolvedValueOnce({
-        json: jest.fn().mockResolvedValue(mockListDigimonResponse),
-        ok: true,
-        status: 200,
-      } as any);
+      mockFetch.mockResolvedValueOnce(
+        makeResponse({
+          json: jest.fn().mockResolvedValue(mockListDigimonResponse) as unknown as Response['json'],
+          ok: true,
+          status: 200,
+        }),
+      );
 
       const result = await digimonAPI.getListDigimon('Rookie');
 
@@ -50,11 +53,13 @@ describe('DigimonAPI DataSource', () => {
     });
 
     it('should fetch list of digimon with level and pageSize parameters', async () => {
-      mockFetch.mockResolvedValueOnce({
-        json: jest.fn().mockResolvedValue(mockListDigimonResponse),
-        ok: true,
-        status: 200,
-      } as any);
+      mockFetch.mockResolvedValueOnce(
+        makeResponse({
+          json: jest.fn().mockResolvedValue(mockListDigimonResponse) as unknown as Response['json'],
+          ok: true,
+          status: 200,
+        }),
+      );
 
       const result = await digimonAPI.getListDigimon('Champion', 50);
 
@@ -65,11 +70,13 @@ describe('DigimonAPI DataSource', () => {
     });
 
     it('should handle empty level parameter', async () => {
-      mockFetch.mockResolvedValueOnce({
-        json: jest.fn().mockResolvedValue(mockListDigimonResponse),
-        ok: true,
-        status: 200,
-      } as any);
+      mockFetch.mockResolvedValueOnce(
+        makeResponse({
+          json: jest.fn().mockResolvedValue(mockListDigimonResponse) as unknown as Response['json'],
+          ok: true,
+          status: 200,
+        }),
+      );
 
       const result = await digimonAPI.getListDigimon('');
 
@@ -78,11 +85,13 @@ describe('DigimonAPI DataSource', () => {
     });
 
     it('should handle pageSize of 0', async () => {
-      mockFetch.mockResolvedValueOnce({
-        json: jest.fn().mockResolvedValue(mockListDigimonResponse),
-        ok: true,
-        status: 200,
-      } as any);
+      mockFetch.mockResolvedValueOnce(
+        makeResponse({
+          json: jest.fn().mockResolvedValue(mockListDigimonResponse) as unknown as Response['json'],
+          ok: true,
+          status: 200,
+        }),
+      );
 
       const result = await digimonAPI.getListDigimon('Ultimate', 0);
 
@@ -100,11 +109,15 @@ describe('DigimonAPI DataSource', () => {
     });
 
     it('should handle malformed JSON response', async () => {
-      mockFetch.mockResolvedValueOnce({
-        json: jest.fn().mockRejectedValue(new Error('Invalid JSON')),
-        ok: true,
-        status: 200,
-      } as any);
+      mockFetch.mockResolvedValueOnce(
+        makeResponse({
+          json: jest
+            .fn()
+            .mockRejectedValue(new Error('Invalid JSON')) as unknown as Response['json'],
+          ok: true,
+          status: 200,
+        }),
+      );
 
       await expect(digimonAPI.getListDigimon('Rookie')).rejects.toThrow('Invalid JSON');
     });
@@ -114,11 +127,15 @@ describe('DigimonAPI DataSource', () => {
     const mockDetailDigimonResponse: DetailDigimonEntity = makeDetailDigimonEntity();
 
     it('should fetch digimon by ID', async () => {
-      mockFetch.mockResolvedValueOnce({
-        json: jest.fn().mockResolvedValue(mockDetailDigimonResponse),
-        ok: true,
-        status: 200,
-      } as any);
+      mockFetch.mockResolvedValueOnce(
+        makeResponse({
+          json: jest
+            .fn()
+            .mockResolvedValue(mockDetailDigimonResponse) as unknown as Response['json'],
+          ok: true,
+          status: 200,
+        }),
+      );
 
       const result = await digimonAPI.getDigimonById(1);
 
@@ -131,11 +148,13 @@ describe('DigimonAPI DataSource', () => {
     it('should fetch digimon with different ID', async () => {
       const mockDigimon2 = { ...mockDetailDigimonResponse, id: 42, name: 'TestDigimon' };
 
-      mockFetch.mockResolvedValueOnce({
-        json: jest.fn().mockResolvedValue(mockDigimon2),
-        ok: true,
-        status: 200,
-      } as any);
+      mockFetch.mockResolvedValueOnce(
+        makeResponse({
+          json: jest.fn().mockResolvedValue(mockDigimon2) as unknown as Response['json'],
+          ok: true,
+          status: 200,
+        }),
+      );
 
       const result = await digimonAPI.getDigimonById(42);
 
@@ -150,11 +169,15 @@ describe('DigimonAPI DataSource', () => {
         priorEvolutions: [{ id: 0, digimon: 'Some prior evolution' }],
       };
 
-      mockFetch.mockResolvedValueOnce({
-        json: jest.fn().mockResolvedValue(responseWithPriorEvolutions),
-        ok: true,
-        status: 200,
-      } as any);
+      mockFetch.mockResolvedValueOnce(
+        makeResponse({
+          json: jest
+            .fn()
+            .mockResolvedValue(responseWithPriorEvolutions) as unknown as Response['json'],
+          ok: true,
+          status: 200,
+        }),
+      );
 
       const result = await digimonAPI.getDigimonById(1);
 
@@ -171,21 +194,29 @@ describe('DigimonAPI DataSource', () => {
     });
 
     it('should handle invalid JSON response for detail', async () => {
-      mockFetch.mockResolvedValueOnce({
-        json: jest.fn().mockRejectedValue(new Error('Invalid JSON')),
-        ok: true,
-        status: 200,
-      } as any);
+      mockFetch.mockResolvedValueOnce(
+        makeResponse({
+          json: jest
+            .fn()
+            .mockRejectedValue(new Error('Invalid JSON')) as unknown as Response['json'],
+          ok: true,
+          status: 200,
+        }),
+      );
 
       await expect(digimonAPI.getDigimonById(1)).rejects.toThrow('Invalid JSON');
     });
 
     it('should handle zero ID', async () => {
-      mockFetch.mockResolvedValueOnce({
-        json: jest.fn().mockResolvedValue(mockDetailDigimonResponse),
-        ok: true,
-        status: 200,
-      } as any);
+      mockFetch.mockResolvedValueOnce(
+        makeResponse({
+          json: jest
+            .fn()
+            .mockResolvedValue(mockDetailDigimonResponse) as unknown as Response['json'],
+          ok: true,
+          status: 200,
+        }),
+      );
 
       const result = await digimonAPI.getDigimonById(0);
 
@@ -194,11 +225,15 @@ describe('DigimonAPI DataSource', () => {
     });
 
     it('should handle negative ID', async () => {
-      mockFetch.mockResolvedValueOnce({
-        json: jest.fn().mockResolvedValue(mockDetailDigimonResponse),
-        ok: true,
-        status: 200,
-      } as any);
+      mockFetch.mockResolvedValueOnce(
+        makeResponse({
+          json: jest
+            .fn()
+            .mockResolvedValue(mockDetailDigimonResponse) as unknown as Response['json'],
+          ok: true,
+          status: 200,
+        }),
+      );
 
       const result = await digimonAPI.getDigimonById(-1);
 
@@ -209,11 +244,11 @@ describe('DigimonAPI DataSource', () => {
 
   describe('API Integration', () => {
     it('should use correct base URL for all requests', async () => {
-      const mockResponse = {
-        json: jest.fn().mockResolvedValue({}),
+      const mockResponse = makeResponse({
+        json: jest.fn().mockResolvedValue({}) as unknown as Response['json'],
         ok: true,
         status: 200,
-      } as any;
+      });
 
       mockFetch.mockResolvedValue(mockResponse);
 
@@ -227,11 +262,13 @@ describe('DigimonAPI DataSource', () => {
     });
 
     it('should construct URLs correctly with multiple parameters', async () => {
-      mockFetch.mockResolvedValueOnce({
-        json: jest.fn().mockResolvedValue({}),
-        ok: true,
-        status: 200,
-      } as any);
+      mockFetch.mockResolvedValueOnce(
+        makeResponse({
+          json: jest.fn().mockResolvedValue({}) as unknown as Response['json'],
+          ok: true,
+          status: 200,
+        }),
+      );
 
       await digimonAPI.getListDigimon('Ultimate', 25);
 
@@ -240,11 +277,13 @@ describe('DigimonAPI DataSource', () => {
     });
 
     it('should handle special characters in level parameter', async () => {
-      mockFetch.mockResolvedValueOnce({
-        json: jest.fn().mockResolvedValue({}),
-        ok: true,
-        status: 200,
-      } as any);
+      mockFetch.mockResolvedValueOnce(
+        makeResponse({
+          json: jest.fn().mockResolvedValue({}) as unknown as Response['json'],
+          ok: true,
+          status: 200,
+        }),
+      );
 
       await digimonAPI.getListDigimon('In-Training');
 
@@ -270,7 +309,7 @@ describe('DigimonAPI DataSource', () => {
 
     it('should handle failed response.json() calls', async () => {
       // Mock fetch to return undefined/null response (simulating network issues)
-      mockFetch.mockResolvedValueOnce(undefined as any);
+      mockFetch.mockResolvedValueOnce(undefined as unknown as Response);
 
       await expect(digimonAPI.getDigimonById(9999)).rejects.toThrow(
         "Cannot read properties of undefined (reading 'json')",

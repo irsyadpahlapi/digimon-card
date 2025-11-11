@@ -60,10 +60,11 @@ export const mockProfile = {
 };
 
 // Helper to mock localStorage
-export const mockLocalStorage = (data: Record<string, any>) => {
+export const mockLocalStorage = (data: Record<string, unknown>) => {
   const localStorageMock = {
     getItem: jest.fn((key: string) => {
-      return data[key] ? JSON.stringify(data[key]) : null;
+      const value = data[key];
+      return value !== undefined ? JSON.stringify(value) : null;
     }),
     setItem: jest.fn(),
     removeItem: jest.fn(),
@@ -82,24 +83,20 @@ export const mockLocalStorage = (data: Record<string, any>) => {
 export const waitFor = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Validation helpers to reduce duplication in entity tests
-export function validatePropertyTypes<T extends Record<string, any>>(
-  obj: T,
-  expectedTypes: Record<keyof T, string>,
-) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function validatePropertyTypes(obj: any, expectedTypes: Record<string, string>) {
   for (const [key, expectedType] of Object.entries(expectedTypes)) {
-    const actualValue = obj[key as keyof T];
+    const actualValue = obj[key];
     const actualType = Array.isArray(actualValue) ? 'array' : typeof actualValue;
 
     expect(actualType).toBe(expectedType);
   }
 }
 
-export function validateRequiredProperties<T extends Record<string, any>>(
-  obj: T,
-  requiredProps: (keyof T)[],
-) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function validateRequiredProperties(obj: any, requiredProps: string[]) {
   for (const prop of requiredProps) {
-    expect(obj).toHaveProperty(prop as string);
+    expect(obj).toHaveProperty(prop);
   }
 }
 

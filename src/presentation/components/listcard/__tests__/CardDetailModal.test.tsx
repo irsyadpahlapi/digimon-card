@@ -6,7 +6,10 @@ import { DetailDigimonRepository } from '@/core/repositories/myCardRepository';
 // Mock Next.js Image component
 jest.mock('next/image', () => ({
   __esModule: true,
-  default: ({ src, alt, ...props }: any) => <img src={src} alt={alt} {...props} />,
+  default: ({ src, alt, ...props }: { src: string; alt: string } & Record<string, unknown>) => (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={src} alt={alt} {...props} />
+  ),
 }));
 
 describe('CardDetailModal Component', () => {

@@ -37,23 +37,25 @@ jest.mock('../../../hooks/useLocalStorage', () => ({
 
 // Mock Image component
 jest.mock('next/image', () => {
-  const MockedImage = (props: any) => {
-    const { src, alt, className, onClick, ...rest } = props;
-    return (
-      <button
-        onClick={onClick}
-        className={className}
-        aria-label={alt}
-        style={{
-          backgroundImage: `url(${typeof src === 'string' ? src : '/mock-image.jpg'})`,
-          border: 'none',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-        {...rest}
-      />
-    );
-  };
+  interface MockedImageProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+    src: string;
+    alt: string;
+    className?: string;
+  }
+  const MockedImage = ({ src, alt, className, onClick, ...rest }: MockedImageProps) => (
+    <button
+      onClick={onClick}
+      className={className}
+      aria-label={alt}
+      style={{
+        backgroundImage: `url(${src || '/mock-image.jpg'})`,
+        border: 'none',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+      {...rest}
+    />
+  );
   MockedImage.displayName = 'MockedImage';
   return MockedImage;
 });
@@ -133,10 +135,17 @@ const mockListGatcha = {
   ]),
 };
 
-// Apply mocks
-const { ListMyCard } = require('../../../../core/usecases/myCard');
-const { ListGatcha } = require('../../../../core/usecases/listGatcha');
-const useLocalStorage = require('../../../hooks/useLocalStorage').default;
+// Apply mocks via ESM imports (after jest.mock declarations)
+import { ListMyCard as ListMyCardOriginal } from '../../../../core/usecases/myCard';
+import { ListGatcha as ListGatchaOriginal } from '../../../../core/usecases/listGatcha';
+import useLocalStorage from '../../../hooks/useLocalStorage';
+
+// Cast constructors that Jest auto-mocked (via jest.mock above) into jest.Mock so we can
+// attach mockImplementation without using "any". The runtime value is already a jest.fn()
+// because of the manual factory in jest.mock; this cast just informs TypeScript.
+const ListMyCard = ListMyCardOriginal as unknown as jest.Mock;
+const ListGatcha = ListGatchaOriginal as unknown as jest.Mock;
+const mockUseLocalStorage = useLocalStorage as jest.MockedFunction<typeof useLocalStorage>;
 
 ListMyCard.mockImplementation(() => mockListMyCard);
 ListGatcha.mockImplementation(() => mockListGatcha);
@@ -145,7 +154,7 @@ describe('HomePage Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     // Mock useLocalStorage to return our mock data
-    useLocalStorage.mockImplementation((key: string, defaultValue: any) => {
+    mockUseLocalStorage.mockImplementation((key: string, defaultValue: unknown) => {
       if (key === 'Profile') {
         return [mockProfile, mockSetProfile];
       }
@@ -291,7 +300,7 @@ describe('HomePage Component', () => {
 
     it('should execute handleBuyPack function with insufficient coins', async () => {
       // Mock user with insufficient coins
-      useLocalStorage.mockImplementation((key: string, defaultValue: any) => {
+      mockUseLocalStorage.mockImplementation((key: string, defaultValue: unknown) => {
         if (key === 'Profile') {
           return [{ ...mockProfile, coin: 1 }, mockSetProfile];
         }
@@ -629,7 +638,7 @@ describe('HomePage Component', () => {
 describe('HomePage Component Functions - Additional Coverage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    useLocalStorage.mockImplementation((key: string, defaultValue: any) => {
+    mockUseLocalStorage.mockImplementation((key: string, defaultValue: unknown) => {
       if (key === 'Profile') {
         return [mockProfile, mockSetProfile];
       }

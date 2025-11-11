@@ -5,7 +5,13 @@ import ActionButton from '../ActionButton';
 
 // Mock LoadingSpinner
 jest.mock('../LoadingSpinner', () => {
-  return function MockLoadingSpinner({ size, color }: any) {
+  return function MockLoadingSpinner({
+    size,
+    color,
+  }: {
+    size?: 'sm' | 'md' | 'lg';
+    color?: string;
+  }) {
     return (
       <div data-testid="loading-spinner" data-size={size} data-color={color}>
         Spinner

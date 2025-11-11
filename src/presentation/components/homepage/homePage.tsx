@@ -95,7 +95,7 @@ export default function HomePage() {
     };
   }, [hasMore, loadMoreCards]);
 
-  const handleCardClick = (item: DetailDigimonRepository, index: number) => {
+  const handleCardClick = (item: DetailDigimonRepository) => {
     setSelectedCard(item);
     setIsModalOpen(true);
   };
@@ -259,8 +259,8 @@ export default function HomePage() {
           />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {displayedCards.map((item, index) => (
-            <Card key={item.id} item={item} onClick={() => handleCardClick(item, index)} />
+          {displayedCards.map((item) => (
+            <Card key={item.id} item={item} onClick={() => handleCardClick(item)} />
           ))}
         </div>
 

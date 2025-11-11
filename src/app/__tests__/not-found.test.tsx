@@ -170,7 +170,7 @@ describe('NotFound Page', () => {
     const { unmount, rerender } = render(<NotFound />);
 
     // First render check
-    let container = document.body;
+    const container = document.body;
     let svg = container.querySelector('svg');
     expect(svg).toBeInTheDocument();
 

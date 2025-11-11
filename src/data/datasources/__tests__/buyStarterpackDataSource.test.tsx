@@ -8,11 +8,14 @@ jest.mock('../digimonDataSource');
 const MockedDigimonAPI = DigimonAPI as jest.MockedClass<typeof DigimonAPI>;
 
 // Helper functions to reduce nesting
-const getCallsForLevel = (mock: jest.MockedFunction<any>, level: string) => {
-  return mock.mock.calls.filter((call: any[]) => call[0] === level);
+type LevelArg = string;
+type GetListDigimonFn = jest.MockedFunction<(level: LevelArg) => Promise<unknown>>;
+
+const getCallsForLevel = (mock: GetListDigimonFn, level: LevelArg) => {
+  return mock.mock.calls.filter((call: readonly [LevelArg]) => call[0] === level);
 };
 
-const expectCallCount = (mock: jest.MockedFunction<any>, level: string, expectedCount: number) => {
+const expectCallCount = (mock: GetListDigimonFn, level: LevelArg, expectedCount: number) => {
   const calls = getCallsForLevel(mock, level);
   expect(calls).toHaveLength(expectedCount);
 };
@@ -288,8 +291,8 @@ describe('BuyStarterpack DataSource', () => {
         expect(buyStarterpack.getListChampion).toHaveBeenCalledTimes(2);
 
         // Verify exact call counts using helper functions
-        expectCallCount(buyStarterpack.getListDigimon as jest.MockedFunction<any>, 'Child', 2);
-        expectCallCount(buyStarterpack.getListDigimon as jest.MockedFunction<any>, 'Ultimate', 1);
+        expectCallCount(buyStarterpack.getListDigimon as GetListDigimonFn, 'Child', 2);
+        expectCallCount(buyStarterpack.getListDigimon as GetListDigimonFn, 'Ultimate', 1);
       });
     });
 
@@ -300,8 +303,8 @@ describe('BuyStarterpack DataSource', () => {
         expect(result).toHaveLength(5);
         expect(buyStarterpack.getListChampion).toHaveBeenCalledTimes(2);
 
-        expectCallCount(buyStarterpack.getListDigimon as jest.MockedFunction<any>, 'Child', 1);
-        expectCallCount(buyStarterpack.getListDigimon as jest.MockedFunction<any>, 'Ultimate', 2);
+        expectCallCount(buyStarterpack.getListDigimon as GetListDigimonFn, 'Child', 1);
+        expectCallCount(buyStarterpack.getListDigimon as GetListDigimonFn, 'Ultimate', 2);
       });
     });
 
@@ -312,8 +315,8 @@ describe('BuyStarterpack DataSource', () => {
         expect(result).toHaveLength(4);
         expect(buyStarterpack.getListChampion).toHaveBeenCalledTimes(1);
 
-        expectCallCount(buyStarterpack.getListDigimon as jest.MockedFunction<any>, 'Ultimate', 2);
-        expectCallCount(buyStarterpack.getListDigimon as jest.MockedFunction<any>, 'Perfect', 1);
+        expectCallCount(buyStarterpack.getListDigimon as GetListDigimonFn, 'Ultimate', 2);
+        expectCallCount(buyStarterpack.getListDigimon as GetListDigimonFn, 'Perfect', 1);
       });
     });
 

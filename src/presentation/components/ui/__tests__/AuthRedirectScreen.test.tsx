@@ -10,7 +10,13 @@ jest.mock('next/navigation', () => ({
 
 // Mock the child components
 jest.mock('../LoadingSpinner', () => {
-  return function MockLoadingSpinner({ size, color }: any) {
+  return function MockLoadingSpinner({
+    size,
+    color,
+  }: {
+    size?: 'sm' | 'md' | 'lg';
+    color?: string;
+  }) {
     return (
       <div data-testid="loading-spinner" data-size={size} data-color={color}>
         Loading Spinner
@@ -286,7 +292,9 @@ describe('AuthRedirectScreen Component', () => {
   describe('Props Validation', () => {
     it('should handle unknown variant gracefully', () => {
       // TypeScript would catch this, but test runtime behavior
-      const { container } = render(<AuthRedirectScreen variant={'unknown' as any} />);
+      const { container } = render(
+        <AuthRedirectScreen variant={'unknown' as 'toHome' | 'toLogin'} />,
+      );
 
       // Should fallback to default behavior (toHome)
       expect(container).toBeInTheDocument();

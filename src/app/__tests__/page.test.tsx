@@ -5,9 +5,9 @@ import React from 'react';
 
 // Mock the dynamic import with more comprehensive implementation
 jest.mock('next/dynamic', () => {
-  return jest.fn().mockImplementation((importFunc, options = {}) => {
+  return jest.fn().mockImplementation(() => {
     // Create a mock component that respects dynamic options
-    const MockedHomePage = (props: any) => {
+    const MockedHomePage = (props: Record<string, unknown>) => {
       // For testing purposes, we don't need the loading state simulation
       // This ensures predictable test behavior without random values
       return (
@@ -37,7 +37,7 @@ jest.mock('@/presentation/hooks/useAuthCheck', () => ({
 
 // Mock AuthRedirectScreen component
 jest.mock('@/presentation/components/ui/AuthRedirectScreen', () => {
-  return function MockAuthRedirectScreen({ variant }: any) {
+  return function MockAuthRedirectScreen({ variant }: { variant?: string }) {
     return (
       <div data-testid="auth-redirect" data-variant={variant}>
         <div>Redirecting...</div>
@@ -59,7 +59,7 @@ describe('Homepage Component', () => {
   let mockRedirectToHome: jest.Mock;
   let mockLogout: jest.Mock;
 
-  const createMockAuthReturn = (overrides: any = {}) => ({
+  const createMockAuthReturn = (overrides: Record<string, unknown> = {}) => ({
     redirectToLogin: mockRedirectToLogin,
     redirectToHome: mockRedirectToHome,
     logout: mockLogout,
@@ -77,7 +77,7 @@ describe('Homepage Component', () => {
   });
 
   // Helpers to reduce duplication across tests in this suite
-  const setAuthState = (overrides: any = {}) => {
+  const setAuthState = (overrides: Record<string, unknown> = {}) => {
     mockUseAuthCheck.mockReturnValue(
       createMockAuthReturn({
         ...overrides,
@@ -85,7 +85,7 @@ describe('Homepage Component', () => {
     );
   };
 
-  const renderWithAuth = (overrides: any = {}) => {
+  const renderWithAuth = (overrides: Record<string, unknown> = {}) => {
     setAuthState(overrides);
     return render(<Homepage />);
   };
@@ -327,7 +327,7 @@ describe('Homepage Component', () => {
 
     it('should execute all conditional branches', () => {
       // Test isLoading === true branch
-      let { rerender } = renderWithAuth({ isLoading: true, isAuthenticated: true });
+      const { rerender } = renderWithAuth({ isLoading: true, isAuthenticated: true });
       expect(screen.getByTestId('auth-redirect')).toBeInTheDocument();
 
       // Test !isAuthenticated branch (when not loading)
