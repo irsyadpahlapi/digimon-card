@@ -189,8 +189,8 @@ export default function HomePage() {
   };
 
   const handleBuyPack = async (pack: (typeof STARTER_PACK_ITEMS)[0]) => {
-    // Check rate limit for buying packs (max 3 purchases per minute)
-    if (!checkRateLimit('buyPack', 3, 60000)) {
+    // Check rate limit for buying packs (max 10 purchases per minute)
+    if (!checkRateLimit('buyPack', 10, 60000)) {
       setToastMessage('Too many purchase attempts. Please wait a moment.');
       setToastType('error');
       setShowToast(true);

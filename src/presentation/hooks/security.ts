@@ -113,6 +113,19 @@ export function checkRateLimit(key: string, maxAttempts = 5, windowMs = 60000): 
 }
 
 /**
+ * Clear rate limit for a specific key
+ * Useful for debugging or resetting rate limits
+ */
+export function clearRateLimit(key: string): void {
+  try {
+    const storageKey = `rateLimit_${key}`;
+    localStorage.removeItem(storageKey);
+  } catch {
+    // Silent fail if localStorage is not available
+  }
+}
+
+/**
  * Safely parse JSON with error handling
  */
 export function safeJsonParse<T>(json: string, fallback: T): T {

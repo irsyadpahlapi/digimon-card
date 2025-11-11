@@ -253,6 +253,23 @@ This project implements multiple layers of security to protect user data and pre
 - **API Protection**: Timeout protection (10s), error handling, and response validation in API client
 - **Environment Validation**: Runtime validation of required environment variables
 - **Rate Limiting**: Client-side rate limiting utilities to prevent abuse
+  - Evolution: Max 5 attempts per minute
+  - Sell: Max 10 attempts per minute
+  - Buy Pack: Max 10 attempts per minute
+
+### Rate Limit Troubleshooting
+
+If you encounter "Too many attempts" errors, you can clear the rate limit from browser console:
+
+```javascript
+// Clear all rate limits
+localStorage.removeItem('rateLimit_buyPack');
+localStorage.removeItem('rateLimit_evolve');
+localStorage.removeItem('rateLimit_sell');
+
+// Or clear all localStorage (will reset your game)
+localStorage.clear();
+```
 
 ### Security Scripts
 

@@ -4,6 +4,7 @@ import {
   sanitizeNumber,
   secureCompare,
   checkRateLimit,
+  clearRateLimit,
   safeJsonParse,
   validateApiResponse,
 } from '../security';
@@ -220,6 +221,49 @@ describe('Security Utilities', () => {
       expect(checkRateLimit('test', 5, 60000)).toBe(true);
 
       getItemSpy.mockRestore();
+    });
+  });
+
+  describe('clearRateLimit', () => {
+    beforeEach(() => {
+      localStorage.clear();
+    });
+
+    it('should clear rate limit data for a key', () => {
+      // Set up some rate limit data
+      checkRateLimit('test', 5, 60000);
+      expect(localStorage.getItem('rateLimit_test')).not.toBeNull();
+
+      // Clear the rate limit
+      clearRateLimit('test');
+      expect(localStorage.getItem('rateLimit_test')).toBeNull();
+    });
+
+    it('should handle clearing non-existent key', () => {
+      expect(() => clearRateLimit('nonexistent')).not.toThrow();
+    });
+
+    it('should handle localStorage errors gracefully', () => {
+      const removeItemSpy = jest.spyOn(Storage.prototype, 'removeItem');
+      removeItemSpy.mockImplementation(() => {
+        throw new Error('Storage error');
+      });
+
+      expect(() => clearRateLimit('test')).not.toThrow();
+
+      removeItemSpy.mockRestore();
+    });
+
+    it('should allow new attempts after clearing', () => {
+      // Fill up the rate limit
+      for (let i = 0; i < 5; i++) {
+        checkRateLimit('test', 5, 60000);
+      }
+      expect(checkRateLimit('test', 5, 60000)).toBe(false);
+
+      // Clear and try again
+      clearRateLimit('test');
+      expect(checkRateLimit('test', 5, 60000)).toBe(true);
     });
   });
 
