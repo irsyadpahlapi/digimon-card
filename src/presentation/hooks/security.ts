@@ -83,10 +83,19 @@ export function checkRateLimit(key: string, maxAttempts = 5, windowMs = 60000): 
 
   try {
     const data = localStorage.getItem(storageKey);
-    const attempts = data ? JSON.parse(data) : [];
+
+    // Safely parse the data
+    let attempts: number[] = [];
+    if (data) {
+      const parsed = JSON.parse(data);
+      // Validate that parsed data is an array of numbers
+      if (Array.isArray(parsed) && parsed.every((item) => typeof item === 'number')) {
+        attempts = parsed;
+      }
+    }
 
     // Filter out old attempts outside the time window
-    const recentAttempts = attempts.filter((timestamp: number) => now - timestamp < windowMs);
+    const recentAttempts = attempts.filter((timestamp) => now - timestamp < windowMs);
 
     if (recentAttempts.length >= maxAttempts) {
       return false; // Rate limit exceeded
@@ -123,6 +132,12 @@ export function validateApiResponse(data: unknown): boolean {
     return false;
   }
 
-  // Add specific validation logic based on your API structure
-  return true;
+  // Validate basic structure exists
+  const response = data as Record<string, unknown>;
+
+  // Check if it has expected properties for list response or detail response
+  const hasListStructure = 'content' in response && Array.isArray(response.content);
+  const hasDetailStructure = 'id' in response && 'name' in response;
+
+  return hasListStructure || hasDetailStructure;
 }
