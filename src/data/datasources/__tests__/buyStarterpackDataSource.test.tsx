@@ -8,14 +8,13 @@ jest.mock('../digimonDataSource');
 const MockedDigimonAPI = DigimonAPI as jest.MockedClass<typeof DigimonAPI>;
 
 // Helper functions to reduce nesting
-type LevelArg = string;
-type GetListDigimonFn = jest.MockedFunction<(level: LevelArg) => Promise<unknown>>;
+type GetListDigimonFn = jest.MockedFunction<(level: string) => Promise<unknown>>;
 
-const getCallsForLevel = (mock: GetListDigimonFn, level: LevelArg) => {
-  return mock.mock.calls.filter((call: readonly [LevelArg]) => call[0] === level);
+const getCallsForLevel = (mock: GetListDigimonFn, level: string) => {
+  return mock.mock.calls.filter((call: readonly [string]) => call[0] === level);
 };
 
-const expectCallCount = (mock: GetListDigimonFn, level: LevelArg, expectedCount: number) => {
+const expectCallCount = (mock: GetListDigimonFn, level: string, expectedCount: number) => {
   const calls = getCallsForLevel(mock, level);
   expect(calls).toHaveLength(expectedCount);
 };

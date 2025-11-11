@@ -4,16 +4,6 @@ import '@testing-library/jest-dom';
 import StarterPack from '../staterPack';
 import { makeStarterPack, STARTER_PACKS } from '@/__tests__/test-utils';
 
-// Mock Next.js Image component
-jest.mock('next/image', () => ({
-  __esModule: true,
-  // Provide a minimal typed mock without using any
-  default: ({ src, alt, ...props }: { src: string; alt: string } & Record<string, unknown>) => (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img src={src} alt={alt} {...props} />
-  ),
-}));
-
 // Mock ActionButton component
 interface MockActionButtonProps
   extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onClick'> {

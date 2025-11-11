@@ -17,7 +17,7 @@ describe('Digimon Entities', () => {
         image: 'agumon.jpg',
       };
 
-      validatePropertyTypes(mockContent, {
+      validatePropertyTypes(mockContent as unknown as Record<string, unknown>, {
         id: 'number',
         name: 'string',
         href: 'string',
@@ -43,7 +43,12 @@ describe('Digimon Entities', () => {
         image: 'test.jpg',
       });
 
-      validateRequiredProperties(content, ['id', 'name', 'href', 'image']);
+      validateRequiredProperties(content as unknown as Record<string, unknown>, [
+        'id',
+        'name',
+        'href',
+        'image',
+      ]);
     });
   });
 
@@ -114,7 +119,7 @@ describe('Digimon Entities', () => {
         },
       };
 
-      validatePropertyTypes(mockListEntity.pageable, {
+      validatePropertyTypes(mockListEntity.pageable as unknown as Record<string, unknown>, {
         currentPage: 'number',
         elementsOnPage: 'number',
         totalElements: 'number',
@@ -207,7 +212,10 @@ describe('Digimon Entities', () => {
       };
 
       for (const level of mockDetailEntity.levels) {
-        validatePropertyTypes(level, { id: 'number', level: 'string' });
+        validatePropertyTypes(level as unknown as Record<string, unknown>, {
+          id: 'number',
+          level: 'string',
+        });
         expect(level.id).toBeGreaterThan(0);
         expect(level.level.length).toBeGreaterThan(0);
       }
@@ -232,7 +240,10 @@ describe('Digimon Entities', () => {
       };
 
       for (const type of mockDetailEntity.types) {
-        validatePropertyTypes(type, { id: 'number', type: 'string' });
+        validatePropertyTypes(type as unknown as Record<string, unknown>, {
+          id: 'number',
+          type: 'string',
+        });
         expect(type.id).toBeGreaterThan(0);
         expect(['Vaccine', 'Data', 'Virus']).toContain(type.type);
       }
@@ -256,7 +267,10 @@ describe('Digimon Entities', () => {
       };
 
       for (const attribute of mockDetailEntity.attributes) {
-        validatePropertyTypes(attribute, { id: 'number', attribute: 'string' });
+        validatePropertyTypes(attribute as unknown as Record<string, unknown>, {
+          id: 'number',
+          attribute: 'string',
+        });
         expect(attribute.id).toBeGreaterThan(0);
         expect(attribute.attribute.length).toBeGreaterThan(0);
       }
@@ -333,7 +347,7 @@ describe('Digimon Entities', () => {
       };
 
       for (const desc of mockDetailEntity.descriptions) {
-        validatePropertyTypes(desc, {
+        validatePropertyTypes(desc as unknown as Record<string, unknown>, {
           origin: 'string',
           language: 'string',
           description: 'string',

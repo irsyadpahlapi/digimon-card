@@ -4,15 +4,6 @@ import '@testing-library/jest-dom';
 import Card from '../card';
 import { makeRepoCard } from '@/__tests__/test-utils';
 
-// Mock Next.js Image component
-jest.mock('next/image', () => ({
-  __esModule: true,
-  default: ({ src, alt, ...props }: { src: string; alt: string } & Record<string, unknown>) => (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img src={src} alt={alt} {...props} />
-  ),
-}));
-
 const mockDigimonCard = makeRepoCard();
 
 describe('Card Component', () => {

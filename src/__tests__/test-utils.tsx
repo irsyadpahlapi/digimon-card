@@ -64,7 +64,7 @@ export const mockLocalStorage = (data: Record<string, unknown>) => {
   const localStorageMock = {
     getItem: jest.fn((key: string) => {
       const value = data[key];
-      return value !== undefined ? JSON.stringify(value) : null;
+      return value === undefined ? null : JSON.stringify(value);
     }),
     setItem: jest.fn(),
     removeItem: jest.fn(),
@@ -83,8 +83,10 @@ export const mockLocalStorage = (data: Record<string, unknown>) => {
 export const waitFor = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Validation helpers to reduce duplication in entity tests
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function validatePropertyTypes(obj: any, expectedTypes: Record<string, string>) {
+export function validatePropertyTypes(
+  obj: Record<string, unknown>,
+  expectedTypes: Record<string, string>,
+) {
   for (const [key, expectedType] of Object.entries(expectedTypes)) {
     const actualValue = obj[key];
     const actualType = Array.isArray(actualValue) ? 'array' : typeof actualValue;
@@ -93,8 +95,7 @@ export function validatePropertyTypes(obj: any, expectedTypes: Record<string, st
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function validateRequiredProperties(obj: any, requiredProps: string[]) {
+export function validateRequiredProperties(obj: Record<string, unknown>, requiredProps: string[]) {
   for (const prop of requiredProps) {
     expect(obj).toHaveProperty(prop);
   }

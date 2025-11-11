@@ -73,7 +73,7 @@ describe('MyCardRepository', () => {
         sellingDigimon: 15,
       };
 
-      validateRequiredProperties(repository, [
+      validateRequiredProperties(repository as unknown as Record<string, unknown>, [
         'id',
         'name',
         'images',
@@ -111,7 +111,7 @@ describe('MyCardRepository', () => {
         sellingDigimon: 20,
       };
 
-      validatePropertyTypes(repository, {
+      validatePropertyTypes(repository as unknown as Record<string, unknown>, {
         id: 'number',
         name: 'string',
         images: 'array',

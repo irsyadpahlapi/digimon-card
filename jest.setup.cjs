@@ -1,4 +1,5 @@
-import '@testing-library/jest-dom';
+require('@testing-library/jest-dom');
+const React = require('react');
 
 // Mock Next.js router
 jest.mock('next/navigation', () => ({
@@ -24,8 +25,15 @@ jest.mock('next/navigation', () => ({
 jest.mock('next/image', () => ({
   __esModule: true,
   default: (props) => {
-    // eslint-disable-next-line @next/next/no-img-element
-    return <img alt="" {...props} />;
+    // Using standard img in test environment is acceptable since Next.js Image optimization is not needed in tests
+    const { src, alt = '', width, height, ...rest } = props;
+    return React.createElement('img', {
+      src,
+      alt,
+      width,
+      height,
+      ...rest,
+    });
   },
 }));
 

@@ -2,38 +2,6 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import LogoBrand from '../LogoBrand';
 
-// Mock Next.js Image component
-jest.mock('next/image', () => ({
-  __esModule: true,
-  default: ({
-    src,
-    alt,
-    className,
-    width,
-    height,
-    priority,
-    ...props
-  }: {
-    src: string;
-    alt: string;
-    className?: string;
-    width?: number | string;
-    height?: number | string;
-    priority?: boolean;
-  } & Record<string, unknown>) => (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={src}
-      alt={alt}
-      className={className}
-      width={width}
-      height={height}
-      data-priority={priority?.toString()}
-      {...props}
-    />
-  ),
-}));
-
 describe('LogoBrand Component', () => {
   describe('Basic Rendering', () => {
     it('should render with default props', () => {

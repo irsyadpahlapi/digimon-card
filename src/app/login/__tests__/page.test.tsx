@@ -21,18 +21,6 @@ jest.mock('@/presentation/hooks/useLocalStorage', () => {
   return jest.fn();
 });
 
-// Mock Next.js Image component
-jest.mock('next/image', () => {
-  return function MockImage({
-    src,
-    alt,
-    ...props
-  }: { src: string; alt: string } & Record<string, unknown>) {
-    // eslint-disable-next-line @next/next/no-img-element
-    return <img src={src} alt={alt} {...props} />;
-  };
-});
-
 // Mock new UI components
 interface MockFormInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
   label: string;
