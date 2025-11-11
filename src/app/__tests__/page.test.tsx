@@ -52,6 +52,8 @@ const mockUseEffect = jest.spyOn(React, 'useEffect');
 
 const mockUseAuthCheck = useAuthCheck as jest.MockedFunction<typeof useAuthCheck>;
 
+// Helpers will be declared within test scope to access local mocks
+
 describe('Homepage Component', () => {
   let mockRedirectToLogin: jest.Mock;
   let mockRedirectToHome: jest.Mock;
@@ -74,44 +76,37 @@ describe('Homepage Component', () => {
     jest.clearAllMocks();
   });
 
+  // Helpers to reduce duplication across tests in this suite
+  const setAuthState = (overrides: any = {}) => {
+    mockUseAuthCheck.mockReturnValue(
+      createMockAuthReturn({
+        ...overrides,
+      }),
+    );
+  };
+
+  const renderWithAuth = (overrides: any = {}) => {
+    setAuthState(overrides);
+    return render(<Homepage />);
+  };
+
   describe('Component Function Tests', () => {
     it('should execute Homepage default export function', () => {
       const Component = Homepage;
       expect(typeof Component).toBe('function');
 
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: false,
-          isAuthenticated: true,
-        }),
-      );
-
-      const { container } = render(<Component />);
+      const { container } = renderWithAuth({ isLoading: false, isAuthenticated: true });
       expect(container.firstChild).toBeDefined();
     });
 
     it('should show AuthRedirectScreen when loading', () => {
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: true,
-          isAuthenticated: false,
-        }),
-      );
-
-      render(<Homepage />);
+      renderWithAuth({ isLoading: true, isAuthenticated: false });
       expect(screen.getByTestId('auth-redirect')).toBeInTheDocument();
       expect(screen.getByTestId('auth-redirect')).toHaveAttribute('data-variant', 'toLogin');
     });
 
     it('should execute useEffect hook function', () => {
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: false,
-          isAuthenticated: false,
-        }),
-      );
-
-      render(<Homepage />);
+      renderWithAuth({ isLoading: false, isAuthenticated: false });
 
       // Verify useEffect was called
       expect(mockUseEffect).toHaveBeenCalled();
@@ -119,34 +114,17 @@ describe('Homepage Component', () => {
 
     it('should execute conditional rendering functions', () => {
       // Test loading condition
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: true,
-          isAuthenticated: false,
-        }),
-      );
-
-      const { rerender } = render(<Homepage />);
+      const { rerender } = renderWithAuth({ isLoading: true, isAuthenticated: false });
       expect(screen.getByTestId('auth-redirect')).toBeInTheDocument();
 
       // Test unauthenticated condition
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: false,
-          isAuthenticated: false,
-        }),
-      );
+      setAuthState({ isLoading: false, isAuthenticated: false });
 
       rerender(<Homepage />);
       expect(screen.getByTestId('auth-redirect')).toBeInTheDocument();
 
       // Test authenticated condition
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: false,
-          isAuthenticated: true,
-        }),
-      );
+      setAuthState({ isLoading: false, isAuthenticated: true });
 
       rerender(<Homepage />);
       expect(screen.getByTestId('homepage-component')).toBeInTheDocument();
@@ -182,38 +160,17 @@ describe('Homepage Component', () => {
 
   describe('Authenticated State', () => {
     it('should render HomePage component when authenticated', () => {
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: false,
-          isAuthenticated: true,
-        }),
-      );
-
-      render(<Homepage />);
+      renderWithAuth({ isLoading: false, isAuthenticated: true });
       expect(screen.getByTestId('homepage-component')).toBeInTheDocument();
     });
 
     it('should not render AuthRedirectScreen when authenticated', () => {
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: false,
-          isAuthenticated: true,
-        }),
-      );
-
-      render(<Homepage />);
+      renderWithAuth({ isLoading: false, isAuthenticated: true });
       expect(screen.queryByTestId('auth-redirect')).not.toBeInTheDocument();
     });
 
     it('should execute MapComponent rendering function', () => {
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: false,
-          isAuthenticated: true,
-        }),
-      );
-
-      render(<Homepage />);
+      renderWithAuth({ isLoading: false, isAuthenticated: true });
       const mapComponent = screen.getByTestId('homepage-component');
       expect(mapComponent).toBeInTheDocument();
     });
@@ -221,14 +178,7 @@ describe('Homepage Component', () => {
 
   describe('Unauthenticated State', () => {
     it('should call redirectToLogin when not authenticated', async () => {
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: false,
-          isAuthenticated: false,
-        }),
-      );
-
-      render(<Homepage />);
+      renderWithAuth({ isLoading: false, isAuthenticated: false });
 
       await waitFor(() => {
         expect(mockRedirectToLogin).toHaveBeenCalledTimes(1);
@@ -236,14 +186,7 @@ describe('Homepage Component', () => {
     });
 
     it('should render AuthRedirectScreen while redirecting', () => {
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: false,
-          isAuthenticated: false,
-        }),
-      );
-
-      render(<Homepage />);
+      renderWithAuth({ isLoading: false, isAuthenticated: false });
       expect(screen.getByTestId('auth-redirect')).toBeInTheDocument();
       expect(screen.getByTestId('auth-redirect')).toHaveAttribute('data-variant', 'toLogin');
     });
@@ -253,15 +196,7 @@ describe('Homepage Component', () => {
       const isAuthenticated = false;
       const redirectToLogin = mockRedirectToLogin;
 
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading,
-          isAuthenticated,
-          redirectToLogin,
-        }),
-      );
-
-      render(<Homepage />);
+      renderWithAuth({ isLoading, isAuthenticated, redirectToLogin });
 
       await waitFor(() => {
         expect(redirectToLogin).toHaveBeenCalled();
@@ -271,23 +206,11 @@ describe('Homepage Component', () => {
 
   describe('State Transitions', () => {
     it('should handle transition from loading to authenticated', async () => {
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: true,
-          isAuthenticated: false,
-        }),
-      );
-
-      const { rerender } = render(<Homepage />);
+      const { rerender } = renderWithAuth({ isLoading: true, isAuthenticated: false });
       expect(screen.getByTestId('auth-redirect')).toBeInTheDocument();
 
       // Transition to authenticated
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: false,
-          isAuthenticated: true,
-        }),
-      );
+      setAuthState({ isLoading: false, isAuthenticated: true });
 
       rerender(<Homepage />);
 
@@ -297,22 +220,10 @@ describe('Homepage Component', () => {
     });
 
     it('should handle transition from loading to unauthenticated', async () => {
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: true,
-          isAuthenticated: false,
-        }),
-      );
-
-      const { rerender } = render(<Homepage />);
+      const { rerender } = renderWithAuth({ isLoading: true, isAuthenticated: false });
 
       // Transition to unauthenticated
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: false,
-          isAuthenticated: false,
-        }),
-      );
+      setAuthState({ isLoading: false, isAuthenticated: false });
 
       rerender(<Homepage />);
 
@@ -324,14 +235,7 @@ describe('Homepage Component', () => {
 
   describe('Dynamic Component Integration', () => {
     it('should render dynamic component when authenticated', async () => {
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: false,
-          isAuthenticated: true,
-        }),
-      );
-
-      render(<Homepage />);
+      renderWithAuth({ isLoading: false, isAuthenticated: true });
 
       // Verify the dynamic component renders
       await waitFor(() => {
@@ -342,14 +246,7 @@ describe('Homepage Component', () => {
     });
 
     it('should not render dynamic component when not authenticated', () => {
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: false,
-          isAuthenticated: false,
-        }),
-      );
-
-      render(<Homepage />);
+      renderWithAuth({ isLoading: false, isAuthenticated: false });
 
       // Should show redirect screen instead of dynamic component
       expect(screen.getByTestId('auth-redirect')).toBeInTheDocument();
@@ -357,14 +254,7 @@ describe('Homepage Component', () => {
     });
 
     it('should render dynamic component with proper structure', () => {
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: false,
-          isAuthenticated: true,
-        }),
-      );
-
-      render(<Homepage />);
+      renderWithAuth({ isLoading: false, isAuthenticated: true });
 
       const dynamicComponent = screen.getByTestId('homepage-component');
       expect(dynamicComponent).toBeInTheDocument();
@@ -374,14 +264,7 @@ describe('Homepage Component', () => {
     });
 
     it('should handle component mounting and unmounting', () => {
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: false,
-          isAuthenticated: true,
-        }),
-      );
-
-      const { unmount } = render(<Homepage />);
+      const { unmount } = renderWithAuth({ isLoading: false, isAuthenticated: true });
 
       expect(screen.getByTestId('homepage-component')).toBeInTheDocument();
 
@@ -392,24 +275,12 @@ describe('Homepage Component', () => {
 
     it('should handle authentication state changes affecting dynamic component', () => {
       // Start unauthenticated
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: false,
-          isAuthenticated: false,
-        }),
-      );
-
-      const { rerender } = render(<Homepage />);
+      const { rerender } = renderWithAuth({ isLoading: false, isAuthenticated: false });
       expect(screen.getByTestId('auth-redirect')).toBeInTheDocument();
       expect(screen.queryByTestId('homepage-component')).not.toBeInTheDocument();
 
       // Become authenticated
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: false,
-          isAuthenticated: true,
-        }),
-      );
+      setAuthState({ isLoading: false, isAuthenticated: true });
 
       rerender(<Homepage />);
       expect(screen.getByTestId('homepage-component')).toBeInTheDocument();
@@ -419,14 +290,7 @@ describe('Homepage Component', () => {
 
   describe('New Component Integration', () => {
     it('should use AuthRedirectScreen with correct variant for loading', () => {
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: true,
-          isAuthenticated: false,
-        }),
-      );
-
-      render(<Homepage />);
+      renderWithAuth({ isLoading: true, isAuthenticated: false });
 
       const redirectScreen = screen.getByTestId('auth-redirect');
       expect(redirectScreen).toBeInTheDocument();
@@ -434,14 +298,7 @@ describe('Homepage Component', () => {
     });
 
     it('should use AuthRedirectScreen with correct variant for unauthenticated', () => {
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: false,
-          isAuthenticated: false,
-        }),
-      );
-
-      render(<Homepage />);
+      renderWithAuth({ isLoading: false, isAuthenticated: false });
 
       const redirectScreen = screen.getByTestId('auth-redirect');
       expect(redirectScreen).toBeInTheDocument();
@@ -449,15 +306,8 @@ describe('Homepage Component', () => {
     });
 
     it('should handle dynamic import properly', () => {
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: false,
-          isAuthenticated: true,
-        }),
-      );
-
       expect(() => {
-        render(<Homepage />);
+        renderWithAuth({ isLoading: false, isAuthenticated: true });
       }).not.toThrow();
 
       expect(screen.getByTestId('homepage-component')).toBeInTheDocument();
@@ -477,34 +327,17 @@ describe('Homepage Component', () => {
 
     it('should execute all conditional branches', () => {
       // Test isLoading === true branch
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: true,
-          isAuthenticated: true,
-        }),
-      );
-
-      let { rerender } = render(<Homepage />);
+      let { rerender } = renderWithAuth({ isLoading: true, isAuthenticated: true });
       expect(screen.getByTestId('auth-redirect')).toBeInTheDocument();
 
       // Test !isAuthenticated branch (when not loading)
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: false,
-          isAuthenticated: false,
-        }),
-      );
+      setAuthState({ isLoading: false, isAuthenticated: false });
 
       rerender(<Homepage />);
       expect(screen.getByTestId('auth-redirect')).toBeInTheDocument();
 
       // Test authenticated branch
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: false,
-          isAuthenticated: true,
-        }),
-      );
+      setAuthState({ isLoading: false, isAuthenticated: true });
 
       rerender(<Homepage />);
       expect(screen.getByTestId('homepage-component')).toBeInTheDocument();
@@ -512,22 +345,10 @@ describe('Homepage Component', () => {
 
     it('should execute all function paths', async () => {
       // Test path 1: Loading state function
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: true,
-          isAuthenticated: false,
-        }),
-      );
-
-      const { rerender } = render(<Homepage />);
+      const { rerender } = renderWithAuth({ isLoading: true, isAuthenticated: false });
 
       // Test path 2: Redirect function execution
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: false,
-          isAuthenticated: false,
-        }),
-      );
+      setAuthState({ isLoading: false, isAuthenticated: false });
 
       rerender(<Homepage />);
 
@@ -536,12 +357,7 @@ describe('Homepage Component', () => {
       });
 
       // Test path 3: Render main component function
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: false,
-          isAuthenticated: true,
-        }),
-      );
+      setAuthState({ isLoading: false, isAuthenticated: true });
 
       rerender(<Homepage />);
       expect(screen.getByTestId('homepage-component')).toBeInTheDocument();
@@ -559,34 +375,17 @@ describe('Homepage Component', () => {
       // Test all return paths
 
       // Return path 1: Loading state
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: true,
-          isAuthenticated: false,
-        }),
-      );
-
-      const { rerender } = render(<Component />);
+      const { rerender } = renderWithAuth({ isLoading: true, isAuthenticated: false });
       expect(screen.getByTestId('auth-redirect')).toBeInTheDocument();
 
       // Return path 2: Unauthenticated state
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: false,
-          isAuthenticated: false,
-        }),
-      );
+      setAuthState({ isLoading: false, isAuthenticated: false });
 
       rerender(<Component />);
       expect(screen.getByTestId('auth-redirect')).toBeInTheDocument();
 
       // Return path 3: Authenticated state
-      mockUseAuthCheck.mockReturnValue(
-        createMockAuthReturn({
-          isLoading: false,
-          isAuthenticated: true,
-        }),
-      );
+      setAuthState({ isLoading: false, isAuthenticated: true });
 
       rerender(<Component />);
       expect(screen.getByTestId('homepage-component')).toBeInTheDocument();

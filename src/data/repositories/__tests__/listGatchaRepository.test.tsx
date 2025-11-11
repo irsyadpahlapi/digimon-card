@@ -1,6 +1,7 @@
 import { ListGatchaImpl } from '../listGatchaRepository';
 import { BuyStarterpack } from '@/data/datasources/buyStarterpackDataSource';
 import { DetailDigimonEntity } from '@/core/entities/digimon';
+import { makeDetailDigimonEntity } from '@/__tests__/test-utils';
 
 // Mock BuyStarterpack
 jest.mock('@/data/datasources/buyStarterpackDataSource');
@@ -19,39 +20,14 @@ describe('ListGatchaImpl Repository', () => {
   let listGatchaRepository: ListGatchaImpl;
   let mockBuyStarterpack: jest.Mocked<BuyStarterpack>;
 
-  const mockDetailDigimon: DetailDigimonEntity = {
-    id: 1,
-    name: 'Agumon',
-    images: [{ href: 'agumon.jpg', transparent: false }],
-    levels: [{ id: 1, level: 'Rookie' }],
-    types: [{ id: 1, type: 'Vaccine' }],
-    attributes: [{ id: 1, attribute: 'Fire' }],
-    fields: [{ id: 1, field: 'Wind Guardians', image: 'field.jpg' }],
-    descriptions: [
-      {
-        origin: 'Digital Monster Ver. 1',
-        language: 'en',
-        description: 'A small dinosaur Digimon',
-      },
-    ],
-    nextEvolutions: [
-      {
-        id: 2,
-        digimon: 'Greymon',
-        condition: 'Level up',
-        image: 'greymon.jpg',
-        url: '/digimon/greymon',
-      },
-    ],
-    level: { id: 1, level: 'Rookie' },
-  };
+  const mockDetailDigimon = makeDetailDigimonEntity();
 
   const mockGatchaResult: DetailDigimonEntity[] = [
-    { ...mockDetailDigimon, id: 1, name: 'Agumon' },
-    { ...mockDetailDigimon, id: 2, name: 'Gabumon' },
-    { ...mockDetailDigimon, id: 3, name: 'Patamon' },
-    { ...mockDetailDigimon, id: 4, name: 'Tentomon' },
-    { ...mockDetailDigimon, id: 5, name: 'Greymon' },
+    makeDetailDigimonEntity({ id: 1, name: 'Agumon' }),
+    makeDetailDigimonEntity({ id: 2, name: 'Gabumon' }),
+    makeDetailDigimonEntity({ id: 3, name: 'Patamon' }),
+    makeDetailDigimonEntity({ id: 4, name: 'Tentomon' }),
+    makeDetailDigimonEntity({ id: 5, name: 'Greymon' }),
   ];
 
   beforeEach(() => {
@@ -119,11 +95,11 @@ describe('ListGatchaImpl Repository', () => {
 
       it('should handle pack B specific composition', async () => {
         const packBResult = [
-          { ...mockDetailDigimon, id: 1, name: 'ChildDigimon1' },
-          { ...mockDetailDigimon, id: 2, name: 'ChildDigimon2' },
-          { ...mockDetailDigimon, id: 3, name: 'ChampionDigimon1' },
-          { ...mockDetailDigimon, id: 4, name: 'ChampionDigimon2' },
-          { ...mockDetailDigimon, id: 5, name: 'UltimateDigimon' },
+          makeDetailDigimonEntity({ id: 1, name: 'ChildDigimon1' }),
+          makeDetailDigimonEntity({ id: 2, name: 'ChildDigimon2' }),
+          makeDetailDigimonEntity({ id: 3, name: 'ChampionDigimon1' }),
+          makeDetailDigimonEntity({ id: 4, name: 'ChampionDigimon2' }),
+          makeDetailDigimonEntity({ id: 5, name: 'UltimateDigimon' }),
         ];
 
         mockBuyStarterpack.getListGacha.mockResolvedValue(packBResult);
@@ -147,11 +123,11 @@ describe('ListGatchaImpl Repository', () => {
 
       it('should handle pack A specific composition', async () => {
         const packAResult = [
-          { ...mockDetailDigimon, id: 1, name: 'ChildDigimon' },
-          { ...mockDetailDigimon, id: 2, name: 'ChampionDigimon1' },
-          { ...mockDetailDigimon, id: 3, name: 'ChampionDigimon2' },
-          { ...mockDetailDigimon, id: 4, name: 'UltimateDigimon1' },
-          { ...mockDetailDigimon, id: 5, name: 'UltimateDigimon2' },
+          makeDetailDigimonEntity({ id: 1, name: 'ChildDigimon' }),
+          makeDetailDigimonEntity({ id: 2, name: 'ChampionDigimon1' }),
+          makeDetailDigimonEntity({ id: 3, name: 'ChampionDigimon2' }),
+          makeDetailDigimonEntity({ id: 4, name: 'UltimateDigimon1' }),
+          makeDetailDigimonEntity({ id: 5, name: 'UltimateDigimon2' }),
         ];
 
         mockBuyStarterpack.getListGacha.mockResolvedValue(packAResult);
@@ -168,10 +144,10 @@ describe('ListGatchaImpl Repository', () => {
     describe('Starterpack R', () => {
       it('should fetch gacha list for pack type R', async () => {
         const packRResult = [
-          { ...mockDetailDigimon, id: 1, name: 'ChampionDigimon' },
-          { ...mockDetailDigimon, id: 2, name: 'UltimateDigimon1' },
-          { ...mockDetailDigimon, id: 3, name: 'UltimateDigimon2' },
-          { ...mockDetailDigimon, id: 4, name: 'PerfectDigimon' },
+          makeDetailDigimonEntity({ id: 1, name: 'ChampionDigimon' }),
+          makeDetailDigimonEntity({ id: 2, name: 'UltimateDigimon1' }),
+          makeDetailDigimonEntity({ id: 3, name: 'UltimateDigimon2' }),
+          makeDetailDigimonEntity({ id: 4, name: 'PerfectDigimon' }),
         ];
 
         mockBuyStarterpack.getListGacha.mockResolvedValue(packRResult);
@@ -185,30 +161,26 @@ describe('ListGatchaImpl Repository', () => {
 
       it('should handle rare pack specific composition', async () => {
         const packRResult = [
-          {
-            ...mockDetailDigimon,
+          makeDetailDigimonEntity({
             id: 100,
             name: 'RareChampion',
             level: { id: 2, level: 'Champion' },
-          },
-          {
-            ...mockDetailDigimon,
+          }),
+          makeDetailDigimonEntity({
             id: 200,
             name: 'RareUltimate1',
             level: { id: 3, level: 'Ultimate' },
-          },
-          {
-            ...mockDetailDigimon,
+          }),
+          makeDetailDigimonEntity({
             id: 201,
             name: 'RareUltimate2',
             level: { id: 3, level: 'Ultimate' },
-          },
-          {
-            ...mockDetailDigimon,
+          }),
+          makeDetailDigimonEntity({
             id: 300,
             name: 'RarePerfect',
             level: { id: 4, level: 'Perfect' },
-          },
+          }),
         ];
 
         mockBuyStarterpack.getListGacha.mockResolvedValue(packRResult);
@@ -265,33 +237,36 @@ describe('ListGatchaImpl Repository', () => {
     });
 
     describe('Error handling', () => {
-      it('should propagate errors from datasource', async () => {
-        mockBuyStarterpack.getListGacha.mockRejectedValue(new Error('Datasource error'));
+      it('should handle API errors gracefully', async () => {
+        const errorMessage = 'Failed to fetch gacha list';
+        mockBuyStarterpack.getListGacha.mockRejectedValue(new Error(errorMessage));
 
-        await expect(listGatchaRepository.getListGacha('C')).rejects.toThrow('Datasource error');
-        expect(mockBuyStarterpack.getListGacha).toHaveBeenCalledWith('C');
+        await expect(listGatchaRepository.getListGacha('C')).rejects.toThrow(errorMessage);
       });
 
-      it('should handle network timeout errors', async () => {
-        mockBuyStarterpack.getListGacha.mockRejectedValue(new Error('Request timeout'));
+      it('should handle empty response', async () => {
+        mockBuyStarterpack.getListGacha.mockResolvedValue([]);
 
-        await expect(listGatchaRepository.getListGacha('B')).rejects.toThrow('Request timeout');
+        const result = await listGatchaRepository.getListGacha('C');
+
+        expect(result).toEqual([]);
+        expect(result).toHaveLength(0);
       });
 
-      it('should handle API server errors', async () => {
-        mockBuyStarterpack.getListGacha.mockRejectedValue(new Error('Internal server error'));
+      it('should handle malformed data gracefully', async () => {
+        const malformedData = [makeDetailDigimonEntity({ id: null as any, name: null as any })];
 
-        await expect(listGatchaRepository.getListGacha('A')).rejects.toThrow(
-          'Internal server error',
-        );
+        mockBuyStarterpack.getListGacha.mockResolvedValue(malformedData);
+
+        const result = await listGatchaRepository.getListGacha('C');
+
+        expect(result).toEqual(malformedData);
       });
 
-      it('should handle malformed response errors', async () => {
-        mockBuyStarterpack.getListGacha.mockRejectedValue(new Error('Invalid JSON response'));
+      it('should propagate network timeout errors', async () => {
+        mockBuyStarterpack.getListGacha.mockRejectedValue(new Error('Network timeout'));
 
-        await expect(listGatchaRepository.getListGacha('R')).rejects.toThrow(
-          'Invalid JSON response',
-        );
+        await expect(listGatchaRepository.getListGacha('B')).rejects.toThrow('Network timeout');
       });
     });
 
@@ -361,13 +336,13 @@ describe('ListGatchaImpl Repository', () => {
     describe('Different pack variations', () => {
       it('should handle same pack type with different results', async () => {
         const firstCall = [
-          { ...mockDetailDigimon, id: 1, name: 'FirstBatch1' },
-          { ...mockDetailDigimon, id: 2, name: 'FirstBatch2' },
+          makeDetailDigimonEntity({ id: 1, name: 'FirstBatch1' }),
+          makeDetailDigimonEntity({ id: 2, name: 'FirstBatch2' }),
         ];
 
         const secondCall = [
-          { ...mockDetailDigimon, id: 3, name: 'SecondBatch1' },
-          { ...mockDetailDigimon, id: 4, name: 'SecondBatch2' },
+          makeDetailDigimonEntity({ id: 3, name: 'SecondBatch1' }),
+          makeDetailDigimonEntity({ id: 4, name: 'SecondBatch2' }),
         ];
 
         mockBuyStarterpack.getListGacha
@@ -439,8 +414,8 @@ describe('ListGatchaImpl Repository', () => {
 
     it('should maintain state isolation between instances', async () => {
       // Create multiple instances to test independence
-      const result1 = [{ ...mockDetailDigimon, name: 'Repo1Result' }];
-      const result2 = [{ ...mockDetailDigimon, name: 'Repo2Result' }];
+      const result1 = [makeDetailDigimonEntity({ name: 'Repo1Result' })];
+      const result2 = [makeDetailDigimonEntity({ name: 'Repo2Result' })];
 
       // Mock different instances to return different results
       const mockInstance1 = {

@@ -7,103 +7,92 @@ import {
   pickHighestLevelObject,
 } from '../utils';
 
+// Helper tables to reduce duplication
+const LEVEL_CATEGORY_CASES: Array<[string, string]> = [
+  ['Child', 'Rookie'],
+  ['Adult', 'Champion'],
+  ['Armor', 'Champion'],
+  ['Unknown', 'Champion'],
+  ['Hybrid', 'Champion'],
+  ['Ultimate', 'Ultimate'],
+  ['Perfect', 'Mega'],
+];
+
+const INVALID_CATEGORY_INPUTS: string[] = ['Rookie', 'Champion', '', 'Invalid'];
+
+const STARTER_PACK_PRICE_CASES: Array<[string, number]> = [
+  ['C', 5],
+  ['B', 10],
+  ['A', 15],
+  ['R', 20],
+];
+
+const UNKNOWN_PACK_TYPES: string[] = ['X', '', 'Invalid'];
+
+const SELLING_PRICE_EVOLUTION_CASES: Array<[string, number]> = [
+  ['Rookie', 5],
+  ['Champion', 10],
+  ['Ultimate', 20],
+  ['Mega', 30],
+];
+
+const SELLING_PRICE_NO_EVOLUTION_CATEGORIES: string[] = ['Rookie', 'Champion', 'Ultimate', 'Mega'];
+
+const SELLING_PRICE_UNKNOWN_CASES: string[] = ['Unknown', 'Baby', '', 'Invalid'];
+
 describe('Utils Functions', () => {
   describe('Category function', () => {
-    it('should return correct category for Child level', () => {
-      expect(Category('Child')).toBe('Rookie');
+    it.each(LEVEL_CATEGORY_CASES)('should map level %s to category %s', (input, expected) => {
+      expect(Category(input)).toBe(expected);
     });
 
-    it('should return correct category for Adult level', () => {
-      expect(Category('Adult')).toBe('Champion');
-    });
-
-    it('should return correct category for Armor level', () => {
-      expect(Category('Armor')).toBe('Champion');
-    });
-
-    it('should return correct category for Unknown level', () => {
-      expect(Category('Unknown')).toBe('Champion');
-    });
-
-    it('should return correct category for Hybrid level', () => {
-      expect(Category('Hybrid')).toBe('Champion');
-    });
-
-    it('should return correct category for Ultimate level', () => {
-      expect(Category('Ultimate')).toBe('Ultimate');
-    });
-
-    it('should return correct category for Perfect level', () => {
-      expect(Category('Perfect')).toBe('Mega');
-    });
-
-    it('should return Baby for unrecognized levels', () => {
-      expect(Category('Rookie')).toBe('Baby');
-      expect(Category('Champion')).toBe('Baby');
-      expect(Category('')).toBe('Baby');
-      expect(Category('Invalid')).toBe('Baby');
+    it.each(INVALID_CATEGORY_INPUTS)('should return Baby for unrecognized level %s', (input) => {
+      expect(Category(input)).toBe('Baby');
     });
   });
 
   describe('PriceStarterpack function', () => {
-    it('should return correct price for Common pack (C)', () => {
-      expect(PriceStarterpack('C')).toBe(5);
-    });
+    it.each(STARTER_PACK_PRICE_CASES)(
+      'should return correct price %d for pack type %s',
+      (type, price) => {
+        expect(PriceStarterpack(type)).toBe(price);
+      },
+    );
 
-    it('should return correct price for Balance pack (B)', () => {
-      expect(PriceStarterpack('B')).toBe(10);
-    });
-
-    it('should return correct price for Advanced pack (A)', () => {
-      expect(PriceStarterpack('A')).toBe(15);
-    });
-
-    it('should return correct price for Rare pack (R)', () => {
-      expect(PriceStarterpack('R')).toBe(20);
-    });
-
-    it('should return 0 for unknown pack types', () => {
-      expect(PriceStarterpack('X')).toBe(0);
-      expect(PriceStarterpack('')).toBe(0);
-      expect(PriceStarterpack('Invalid')).toBe(0);
+    it.each(UNKNOWN_PACK_TYPES)('should return 0 for unknown pack type %s', (type) => {
+      expect(PriceStarterpack(type)).toBe(0);
     });
   });
 
   describe('sellingDigimonPrice function', () => {
-    it('should return correct price for Rookie category with evolution', () => {
-      expect(sellingDigimonPrice('Rookie', true)).toBe(5);
-    });
+    it.each(SELLING_PRICE_EVOLUTION_CASES)(
+      'should return correct price %d for category %s with evolution',
+      (category, expectedPrice) => {
+        expect(sellingDigimonPrice(category, true)).toBe(expectedPrice);
+      },
+    );
 
-    it('should return correct price for Champion category with evolution', () => {
-      expect(sellingDigimonPrice('Champion', true)).toBe(10);
-    });
+    it.each(SELLING_PRICE_NO_EVOLUTION_CATEGORIES)(
+      'should return God price for category %s without evolution',
+      (category) => {
+        expect(sellingDigimonPrice(category, false)).toBe(100);
+      },
+    );
 
-    it('should return correct price for Ultimate category with evolution', () => {
-      expect(sellingDigimonPrice('Ultimate', true)).toBe(20);
-    });
+    it.each(SELLING_PRICE_UNKNOWN_CASES)(
+      'should return default price 1 for unknown category %s',
+      (category) => {
+        expect(sellingDigimonPrice(category, true)).toBe(1);
+      },
+    );
 
-    it('should return correct price for Mega category with evolution', () => {
-      expect(sellingDigimonPrice('Mega', true)).toBe(30);
-    });
-
-    it('should return God price when no evolution available', () => {
-      expect(sellingDigimonPrice('Rookie', false)).toBe(100);
-      expect(sellingDigimonPrice('Champion', false)).toBe(100);
-      expect(sellingDigimonPrice('Ultimate', false)).toBe(100);
-      expect(sellingDigimonPrice('Mega', false)).toBe(100);
-    });
-
-    it('should return default price for unknown categories', () => {
-      expect(sellingDigimonPrice('Unknown', true)).toBe(1);
-      expect(sellingDigimonPrice('Baby', true)).toBe(1);
-      expect(sellingDigimonPrice('', true)).toBe(1);
-      expect(sellingDigimonPrice('Invalid', true)).toBe(1);
-    });
-
-    it('should return God price when explicitly God category', () => {
-      expect(sellingDigimonPrice('God', true)).toBe(100);
-      expect(sellingDigimonPrice('God', false)).toBe(100);
-    });
+    it.each(['God'])(
+      'should return God price for explicit God category %s regardless of evolution',
+      (category) => {
+        expect(sellingDigimonPrice(category, true)).toBe(100);
+        expect(sellingDigimonPrice(category, false)).toBe(100);
+      },
+    );
   });
 
   describe('Integration tests', () => {
@@ -140,22 +129,16 @@ describe('Utils Functions', () => {
     });
 
     it('should handle starter pack pricing separately', () => {
-      const starterPackTypes = ['C', 'B', 'A', 'R'];
-      const expectedPrices = [5, 10, 15, 20];
-
-      for (const [index, type] of starterPackTypes.entries()) {
-        expect(PriceStarterpack(type)).toBe(expectedPrices[index]);
+      for (const [type, price] of STARTER_PACK_PRICE_CASES) {
+        expect(PriceStarterpack(type)).toBe(price);
       }
     });
 
     it('should correctly handle max selling price for non-evolvable cards', () => {
-      const categories = ['Rookie', 'Champion', 'Ultimate', 'Mega'];
-
-      for (const category of categories) {
+      for (const category of SELLING_PRICE_NO_EVOLUTION_CATEGORIES) {
         const priceWithEvolution = sellingDigimonPrice(category, true);
         const priceWithoutEvolution = sellingDigimonPrice(category, false);
-
-        expect(priceWithoutEvolution).toBe(100); // God price
+        expect(priceWithoutEvolution).toBe(100);
         expect(priceWithEvolution).toBeLessThan(priceWithoutEvolution);
       }
     });

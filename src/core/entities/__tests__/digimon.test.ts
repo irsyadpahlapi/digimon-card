@@ -207,8 +207,7 @@ describe('Digimon Entities', () => {
       };
 
       for (const level of mockDetailEntity.levels) {
-        expect(typeof level.id).toBe('number');
-        expect(typeof level.level).toBe('string');
+        validatePropertyTypes(level, { id: 'number', level: 'string' });
         expect(level.id).toBeGreaterThan(0);
         expect(level.level.length).toBeGreaterThan(0);
       }
@@ -233,8 +232,7 @@ describe('Digimon Entities', () => {
       };
 
       for (const type of mockDetailEntity.types) {
-        expect(typeof type.id).toBe('number');
-        expect(typeof type.type).toBe('string');
+        validatePropertyTypes(type, { id: 'number', type: 'string' });
         expect(type.id).toBeGreaterThan(0);
         expect(['Vaccine', 'Data', 'Virus']).toContain(type.type);
       }
@@ -258,8 +256,7 @@ describe('Digimon Entities', () => {
       };
 
       for (const attribute of mockDetailEntity.attributes) {
-        expect(typeof attribute.id).toBe('number');
-        expect(typeof attribute.attribute).toBe('string');
+        validatePropertyTypes(attribute, { id: 'number', attribute: 'string' });
         expect(attribute.id).toBeGreaterThan(0);
         expect(attribute.attribute.length).toBeGreaterThan(0);
       }
@@ -336,10 +333,11 @@ describe('Digimon Entities', () => {
       };
 
       for (const desc of mockDetailEntity.descriptions) {
-        expect(typeof desc.origin).toBe('string');
-        expect(typeof desc.language).toBe('string');
-        expect(typeof desc.description).toBe('string');
-
+        validatePropertyTypes(desc, {
+          origin: 'string',
+          language: 'string',
+          description: 'string',
+        });
         expect(desc.origin.length).toBeGreaterThan(0);
         expect(desc.language.length).toBeGreaterThan(0);
         expect(desc.description.length).toBeGreaterThan(0);

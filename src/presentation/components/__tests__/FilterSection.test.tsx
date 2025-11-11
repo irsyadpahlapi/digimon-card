@@ -21,31 +21,36 @@ describe('FilterSection Component', () => {
     onToggleType: mockOnToggleType,
   };
 
+  // Helper to render with prop overrides
+  const renderFilter = (overrides = {}) => {
+    return render(<FilterSection {...defaultProps} {...overrides} />);
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   describe('Rendering', () => {
     it('renders filter section with title', () => {
-      render(<FilterSection {...defaultProps} />);
+      renderFilter();
 
       expect(screen.getByText('Filter By')).toBeInTheDocument();
     });
 
     it('renders None button', () => {
-      render(<FilterSection {...defaultProps} />);
+      renderFilter();
 
       expect(screen.getByRole('button', { name: 'None' })).toBeInTheDocument();
     });
 
     it('renders Categories button', () => {
-      render(<FilterSection {...defaultProps} />);
+      renderFilter();
 
       expect(screen.getByRole('button', { name: /Categories/i })).toBeInTheDocument();
     });
 
     it('renders Types button', () => {
-      render(<FilterSection {...defaultProps} />);
+      renderFilter();
 
       expect(screen.getByRole('button', { name: /Types/i })).toBeInTheDocument();
     });
@@ -53,25 +58,21 @@ describe('FilterSection Component', () => {
 
   describe('None Filter Button', () => {
     it('applies active styles when none filter is active', () => {
-      render(<FilterSection {...defaultProps} />);
+      renderFilter();
 
       const noneButton = screen.getByRole('button', { name: 'None' });
       expect(noneButton).toHaveClass('bg-blue-700', 'text-white');
     });
 
     it('applies inactive styles when none filter is not active', () => {
-      const props = {
-        ...defaultProps,
-        filterBy: { none: '', category: 'Vaccine', type: '' },
-      };
-      render(<FilterSection {...props} />);
+      renderFilter({ filterBy: { none: '', category: 'Vaccine', type: '' } });
 
       const noneButton = screen.getByRole('button', { name: 'None' });
       expect(noneButton).toHaveClass('bg-white');
     });
 
     it('calls onFilterChange when None button is clicked', () => {
-      render(<FilterSection {...defaultProps} />);
+      renderFilter();
 
       const noneButton = screen.getByRole('button', { name: 'None' });
       fireEvent.click(noneButton);
@@ -82,18 +83,14 @@ describe('FilterSection Component', () => {
 
   describe('Category Dropdown', () => {
     it('applies active styles when category filter is selected', () => {
-      const props = {
-        ...defaultProps,
-        filterBy: { none: '', category: 'Vaccine', type: '' },
-      };
-      render(<FilterSection {...props} />);
+      renderFilter({ filterBy: { none: '', category: 'Vaccine', type: '' } });
 
       const categoryButton = screen.getByRole('button', { name: /Categories/i });
       expect(categoryButton).toHaveClass('bg-blue-700', 'text-white');
     });
 
     it('toggles category dropdown when Categories button is clicked', () => {
-      render(<FilterSection {...defaultProps} />);
+      renderFilter();
 
       const categoryButton = screen.getByRole('button', { name: /Categories/i });
       fireEvent.click(categoryButton);
@@ -102,8 +99,7 @@ describe('FilterSection Component', () => {
     });
 
     it('renders category options when dropdown is open', () => {
-      const props = { ...defaultProps, isDropdownCategory: true };
-      render(<FilterSection {...props} />);
+      renderFilter({ isDropdownCategory: true });
 
       expect(screen.getByText('Vaccine')).toBeInTheDocument();
       expect(screen.getByText('Virus')).toBeInTheDocument();
@@ -112,15 +108,14 @@ describe('FilterSection Component', () => {
     });
 
     it('does not render category options when dropdown is closed', () => {
-      render(<FilterSection {...defaultProps} />);
+      renderFilter();
 
       expect(screen.queryByText('Vaccine')).not.toBeInTheDocument();
       expect(screen.queryByText('Virus')).not.toBeInTheDocument();
     });
 
     it('calls onFilterChange and toggles dropdown when category is selected', () => {
-      const props = { ...defaultProps, isDropdownCategory: true };
-      render(<FilterSection {...props} />);
+      renderFilter({ isDropdownCategory: true });
 
       const vaccineOption = screen.getByText('Vaccine');
       fireEvent.click(vaccineOption);
@@ -132,18 +127,14 @@ describe('FilterSection Component', () => {
 
   describe('Type Dropdown', () => {
     it('applies active styles when type filter is selected', () => {
-      const props = {
-        ...defaultProps,
-        filterBy: { none: '', category: '', type: 'Rookie' },
-      };
-      render(<FilterSection {...props} />);
+      renderFilter({ filterBy: { none: '', category: '', type: 'Rookie' } });
 
       const typeButton = screen.getByRole('button', { name: /Types/i });
       expect(typeButton).toHaveClass('bg-blue-700', 'text-white');
     });
 
     it('toggles type dropdown when Types button is clicked', () => {
-      render(<FilterSection {...defaultProps} />);
+      renderFilter();
 
       const typeButton = screen.getByRole('button', { name: /Types/i });
       fireEvent.click(typeButton);
@@ -152,8 +143,7 @@ describe('FilterSection Component', () => {
     });
 
     it('renders type options when dropdown is open', () => {
-      const props = { ...defaultProps, isDropdownType: true };
-      render(<FilterSection {...props} />);
+      renderFilter({ isDropdownType: true });
 
       expect(screen.getByText('All Categories')).toBeInTheDocument();
       expect(screen.getByText('Rookie')).toBeInTheDocument();
@@ -162,15 +152,14 @@ describe('FilterSection Component', () => {
     });
 
     it('does not render type options when dropdown is closed', () => {
-      render(<FilterSection {...defaultProps} />);
+      renderFilter();
 
       expect(screen.queryByText('All Categories')).not.toBeInTheDocument();
       expect(screen.queryByText('Rookie')).not.toBeInTheDocument();
     });
 
     it('calls onFilterChange and toggles dropdown when type is selected', () => {
-      const props = { ...defaultProps, isDropdownType: true };
-      render(<FilterSection {...props} />);
+      renderFilter({ isDropdownType: true });
 
       const rookieOption = screen.getByText('Rookie');
       fireEvent.click(rookieOption);
@@ -182,11 +171,7 @@ describe('FilterSection Component', () => {
 
   describe('Multiple Filters', () => {
     it('handles all filters being inactive', () => {
-      const props = {
-        ...defaultProps,
-        filterBy: { none: '', category: '', type: '' },
-      };
-      render(<FilterSection {...props} />);
+      renderFilter({ filterBy: { none: '', category: '', type: '' } });
 
       const noneButton = screen.getByRole('button', { name: 'None' });
       const categoryButton = screen.getByRole('button', { name: /Categories/i });
@@ -198,11 +183,7 @@ describe('FilterSection Component', () => {
     });
 
     it('handles multiple active filters', () => {
-      const props = {
-        ...defaultProps,
-        filterBy: { none: '', category: 'Vaccine', type: 'Rookie' },
-      };
-      render(<FilterSection {...props} />);
+      renderFilter({ filterBy: { none: '', category: 'Vaccine', type: 'Rookie' } });
 
       const categoryButton = screen.getByRole('button', { name: /Categories/i });
       const typeButton = screen.getByRole('button', { name: /Types/i });
@@ -214,7 +195,7 @@ describe('FilterSection Component', () => {
 
   describe('Dropdown Icons', () => {
     it('renders dropdown icons for Categories button', () => {
-      render(<FilterSection {...defaultProps} />);
+      renderFilter();
 
       const categoryButton = screen.getByRole('button', { name: /Categories/i });
       const svg = categoryButton.querySelector('svg');
@@ -224,7 +205,7 @@ describe('FilterSection Component', () => {
     });
 
     it('renders dropdown icons for Types button', () => {
-      render(<FilterSection {...defaultProps} />);
+      renderFilter();
 
       const typeButton = screen.getByRole('button', { name: /Types/i });
       const svg = typeButton.querySelector('svg');
@@ -236,14 +217,14 @@ describe('FilterSection Component', () => {
 
   describe('Accessibility', () => {
     it('renders buttons with correct type attribute', () => {
-      render(<FilterSection {...defaultProps} />);
+      renderFilter();
 
       const noneButton = screen.getByRole('button', { name: 'None' });
       expect(noneButton).toHaveAttribute('type', 'button');
     });
 
     it('renders dropdown buttons with correct type attribute', () => {
-      render(<FilterSection {...defaultProps} />);
+      renderFilter();
 
       const categoryButton = screen.getByRole('button', { name: /Categories/i });
       const typeButton = screen.getByRole('button', { name: /Types/i });
@@ -255,8 +236,7 @@ describe('FilterSection Component', () => {
 
   describe('Dynamic Content', () => {
     it('renders all provided categories', () => {
-      const props = { ...defaultProps, isDropdownCategory: true };
-      render(<FilterSection {...props} />);
+      renderFilter({ isDropdownCategory: true });
 
       for (const category of defaultProps.categories) {
         expect(screen.getByText(category)).toBeInTheDocument();
@@ -264,8 +244,7 @@ describe('FilterSection Component', () => {
     });
 
     it('renders all provided types', () => {
-      const props = { ...defaultProps, isDropdownType: true };
-      render(<FilterSection {...props} />);
+      renderFilter({ isDropdownType: true });
 
       for (const type of defaultProps.types) {
         expect(screen.getByText(type)).toBeInTheDocument();
@@ -273,12 +252,7 @@ describe('FilterSection Component', () => {
     });
 
     it('handles empty categories array', () => {
-      const props = {
-        ...defaultProps,
-        categories: [],
-        isDropdownCategory: true,
-      };
-      render(<FilterSection {...props} />);
+      renderFilter({ categories: [], isDropdownCategory: true });
 
       const dropdown = screen
         .getByRole('button', { name: /Categories/i })
@@ -287,12 +261,7 @@ describe('FilterSection Component', () => {
     });
 
     it('handles empty types array', () => {
-      const props = {
-        ...defaultProps,
-        types: [],
-        isDropdownType: true,
-      };
-      render(<FilterSection {...props} />);
+      renderFilter({ types: [], isDropdownType: true });
 
       const dropdown = screen
         .getByRole('button', { name: /Types/i })

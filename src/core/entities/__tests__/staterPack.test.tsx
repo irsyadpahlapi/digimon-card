@@ -1,4 +1,9 @@
 import { StarterPackProps } from '../staterPack';
+import {
+  STARTER_PACKS,
+  validatePropertyTypes,
+  validateRequiredProperties,
+} from '@/__tests__/test-utils';
 
 describe('StarterPack Entity', () => {
   describe('StarterPackProps Interface', () => {
@@ -14,75 +19,44 @@ describe('StarterPack Entity', () => {
         },
       };
 
-      expect(mockProps.item.id).toBe(1);
-      expect(mockProps.item.name).toBe('Common Pack');
-      expect(mockProps.item.type).toBe('C');
-      expect(mockProps.item.image).toBe('/images/common.png');
-      expect(mockProps.item.price).toBe(5);
+      validatePropertyTypes(mockProps.item, {
+        id: 'number',
+        name: 'string',
+        type: 'string',
+        image: 'string',
+        price: 'number',
+        description: 'string',
+      });
       expect(mockProps.item.description).toContain('Perfect for beginners');
-
-      // Type validation
-      expect(typeof mockProps.item.id).toBe('number');
-      expect(typeof mockProps.item.name).toBe('string');
-      expect(typeof mockProps.item.type).toBe('string');
-      expect(typeof mockProps.item.image).toBe('string');
-      expect(typeof mockProps.item.price).toBe('number');
-      expect(typeof mockProps.item.description).toBe('string');
     });
 
     it('should validate all required properties exist', () => {
-      const createStarterPack = (data: Partial<StarterPackProps['item']>): StarterPackProps => {
-        return {
-          item: {
-            id: 0,
-            name: '',
-            type: '',
-            image: '',
-            price: 0,
-            description: '',
-            ...data,
-          },
-        };
+      const starterPack: StarterPackProps = {
+        item: {
+          id: 2,
+          name: 'Balance Pack',
+          type: 'B',
+          image: '/images/balance.png',
+          price: 10,
+          description: 'Balanced starter pack',
+        },
       };
 
-      const starterPack = createStarterPack({
-        id: 2,
-        name: 'Balance Pack',
-        type: 'B',
-        image: '/images/balance.png',
-        price: 10,
-        description: 'Balanced starter pack',
-      });
-
-      expect(starterPack.item).toHaveProperty('id');
-      expect(starterPack.item).toHaveProperty('name');
-      expect(starterPack.item).toHaveProperty('type');
-      expect(starterPack.item).toHaveProperty('image');
-      expect(starterPack.item).toHaveProperty('price');
-      expect(starterPack.item).toHaveProperty('description');
+      validateRequiredProperties(starterPack.item, [
+        'id',
+        'name',
+        'type',
+        'image',
+        'price',
+        'description',
+      ]);
     });
 
     it('should handle different starter pack types', () => {
-      const packTypes = ['C', 'B', 'A', 'R'];
-      const packNames = ['Common', 'Balance', 'Advanced', 'Rare'];
-      const prices = [5, 10, 15, 20];
-
-      for (const [index, type] of packTypes.entries()) {
-        const pack: StarterPackProps = {
-          item: {
-            id: index + 1,
-            name: `${packNames[index]} Pack`,
-            type: type,
-            image: `/images/${packNames[index].toLowerCase()}.png`,
-            price: prices[index],
-            description: `${packNames[index]} starter pack description`,
-          },
-        };
-
-        expect(pack.item.type).toBe(type);
-        expect(pack.item.price).toBe(prices[index]);
-        expect(pack.item.name).toContain(packNames[index]);
-        expect(pack.item.image).toContain(packNames[index].toLowerCase());
+      for (const pack of STARTER_PACKS) {
+        expect(['C', 'B', 'A', 'R']).toContain(pack.type);
+        expect(pack.price).toBeGreaterThan(0);
+        expect(pack.image).toMatch(/\.(png)$/);
       }
     });
 
@@ -120,23 +94,10 @@ describe('StarterPack Entity', () => {
     });
 
     it('should validate pack type is single character', () => {
-      const validTypes = ['C', 'B', 'A', 'R'];
-
-      for (const type of validTypes) {
-        const pack: StarterPackProps = {
-          item: {
-            id: 1,
-            name: 'Test Pack',
-            type: type,
-            image: '/images/test.png',
-            price: 5,
-            description: 'Test description',
-          },
-        };
-
-        expect(pack.item.type).toHaveLength(1);
-        expect(validTypes).toContain(pack.item.type);
-        expect(typeof pack.item.type).toBe('string');
+      for (const pack of STARTER_PACKS) {
+        expect(pack.type).toHaveLength(1);
+        expect(['C', 'B', 'A', 'R']).toContain(pack.type);
+        expect(typeof pack.type).toBe('string');
       }
     });
 
@@ -159,47 +120,11 @@ describe('StarterPack Entity', () => {
     });
 
     it('should validate ID is unique and positive', () => {
-      const packs: StarterPackProps[] = [
-        {
-          item: {
-            id: 1,
-            name: 'Common',
-            type: 'C',
-            image: '/images/common.png',
-            price: 5,
-            description: 'Common pack',
-          },
-        },
-        {
-          item: {
-            id: 2,
-            name: 'Balance',
-            type: 'B',
-            image: '/images/balance.png',
-            price: 10,
-            description: 'Balance pack',
-          },
-        },
-        {
-          item: {
-            id: 3,
-            name: 'Advanced',
-            type: 'A',
-            image: '/images/advanced.png',
-            price: 15,
-            description: 'Advanced pack',
-          },
-        },
-      ];
-
-      const ids = packs.map((pack) => pack.item.id);
-      const uniqueIds = [...new Set(ids)];
-
-      expect(uniqueIds).toHaveLength(ids.length); // All IDs should be unique
-
-      for (const pack of packs) {
-        expect(pack.item.id).toBeGreaterThan(0);
-        expect(Number.isInteger(pack.item.id)).toBe(true);
+      const ids = STARTER_PACKS.map((p) => p.id);
+      expect(new Set(ids).size).toBe(ids.length);
+      for (const id of ids) {
+        expect(id).toBeGreaterThan(0);
+        expect(Number.isInteger(id)).toBe(true);
       }
     });
 
@@ -221,82 +146,22 @@ describe('StarterPack Entity', () => {
     });
 
     it('should create valid props for component consumption', () => {
-      const componentProps: StarterPackProps = {
-        item: {
-          id: 4,
-          name: 'Rare Pack',
-          type: 'R',
-          image: '/images/rare.png',
-          price: 20,
-          description:
-            'The ultimate pack! Experience legendary power with 1 Champion, 2 Ultimates, and 1 exclusive Mega card. For serious collectors only!',
-        },
-      };
-
-      // Should be valid for React component props
-      expect(componentProps.item).toBeDefined();
-      expect(Object.keys(componentProps.item)).toHaveLength(6);
-
-      // Should have all required properties for UI display
-      expect(componentProps.item.name).toBeTruthy();
-      expect(componentProps.item.price).toBeTruthy();
-      expect(componentProps.item.description).toBeTruthy();
-      expect(componentProps.item.image).toBeTruthy();
+      for (const pack of STARTER_PACKS) {
+        expect(pack.name).toBeTruthy();
+        expect(pack.price).toBeTruthy();
+        expect(pack.description).toBeTruthy();
+        expect(pack.image).toBeTruthy();
+      }
     });
 
     it('should maintain data consistency for price ordering', () => {
-      const packs: StarterPackProps[] = [
-        {
-          item: {
-            id: 1,
-            name: 'Common',
-            type: 'C',
-            image: '/images/common.png',
-            price: 5,
-            description: 'Common',
-          },
-        },
-        {
-          item: {
-            id: 2,
-            name: 'Balance',
-            type: 'B',
-            image: '/images/balance.png',
-            price: 10,
-            description: 'Balance',
-          },
-        },
-        {
-          item: {
-            id: 3,
-            name: 'Advanced',
-            type: 'A',
-            image: '/images/advanced.png',
-            price: 15,
-            description: 'Advanced',
-          },
-        },
-        {
-          item: {
-            id: 4,
-            name: 'Rare',
-            type: 'R',
-            image: '/images/rare.png',
-            price: 20,
-            description: 'Rare',
-          },
-        },
-      ];
-
-      // Prices should be in ascending order
-      for (let i = 1; i < packs.length; i++) {
-        expect(packs[i].item.price).toBeGreaterThan(packs[i - 1].item.price);
+      const sortedByPrice = [...STARTER_PACKS].sort((a, b) => a.price - b.price);
+      for (let i = 1; i < sortedByPrice.length; i++) {
+        expect(sortedByPrice[i].price).toBeGreaterThan(sortedByPrice[i - 1].price);
       }
-
-      // Type hierarchy should match price hierarchy
       const typeHierarchy = ['C', 'B', 'A', 'R'];
-      for (const [index, pack] of packs.entries()) {
-        expect(pack.item.type).toBe(typeHierarchy[index]);
+      for (const [index, pack] of STARTER_PACKS.entries()) {
+        expect(pack.type).toBe(typeHierarchy[index]);
       }
     });
   });

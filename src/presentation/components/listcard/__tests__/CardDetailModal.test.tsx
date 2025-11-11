@@ -61,6 +61,11 @@ describe('CardDetailModal Component', () => {
     isSelling: false,
   };
 
+  // Helper to render modal with prop overrides
+  const renderModal = (overrides = {}) => {
+    return render(<CardDetailModal {...defaultProps} {...overrides} />);
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
     // Reset document overflow style
@@ -73,7 +78,7 @@ describe('CardDetailModal Component', () => {
   });
 
   it('should render modal when isOpen is true', () => {
-    render(<CardDetailModal {...defaultProps} />);
+    renderModal();
 
     // Check for modal content instead of specific dialog role
     expect(screen.getByText('Agumon')).toBeInTheDocument();
@@ -83,20 +88,20 @@ describe('CardDetailModal Component', () => {
   });
 
   it('should not render modal when isOpen is false', () => {
-    render(<CardDetailModal {...defaultProps} isOpen={false} />);
+    renderModal({ isOpen: false });
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
   it('should not render modal when item is null', () => {
-    render(<CardDetailModal {...defaultProps} item={null} />);
+    renderModal({ item: null });
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
   it('should call onClose when close button is clicked', async () => {
     const user = userEvent.setup();
-    render(<CardDetailModal {...defaultProps} />);
+    renderModal();
 
     const closeButton = screen.getByLabelText('Close modal');
     await user.click(closeButton);
@@ -105,7 +110,7 @@ describe('CardDetailModal Component', () => {
   });
 
   it('should call onClose when ESC key is pressed', async () => {
-    render(<CardDetailModal {...defaultProps} />);
+    renderModal();
 
     fireEvent.keyDown(document, { key: 'Escape' });
 
@@ -113,7 +118,7 @@ describe('CardDetailModal Component', () => {
   });
 
   it('should display card stats correctly', () => {
-    render(<CardDetailModal {...defaultProps} />);
+    renderModal();
 
     expect(screen.getByText('Level: Rookie')).toBeInTheDocument();
     expect(screen.getAllByText('Fire')).toHaveLength(2); // Appears in both badge and attribute section
@@ -123,7 +128,7 @@ describe('CardDetailModal Component', () => {
   });
 
   it('should display fields correctly', () => {
-    render(<CardDetailModal {...defaultProps} />);
+    renderModal();
 
     expect(screen.getByText('Fields')).toBeInTheDocument();
     expect(screen.getByText('Wind Guardians')).toBeInTheDocument();
@@ -132,7 +137,7 @@ describe('CardDetailModal Component', () => {
 
   it('should show evolution section when evolve button is clicked', async () => {
     const user = userEvent.setup();
-    render(<CardDetailModal {...defaultProps} />);
+    renderModal();
 
     const evolveButton = screen.getByText('Evolve (2 options)');
     await user.click(evolveButton);
@@ -148,7 +153,7 @@ describe('CardDetailModal Component', () => {
 
   it('should hide evolution section when hide button is clicked', async () => {
     const user = userEvent.setup();
-    render(<CardDetailModal {...defaultProps} />);
+    renderModal();
 
     // First show evolution section
     const evolveButton = screen.getByText('Evolve (2 options)');
@@ -169,7 +174,7 @@ describe('CardDetailModal Component', () => {
 
   it('should call onEvolve when evolution option is selected', async () => {
     const user = userEvent.setup();
-    render(<CardDetailModal {...defaultProps} />);
+    renderModal();
 
     // Show evolution section
     const evolveButton = screen.getByText('Evolve (2 options)');
@@ -184,7 +189,7 @@ describe('CardDetailModal Component', () => {
 
   it('should call onSell when sell button is clicked', async () => {
     const user = userEvent.setup();
-    render(<CardDetailModal {...defaultProps} />);
+    renderModal();
 
     const sellButton = screen.getByText('Sell (10 coins)');
     await user.click(sellButton);
@@ -193,7 +198,7 @@ describe('CardDetailModal Component', () => {
   });
 
   it('should disable buttons when isEvolving is true', () => {
-    render(<CardDetailModal {...defaultProps} isEvolving={true} />);
+    renderModal({ isEvolving: true });
 
     const evolveButton = screen.getByRole('button', { name: /evolve.*options/i });
     const sellButton = screen.getByRole('button', { name: /sell.*coins/i });
@@ -204,7 +209,7 @@ describe('CardDetailModal Component', () => {
   });
 
   it('should disable buttons when isSelling is true', () => {
-    render(<CardDetailModal {...defaultProps} isSelling={true} />);
+    renderModal({ isSelling: true });
 
     const evolveButton = screen.getByRole('button', { name: /evolve.*options/i });
     const sellButton = screen.getByRole('button', { name: /selling/i });
@@ -217,7 +222,7 @@ describe('CardDetailModal Component', () => {
 
   it('should show loading state for evolving', async () => {
     // Render with isEvolving=true
-    render(<CardDetailModal {...defaultProps} isEvolving={true} />);
+    renderModal({ isEvolving: true });
 
     // Click the main evolve button to show evolution section
     // Button should say "Evolve (2 options)" and be disabled when isEvolving=true
@@ -234,7 +239,7 @@ describe('CardDetailModal Component', () => {
   });
 
   it('should show loading state for selling', () => {
-    render(<CardDetailModal {...defaultProps} isSelling={true} />);
+    renderModal({ isSelling: true });
 
     expect(screen.getByText('Selling...')).toBeInTheDocument();
     // Check for spinner SVG instead of role status
@@ -248,7 +253,7 @@ describe('CardDetailModal Component', () => {
       nextEvolutions: [],
     };
 
-    render(<CardDetailModal {...defaultProps} item={cardWithoutEvolutions} />);
+    renderModal({ item: cardWithoutEvolutions });
 
     expect(screen.queryByText('Evolve')).not.toBeInTheDocument();
     expect(screen.getByText('Sell (10 coins)')).toBeInTheDocument();
@@ -260,7 +265,7 @@ describe('CardDetailModal Component', () => {
       fields: [],
     };
 
-    render(<CardDetailModal {...defaultProps} item={cardWithoutFields} />);
+    renderModal({ item: cardWithoutFields });
 
     expect(screen.queryByText('Fields')).not.toBeInTheDocument();
   });
@@ -271,19 +276,19 @@ describe('CardDetailModal Component', () => {
       description: '',
     };
 
-    render(<CardDetailModal {...defaultProps} item={cardWithoutDescription} />);
+    renderModal({ item: cardWithoutDescription });
 
     expect(screen.queryByText('Description')).not.toBeInTheDocument();
   });
 
   it('should set body overflow to hidden when modal is open', () => {
-    render(<CardDetailModal {...defaultProps} />);
+    renderModal();
 
     expect(document.body.style.overflow).toBe('hidden');
   });
 
   it('should restore body overflow when modal is closed', () => {
-    const { rerender } = render(<CardDetailModal {...defaultProps} />);
+    const { rerender } = renderModal();
 
     expect(document.body.style.overflow).toBe('hidden');
 
@@ -298,14 +303,14 @@ describe('CardDetailModal Component', () => {
       images: [],
     };
 
-    render(<CardDetailModal {...defaultProps} item={cardWithoutImage} />);
+    renderModal({ item: cardWithoutImage });
 
     const image = screen.getByAltText('Agumon');
     expect(image).toHaveAttribute('src', 'https://via.placeholder.com/300x300?text=Digimon');
   });
 
   it('should reset evolution section state when modal closes via useEffect timeout', async () => {
-    const { rerender } = render(<CardDetailModal {...defaultProps} />);
+    const { rerender } = renderModal();
 
     // First show evolution section
     const evolveButton = screen.getByText('Evolve (2 options)');
@@ -327,7 +332,7 @@ describe('CardDetailModal Component', () => {
 
   it('should hide evolution section when close button in evolution section is clicked', async () => {
     const user = userEvent.setup();
-    render(<CardDetailModal {...defaultProps} />);
+    renderModal();
 
     // First show evolution section
     const evolveButton = screen.getByText('Evolve (2 options)');
@@ -352,7 +357,7 @@ describe('CardDetailModal Component', () => {
 
   it('should handle useEffect cleanup properly', () => {
     // Test the cleanup function is defined but don't test internal implementation
-    const { unmount } = render(<CardDetailModal {...defaultProps} />);
+    const { unmount } = renderModal();
 
     // Simply unmount to ensure no errors occur during cleanup
     expect(() => unmount()).not.toThrow();
