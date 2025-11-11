@@ -158,13 +158,6 @@ jobs:
       - name: Build application
         run: yarn build
 
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # v4.4.0
-        with:
-          name: build-output
-          path: .next/
-          retention-days: 1
-
   # Build and Deploy job (only on main branch)
   deploy:
     name: Deploy to Vercel
@@ -195,12 +188,6 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Download build artifacts
-        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
-        with:
-          name: build-output
-          path: .next/
-
       - name: Deploy to Vercel (Production)
         run: |
           npm install -g vercel
@@ -209,7 +196,6 @@ jobs:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-        continue-on-error: true
 
   # Preview deployment for PRs
   preview:
@@ -241,12 +227,6 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Download build artifacts
-        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
-        with:
-          name: build-output
-          path: .next/
-
       - name: Deploy to Vercel (Preview)
         run: |
           npm install -g vercel
@@ -255,4 +235,3 @@ jobs:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-        continue-on-error: true
