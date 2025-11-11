@@ -4,24 +4,24 @@ import { DetailDigimonEntity } from '@entities/digimon';
 export class BuyStarterpack {
   // Get Random Rookies Digimon
   async getListDigimon(type: string): Promise<DetailDigimonEntity> {
-    const { getListDigimon, getDigimonById } = new DigimonAPI();
-    const ListDataChild = await getListDigimon(type, 100);
+    const api = new DigimonAPI();
+    const ListDataChild = await api.getListDigimon(type, 100);
 
     // Using Math.random for game mechanics (card selection) is acceptable for non-cryptographic purposes
     // This is not used for security-critical operations, only for game randomness
     const randomIndex = Math.floor(Math.random() * ListDataChild.content.length); // NOSONAR
-    const data = await getDigimonById(ListDataChild.content[randomIndex].id);
+    const data = await api.getDigimonById(ListDataChild.content[randomIndex].id);
 
     return data;
   }
 
   // Get Random Champion Digimon
   async getListChampion(): Promise<DetailDigimonEntity> {
-    const { getListDigimon, getDigimonById } = new DigimonAPI();
-    const ListDataAdult = await getListDigimon('Adult', 50);
-    const ListDataArmor = await getListDigimon('Armor', 50);
-    const ListDataUnknown = await getListDigimon('Unknown', 50);
-    const ListDataHybrid = await getListDigimon('Hybrid', 50);
+    const api = new DigimonAPI();
+    const ListDataAdult = await api.getListDigimon('Adult', 50);
+    const ListDataArmor = await api.getListDigimon('Armor', 50);
+    const ListDataUnknown = await api.getListDigimon('Unknown', 50);
+    const ListDataHybrid = await api.getListDigimon('Hybrid', 50);
 
     const ListDataAll = [
       ...ListDataAdult.content,
@@ -33,7 +33,7 @@ export class BuyStarterpack {
     // Using Math.random for game mechanics (card selection) is acceptable for non-cryptographic purposes
     // This is not used for security-critical operations, only for game randomness
     const randomIndex = Math.floor(Math.random() * ListDataAll.length); // NOSONAR
-    const data = await getDigimonById(ListDataAll[randomIndex].id);
+    const data = await api.getDigimonById(ListDataAll[randomIndex].id);
 
     return data;
   }
@@ -85,8 +85,8 @@ export class BuyStarterpack {
   }
 
   async getDigimonById(id: number): Promise<DetailDigimonEntity> {
-    const { getDigimonById } = new DigimonAPI();
-    const data = await getDigimonById(id);
+    const api = new DigimonAPI();
+    const data = await api.getDigimonById(id);
     return data;
   }
 }
