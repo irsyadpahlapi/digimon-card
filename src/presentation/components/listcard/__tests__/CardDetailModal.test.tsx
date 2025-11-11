@@ -66,6 +66,28 @@ describe('CardDetailModal Component', () => {
     return render(<CardDetailModal {...defaultProps} {...overrides} />);
   };
 
+  // Builder for card variants
+  const buildCard = (overrides: Partial<DetailDigimonRepository>): DetailDigimonRepository => {
+    return { ...mockCard, ...overrides } as DetailDigimonRepository;
+  };
+
+  // Helper to open evolution section
+  const openEvolutionSection = async (user: ReturnType<typeof userEvent.setup>) => {
+    const evolveButton = screen.getByRole('button', { name: /evolve.*options/i });
+    await user.click(evolveButton);
+    await waitFor(() => {
+      expect(screen.getByText('Choose Evolution')).toBeInTheDocument();
+    });
+  };
+
+  // Shared assertions for evolution options
+  const assertEvolutionOptionsVisible = () => {
+    expect(screen.getByText('Greymon')).toBeInTheDocument();
+    expect(screen.getByText('GeoGreymon')).toBeInTheDocument();
+    expect(screen.getByText('Level up')).toBeInTheDocument();
+    expect(screen.getByText('Ancient evolution')).toBeInTheDocument();
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
     // Reset document overflow style
@@ -138,35 +160,16 @@ describe('CardDetailModal Component', () => {
   it('should show evolution section when evolve button is clicked', async () => {
     const user = userEvent.setup();
     renderModal();
-
-    const evolveButton = screen.getByText('Evolve (2 options)');
-    await user.click(evolveButton);
-
-    await waitFor(() => {
-      expect(screen.getByText('Choose Evolution')).toBeInTheDocument();
-    });
-    expect(screen.getByText('Greymon')).toBeInTheDocument();
-    expect(screen.getByText('GeoGreymon')).toBeInTheDocument();
-    expect(screen.getByText('Level up')).toBeInTheDocument();
-    expect(screen.getByText('Ancient evolution')).toBeInTheDocument();
+    await openEvolutionSection(user);
+    assertEvolutionOptionsVisible();
   });
 
   it('should hide evolution section when hide button is clicked', async () => {
     const user = userEvent.setup();
     renderModal();
-
-    // First show evolution section
-    const evolveButton = screen.getByText('Evolve (2 options)');
-    await user.click(evolveButton);
-
-    await waitFor(() => {
-      expect(screen.getByText('Choose Evolution')).toBeInTheDocument();
-    });
-
-    // Then hide it
+    await openEvolutionSection(user);
     const hideButton = screen.getByText('Hide Evolutions');
     await user.click(hideButton);
-
     await waitFor(() => {
       expect(screen.queryByText('Choose Evolution')).not.toBeInTheDocument();
     });
@@ -175,15 +178,8 @@ describe('CardDetailModal Component', () => {
   it('should call onEvolve when evolution option is selected', async () => {
     const user = userEvent.setup();
     renderModal();
-
-    // Show evolution section
-    const evolveButton = screen.getByText('Evolve (2 options)');
-    await user.click(evolveButton);
-
-    // Click on specific evolution
-    const greymonButton = screen.getByText('Evolve to Greymon');
-    await user.click(greymonButton);
-
+    await openEvolutionSection(user);
+    await user.click(screen.getByText('Evolve to Greymon'));
     expect(mockOnEvolve).toHaveBeenCalledWith(1, 2);
   });
 
@@ -247,38 +243,25 @@ describe('CardDetailModal Component', () => {
     expect(spinnerSvg).toBeInTheDocument();
   });
 
-  it('should handle card without next evolutions', () => {
-    const cardWithoutEvolutions = {
-      ...mockCard,
-      nextEvolutions: [],
-    };
+  describe('conditional sections', () => {
+    it.each([
+      [{ nextEvolutions: [] }, /Evolve/, false],
+      [{ fields: [] }, /Fields/, false],
+      [{ description: '' }, /Description/, false],
+    ])('should handle missing section %p', (overrides, pattern, shouldExist) => {
+      renderModal({ item: buildCard(overrides) });
+      if (shouldExist) {
+        expect(screen.getByText(pattern)).toBeInTheDocument();
+      } else {
+        expect(screen.queryByText(pattern)).not.toBeInTheDocument();
+      }
+    });
 
-    renderModal({ item: cardWithoutEvolutions });
-
-    expect(screen.queryByText('Evolve')).not.toBeInTheDocument();
-    expect(screen.getByText('Sell (10 coins)')).toBeInTheDocument();
-  });
-
-  it('should handle card without fields', () => {
-    const cardWithoutFields = {
-      ...mockCard,
-      fields: [],
-    };
-
-    renderModal({ item: cardWithoutFields });
-
-    expect(screen.queryByText('Fields')).not.toBeInTheDocument();
-  });
-
-  it('should handle card without description', () => {
-    const cardWithoutDescription = {
-      ...mockCard,
-      description: '',
-    };
-
-    renderModal({ item: cardWithoutDescription });
-
-    expect(screen.queryByText('Description')).not.toBeInTheDocument();
+    it('should still allow selling when evolutions are missing', () => {
+      renderModal({ item: buildCard({ nextEvolutions: [] }) });
+      expect(screen.queryByText(/Evolve/)).not.toBeInTheDocument();
+      expect(screen.getByText('Sell (10 coins)')).toBeInTheDocument();
+    });
   });
 
   it('should set body overflow to hidden when modal is open', () => {
@@ -311,20 +294,8 @@ describe('CardDetailModal Component', () => {
 
   it('should reset evolution section state when modal closes via useEffect timeout', async () => {
     const { rerender } = renderModal();
-
-    // First show evolution section
-    const evolveButton = screen.getByText('Evolve (2 options)');
-    await userEvent.setup().click(evolveButton);
-
-    // Wait for evolution section to appear
-    await waitFor(() => {
-      expect(screen.getByText('Choose Evolution')).toBeInTheDocument();
-    });
-
-    // Close modal and verify timeout cleanup
+    await openEvolutionSection(userEvent.setup());
     rerender(<CardDetailModal {...defaultProps} isOpen={false} />);
-
-    // Wait for timeout to execute
     await waitFor(() => {
       expect(screen.queryByText('Choose Evolution')).not.toBeInTheDocument();
     });
@@ -333,23 +304,11 @@ describe('CardDetailModal Component', () => {
   it('should hide evolution section when close button in evolution section is clicked', async () => {
     const user = userEvent.setup();
     renderModal();
-
-    // First show evolution section
-    const evolveButton = screen.getByText('Evolve (2 options)');
-    await user.click(evolveButton);
-
-    // Wait for evolution section to appear
-    await waitFor(() => {
-      expect(screen.getByText('Choose Evolution')).toBeInTheDocument();
-    });
-
-    // Find the specific close button in evolution section by checking its container
+    await openEvolutionSection(user);
     const evolutionSection = screen.getByText('Choose Evolution').closest('div');
     const closeButton = evolutionSection?.querySelector('button') as HTMLButtonElement;
-
     expect(closeButton).toBeDefined();
     await user.click(closeButton);
-
     await waitFor(() => {
       expect(screen.queryByText('Choose Evolution')).not.toBeInTheDocument();
     });
