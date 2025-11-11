@@ -1,5 +1,6 @@
 import { ListGatcha } from '../listGatcha';
 import { DetailDigimonEntity } from '@/core/entities/digimon';
+import { makeDetailDigimonEntity } from '@/__tests__/test-utils';
 
 // Mock the repository
 const mockListGatchaImpl = {
@@ -60,14 +61,12 @@ describe('ListGatcha Use Case', () => {
   let listGatcha: ListGatcha;
 
   const mockDigimonData: DetailDigimonEntity[] = [
-    {
+    makeDetailDigimonEntity({
       id: 1,
       name: 'Agumon',
-      images: [{ href: 'agumon.jpg', transparent: false }],
       levels: [{ id: 1, level: 'Child' }],
       types: [{ id: 1, type: 'Vaccine' }],
       attributes: [{ id: 1, attribute: 'Fire' }],
-      fields: [{ id: 1, field: 'Wind Guardians', image: 'field.jpg' }],
       descriptions: [
         { origin: 'Test', language: 'en', description: 'A small dinosaur Digimon' },
         { origin: 'Test2', language: 'en', description: 'Latest description' },
@@ -82,11 +81,10 @@ describe('ListGatcha Use Case', () => {
         },
       ],
       level: { id: 1, level: 'Child' },
-    },
-    {
+    }),
+    makeDetailDigimonEntity({
       id: 2,
       name: 'Gabumon',
-      images: [{ href: 'gabumon.jpg', transparent: false }],
       levels: [{ id: 2, level: 'Adult' }],
       types: [{ id: 2, type: 'Data' }],
       attributes: [{ id: 2, attribute: 'Ice' }],
@@ -96,7 +94,7 @@ describe('ListGatcha Use Case', () => {
       ],
       nextEvolutions: [],
       level: { id: 2, level: 'Adult' },
-    },
+    }),
   ];
 
   beforeEach(() => {
@@ -143,7 +141,7 @@ describe('ListGatcha Use Case', () => {
 
     it('should handle digimon with multiple types and attributes', async () => {
       const complexDigimon: DetailDigimonEntity[] = [
-        {
+        makeDetailDigimonEntity({
           id: 3,
           name: 'MetalGreymon',
           images: [{ href: 'metalgreymon.jpg', transparent: false }],
@@ -160,9 +158,6 @@ describe('ListGatcha Use Case', () => {
             { id: 1, attribute: 'Vaccine' },
           ],
           fields: [{ id: 1, field: 'Metal Empire', image: 'metal.jpg' }],
-          descriptions: [
-            { origin: 'Test', language: 'en', description: 'A mechanized dragon Digimon' },
-          ],
           nextEvolutions: [
             {
               id: 4,
@@ -173,7 +168,7 @@ describe('ListGatcha Use Case', () => {
             },
           ],
           level: { id: 3, level: 'Ultimate' },
-        },
+        }),
       ];
 
       mockListGatchaImpl.getListGacha.mockResolvedValue(complexDigimon);
@@ -192,18 +187,18 @@ describe('ListGatcha Use Case', () => {
 
     it('should handle digimon with empty arrays gracefully', async () => {
       const emptyDigimon: DetailDigimonEntity[] = [
-        {
+        makeDetailDigimonEntity({
           id: 4,
           name: 'EmptyDigimon',
           images: [],
-          levels: [{ id: 1, level: '' }], // Minimal level to prevent undefined access
+          levels: [{ id: 1, level: '' }],
           types: [],
           attributes: [],
           fields: [],
           descriptions: [],
           nextEvolutions: [],
           level: { id: 1, level: 'Rookie' },
-        },
+        }),
       ];
 
       mockListGatchaImpl.getListGacha.mockResolvedValue(emptyDigimon);
@@ -248,18 +243,13 @@ describe('ListGatcha Use Case', () => {
 
     it('should handle digimon with single description correctly', async () => {
       const singleDescDigimon: DetailDigimonEntity[] = [
-        {
+        makeDetailDigimonEntity({
           id: 5,
           name: 'TestDigimon',
-          images: [{ href: 'test.jpg', transparent: false }],
           levels: [{ id: 1, level: 'Rookie' }],
-          types: [{ id: 1, type: 'Vaccine' }],
-          attributes: [{ id: 1, attribute: 'Fire' }],
-          fields: [],
           descriptions: [{ origin: 'Single', language: 'en', description: 'Only description' }],
-          nextEvolutions: [],
           level: { id: 1, level: 'Rookie' },
-        },
+        }),
       ];
 
       mockListGatchaImpl.getListGacha.mockResolvedValue(singleDescDigimon);
@@ -271,10 +261,9 @@ describe('ListGatcha Use Case', () => {
 
     it('should properly sort and select highest ID elements', async () => {
       const sortTestDigimon: DetailDigimonEntity[] = [
-        {
+        makeDetailDigimonEntity({
           id: 6,
           name: 'SortTestDigimon',
-          images: [{ href: 'sort.jpg', transparent: false }],
           levels: [
             { id: 1, level: 'Child' },
             { id: 5, level: 'Perfect' },
@@ -291,11 +280,8 @@ describe('ListGatcha Use Case', () => {
             { id: 3, attribute: 'Ice' },
             { id: 2, attribute: 'Earth' },
           ],
-          fields: [],
-          descriptions: [],
-          nextEvolutions: [],
           level: { id: 5, level: 'Perfect' },
-        },
+        }),
       ];
 
       mockListGatchaImpl.getListGacha.mockResolvedValue(sortTestDigimon);

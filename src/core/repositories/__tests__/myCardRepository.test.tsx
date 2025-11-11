@@ -1,4 +1,12 @@
 import { DetailDigimonRepository } from '../myCardRepository';
+import {
+  validatePropertyTypes,
+  validateRequiredProperties,
+  validateImageStructure,
+  validateFieldStructure,
+  validateNextEvolutionStructure,
+  validateNumericConstraints,
+} from '@/__tests__/test-utils';
 
 describe('MyCardRepository', () => {
   describe('DetailDigimonRepository Interface', () => {
@@ -65,22 +73,23 @@ describe('MyCardRepository', () => {
         sellingDigimon: 15,
       };
 
-      // Validate all required properties exist
-      expect(repository).toHaveProperty('id');
-      expect(repository).toHaveProperty('name');
-      expect(repository).toHaveProperty('images');
-      expect(repository).toHaveProperty('level');
-      expect(repository).toHaveProperty('type');
-      expect(repository).toHaveProperty('attribute');
-      expect(repository).toHaveProperty('fields');
-      expect(repository).toHaveProperty('description');
-      expect(repository).toHaveProperty('nextEvolutions');
-      expect(repository).toHaveProperty('isEvolution');
-      expect(repository).toHaveProperty('evolution');
-      expect(repository).toHaveProperty('starterPack');
-      expect(repository).toHaveProperty('total');
-      expect(repository).toHaveProperty('category');
-      expect(repository).toHaveProperty('sellingDigimon');
+      validateRequiredProperties(repository, [
+        'id',
+        'name',
+        'images',
+        'level',
+        'type',
+        'attribute',
+        'fields',
+        'description',
+        'nextEvolutions',
+        'isEvolution',
+        'evolution',
+        'starterPack',
+        'total',
+        'category',
+        'sellingDigimon',
+      ]);
     });
 
     it('should validate data types for all properties', () => {
@@ -102,21 +111,23 @@ describe('MyCardRepository', () => {
         sellingDigimon: 20,
       };
 
-      expect(typeof repository.id).toBe('number');
-      expect(typeof repository.name).toBe('string');
-      expect(Array.isArray(repository.images)).toBe(true);
-      expect(typeof repository.level).toBe('string');
-      expect(typeof repository.type).toBe('string');
-      expect(typeof repository.attribute).toBe('string');
-      expect(Array.isArray(repository.fields)).toBe(true);
-      expect(typeof repository.description).toBe('string');
-      expect(Array.isArray(repository.nextEvolutions)).toBe(true);
-      expect(typeof repository.isEvolution).toBe('boolean');
-      expect(typeof repository.evolution).toBe('number');
-      expect(typeof repository.starterPack).toBe('number');
-      expect(typeof repository.total).toBe('number');
-      expect(typeof repository.category).toBe('string');
-      expect(typeof repository.sellingDigimon).toBe('number');
+      validatePropertyTypes(repository, {
+        id: 'number',
+        name: 'string',
+        images: 'array',
+        level: 'string',
+        type: 'string',
+        attribute: 'string',
+        fields: 'array',
+        description: 'string',
+        nextEvolutions: 'array',
+        isEvolution: 'boolean',
+        evolution: 'number',
+        starterPack: 'number',
+        total: 'number',
+        category: 'string',
+        sellingDigimon: 'number',
+      });
     });
 
     it('should validate Image structure within repository', () => {
@@ -142,10 +153,10 @@ describe('MyCardRepository', () => {
         sellingDigimon: 25,
       };
 
+      validateImageStructure(repository.images);
+
+      // Additional validation for image file extensions
       for (const image of repository.images) {
-        expect(typeof image.href).toBe('string');
-        expect(typeof image.transparent).toBe('boolean');
-        expect(image.href.length).toBeGreaterThan(0);
         expect(image.href).toMatch(/\.(jpg|jpeg|png|gif)$/);
       }
     });
@@ -173,15 +184,7 @@ describe('MyCardRepository', () => {
         sellingDigimon: 12,
       };
 
-      for (const field of repository.fields) {
-        expect(typeof field.id).toBe('number');
-        expect(typeof field.field).toBe('string');
-        expect(typeof field.image).toBe('string');
-
-        expect(field.id).toBeGreaterThan(0);
-        expect(field.field.length).toBeGreaterThan(0);
-        expect(field.image.length).toBeGreaterThan(0);
-      }
+      validateFieldStructure(repository.fields);
     });
 
     it('should validate NextEvolution structure within repository', () => {
@@ -218,19 +221,7 @@ describe('MyCardRepository', () => {
         sellingDigimon: 5,
       };
 
-      for (const evolution of repository.nextEvolutions) {
-        expect(typeof evolution.id).toBe('number');
-        expect(typeof evolution.digimon).toBe('string');
-        expect(typeof evolution.condition).toBe('string');
-        expect(typeof evolution.image).toBe('string');
-        expect(typeof evolution.url).toBe('string');
-
-        expect(evolution.id).toBeGreaterThan(0);
-        expect(evolution.digimon.length).toBeGreaterThan(0);
-        expect(evolution.condition.length).toBeGreaterThan(0);
-        expect(evolution.image.length).toBeGreaterThan(0);
-        expect(evolution.url.length).toBeGreaterThan(0);
-      }
+      validateNextEvolutionStructure(repository.nextEvolutions);
     });
 
     it('should validate evolution logic consistency', () => {
@@ -413,18 +404,22 @@ describe('MyCardRepository', () => {
         sellingDigimon: 12,
       };
 
-      expect(repository.id).toBeGreaterThan(0);
-      expect(repository.evolution).toBeGreaterThanOrEqual(0);
-      expect(repository.starterPack).toBeGreaterThanOrEqual(0);
-      expect(repository.total).toBeGreaterThan(0);
-      expect(repository.sellingDigimon).toBeGreaterThan(0);
-
-      // All numeric values should be integers
-      expect(Number.isInteger(repository.id)).toBe(true);
-      expect(Number.isInteger(repository.evolution)).toBe(true);
-      expect(Number.isInteger(repository.starterPack)).toBe(true);
-      expect(Number.isInteger(repository.total)).toBe(true);
-      expect(Number.isInteger(repository.sellingDigimon)).toBe(true);
+      validateNumericConstraints(
+        {
+          id: repository.id,
+          evolution: repository.evolution,
+          starterPack: repository.starterPack,
+          total: repository.total,
+          sellingDigimon: repository.sellingDigimon,
+        },
+        {
+          id: { min: 1, isInteger: true },
+          evolution: { min: 0, isInteger: true },
+          starterPack: { min: 0, isInteger: true },
+          total: { min: 1, isInteger: true },
+          sellingDigimon: { min: 1, isInteger: true },
+        },
+      );
     });
 
     it('should handle empty arrays gracefully', () => {

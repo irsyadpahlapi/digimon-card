@@ -1,4 +1,11 @@
 import { Content, ListDigimonEntity, DetailDigimonEntity } from '../digimon';
+import {
+  validatePropertyTypes,
+  validateRequiredProperties,
+  validateImageStructure,
+  validateFieldStructure,
+  validateNextEvolutionStructure,
+} from '@/__tests__/test-utils';
 
 describe('Digimon Entities', () => {
   describe('Content Interface', () => {
@@ -10,16 +17,12 @@ describe('Digimon Entities', () => {
         image: 'agumon.jpg',
       };
 
-      expect(mockContent.id).toBe(1);
-      expect(mockContent.name).toBe('Agumon');
-      expect(mockContent.href).toBe('/digimon/agumon');
-      expect(mockContent.image).toBe('agumon.jpg');
-
-      // Type validation
-      expect(typeof mockContent.id).toBe('number');
-      expect(typeof mockContent.name).toBe('string');
-      expect(typeof mockContent.href).toBe('string');
-      expect(typeof mockContent.image).toBe('string');
+      validatePropertyTypes(mockContent, {
+        id: 'number',
+        name: 'string',
+        href: 'string',
+        image: 'string',
+      });
     });
 
     it('should validate Content interface properties are required', () => {
@@ -40,10 +43,7 @@ describe('Digimon Entities', () => {
         image: 'test.jpg',
       });
 
-      expect(content).toHaveProperty('id');
-      expect(content).toHaveProperty('name');
-      expect(content).toHaveProperty('href');
-      expect(content).toHaveProperty('image');
+      validateRequiredProperties(content, ['id', 'name', 'href', 'image']);
     });
   });
 
@@ -114,14 +114,14 @@ describe('Digimon Entities', () => {
         },
       };
 
-      const { pageable } = mockListEntity;
-
-      expect(typeof pageable.currentPage).toBe('number');
-      expect(typeof pageable.elementsOnPage).toBe('number');
-      expect(typeof pageable.totalElements).toBe('number');
-      expect(typeof pageable.totalPages).toBe('number');
-      expect(typeof pageable.previousPage).toBe('string');
-      expect(typeof pageable.nextPage).toBe('string');
+      validatePropertyTypes(mockListEntity.pageable, {
+        currentPage: 'number',
+        elementsOnPage: 'number',
+        totalElements: 'number',
+        totalPages: 'number',
+        previousPage: 'string',
+        nextPage: 'string',
+      });
     });
   });
 
@@ -186,11 +186,7 @@ describe('Digimon Entities', () => {
         level: { id: 1, level: 'Test' },
       };
 
-      for (const image of mockDetailEntity.images) {
-        expect(typeof image.href).toBe('string');
-        expect(typeof image.transparent).toBe('boolean');
-        expect(image.href.length).toBeGreaterThan(0);
-      }
+      validateImageStructure(mockDetailEntity.images);
     });
 
     it('should validate Level structure', () => {
@@ -286,14 +282,7 @@ describe('Digimon Entities', () => {
         level: { id: 1, level: 'Test' },
       };
 
-      for (const field of mockDetailEntity.fields) {
-        expect(typeof field.id).toBe('number');
-        expect(typeof field.field).toBe('string');
-        expect(typeof field.image).toBe('string');
-        expect(field.id).toBeGreaterThan(0);
-        expect(field.field.length).toBeGreaterThan(0);
-        expect(field.image.length).toBeGreaterThan(0);
-      }
+      validateFieldStructure(mockDetailEntity.fields);
     });
 
     it('should validate NextEvolution structure', () => {
@@ -318,19 +307,7 @@ describe('Digimon Entities', () => {
         level: { id: 1, level: 'Test' },
       };
 
-      for (const evolution of mockDetailEntity.nextEvolutions) {
-        expect(typeof evolution.id).toBe('number');
-        expect(typeof evolution.digimon).toBe('string');
-        expect(typeof evolution.condition).toBe('string');
-        expect(typeof evolution.image).toBe('string');
-        expect(typeof evolution.url).toBe('string');
-
-        expect(evolution.id).toBeGreaterThan(0);
-        expect(evolution.digimon.length).toBeGreaterThan(0);
-        expect(evolution.condition.length).toBeGreaterThan(0);
-        expect(evolution.image.length).toBeGreaterThan(0);
-        expect(evolution.url.length).toBeGreaterThan(0);
-      }
+      validateNextEvolutionStructure(mockDetailEntity.nextEvolutions);
     });
 
     it('should validate Description structure', () => {

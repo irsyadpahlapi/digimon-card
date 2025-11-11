@@ -1,5 +1,5 @@
 import { ListMyCard } from '../myCard';
-import { DetailDigimonRepository } from '@/core/repositories/myCardRepository';
+import { makeRepoCardSet, adjustStarterPack } from '@/__tests__/test-utils';
 
 // Mock the implementation
 const mockDigimonImpl = {
@@ -29,59 +29,7 @@ describe('ListMyCard Use Case', () => {
     level: { id: 1, level: 'Champion' },
   };
 
-  const mockCards: DetailDigimonRepository[] = [
-    {
-      id: 1,
-      name: 'Agumon',
-      images: [{ href: 'agumon.jpg', transparent: false }],
-      level: 'Rookie',
-      type: 'Vaccine',
-      attribute: 'Fire',
-      fields: [],
-      description: 'A small dinosaur Digimon',
-      nextEvolutions: [],
-      isEvolution: false,
-      evolution: 0,
-      starterPack: 6,
-      total: 1,
-      category: 'Rookie',
-      sellingDigimon: 5,
-    },
-    {
-      id: 2,
-      name: 'Gabumon',
-      images: [{ href: 'gabumon.jpg', transparent: false }],
-      level: 'Rookie',
-      type: 'Data',
-      attribute: 'Ice',
-      fields: [],
-      description: 'A reptile Digimon with blue fur',
-      nextEvolutions: [],
-      isEvolution: false,
-      evolution: 0,
-      starterPack: 6,
-      total: 1,
-      category: 'Rookie',
-      sellingDigimon: 5,
-    },
-    {
-      id: 3,
-      name: 'Greymon',
-      images: [{ href: 'greymon.jpg', transparent: false }],
-      level: 'Champion',
-      type: 'Vaccine',
-      attribute: 'Fire',
-      fields: [],
-      description: 'A large dinosaur Digimon',
-      nextEvolutions: [],
-      isEvolution: false,
-      evolution: 0,
-      starterPack: 6,
-      total: 1,
-      category: 'Champion',
-      sellingDigimon: 10,
-    },
-  ];
+  const mockCards = makeRepoCardSet();
 
   beforeEach(() => {
     listMyCard = new ListMyCard();
@@ -143,12 +91,7 @@ describe('ListMyCard Use Case', () => {
   describe('getListMyCard', () => {
     it('should return all cards when no filters are applied', async () => {
       const result = listMyCard.getListMyCard(mockCards, '', '');
-
-      // Expected values should match implementation logic (starterPack + 1 for non-evolution cards)
-      const expectedCards = mockCards.map((card) => ({
-        ...card,
-        starterPack: card.isEvolution ? card.starterPack : card.starterPack + 1,
-      }));
+      const expectedCards = adjustStarterPack(mockCards);
 
       expect(result).toEqual(expectedCards);
     });
@@ -157,12 +100,7 @@ describe('ListMyCard Use Case', () => {
       const rookieCards = mockCards.filter((card) => card.category === 'Rookie');
 
       const result = listMyCard.getListMyCard(mockCards, 'Rookie', '');
-
-      // Expected values should match implementation logic (starterPack + 1 for non-evolution cards)
-      const expectedCards = rookieCards.map((card) => ({
-        ...card,
-        starterPack: card.isEvolution ? card.starterPack : card.starterPack + 1,
-      }));
+      const expectedCards = adjustStarterPack(rookieCards);
 
       expect(result).toEqual(expectedCards);
     });
@@ -171,12 +109,7 @@ describe('ListMyCard Use Case', () => {
       const vaccineCards = mockCards.filter((card) => card.type === 'Vaccine');
 
       const result = listMyCard.getListMyCard(mockCards, '', 'Vaccine');
-
-      // Expected values should match implementation logic (starterPack + 1 for non-evolution cards)
-      const expectedCards = vaccineCards.map((card) => ({
-        ...card,
-        starterPack: card.isEvolution ? card.starterPack : card.starterPack + 1,
-      }));
+      const expectedCards = adjustStarterPack(vaccineCards);
 
       expect(result).toEqual(expectedCards);
     });

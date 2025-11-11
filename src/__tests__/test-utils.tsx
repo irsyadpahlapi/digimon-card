@@ -81,6 +81,83 @@ export const mockLocalStorage = (data: Record<string, any>) => {
 // Helper to wait for async operations
 export const waitFor = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+// Validation helpers to reduce duplication in entity tests
+export function validatePropertyTypes<T extends Record<string, any>>(
+  obj: T,
+  expectedTypes: Record<keyof T, string>,
+) {
+  for (const [key, expectedType] of Object.entries(expectedTypes)) {
+    const actualValue = obj[key as keyof T];
+    const actualType = Array.isArray(actualValue) ? 'array' : typeof actualValue;
+
+    expect(actualType).toBe(expectedType);
+  }
+}
+
+export function validateRequiredProperties<T extends Record<string, any>>(
+  obj: T,
+  requiredProps: (keyof T)[],
+) {
+  for (const prop of requiredProps) {
+    expect(obj).toHaveProperty(prop as string);
+  }
+}
+
+export function validateImageStructure(images: Array<{ href: string; transparent: boolean }>) {
+  for (const image of images) {
+    expect(typeof image.href).toBe('string');
+    expect(typeof image.transparent).toBe('boolean');
+    expect(image.href.length).toBeGreaterThan(0);
+  }
+}
+
+export function validateFieldStructure(
+  fields: Array<{ id: number; field: string; image: string }>,
+) {
+  for (const field of fields) {
+    expect(typeof field.id).toBe('number');
+    expect(typeof field.field).toBe('string');
+    expect(typeof field.image).toBe('string');
+    expect(field.id).toBeGreaterThan(0);
+    expect(field.field.length).toBeGreaterThan(0);
+    expect(field.image.length).toBeGreaterThan(0);
+  }
+}
+
+export function validateNextEvolutionStructure(
+  evolutions: Array<{ id: number; digimon: string; condition: string; image: string; url: string }>,
+) {
+  for (const evolution of evolutions) {
+    expect(typeof evolution.id).toBe('number');
+    expect(typeof evolution.digimon).toBe('string');
+    expect(typeof evolution.condition).toBe('string');
+    expect(typeof evolution.image).toBe('string');
+    expect(typeof evolution.url).toBe('string');
+    expect(evolution.id).toBeGreaterThan(0);
+    expect(evolution.digimon.length).toBeGreaterThan(0);
+    expect(evolution.condition.length).toBeGreaterThan(0);
+    expect(evolution.image.length).toBeGreaterThan(0);
+    expect(evolution.url.length).toBeGreaterThan(0);
+  }
+}
+
+export function validateNumericConstraints(
+  obj: Record<string, number>,
+  constraints: Record<string, { min?: number; isInteger?: boolean }>,
+) {
+  for (const [key, constraint] of Object.entries(constraints)) {
+    const value = obj[key];
+
+    if (constraint.min !== undefined) {
+      expect(value).toBeGreaterThanOrEqual(constraint.min);
+    }
+
+    if (constraint.isInteger) {
+      expect(Number.isInteger(value)).toBe(true);
+    }
+  }
+}
+
 // Test fixtures and builders to reduce duplication across tests
 export function makeDetailDigimonEntity(
   overrides: Partial<DetailDigimonEntity> = {},
@@ -153,16 +230,18 @@ export function makeListDigimonEntity(
     { id: 2, name: 'Gabumon', href: '/api/digimon/2', image: 'gabumon.jpg' },
     { id: 3, name: 'Patamon', href: '/api/digimon/3', image: 'patamon.jpg' },
   ],
-  pageable: ListDigimonEntity['pageable'] = {
+  pageable?: ListDigimonEntity['pageable'],
+): ListDigimonEntity {
+  const defaultPageable: ListDigimonEntity['pageable'] = {
     currentPage: 1,
     elementsOnPage: content.length,
     totalElements: 100,
     totalPages: 34,
     previousPage: '',
     nextPage: '/api/v1/digimon?level=Child&page=2',
-  },
-): ListDigimonEntity {
-  return { content, pageable };
+  };
+
+  return { content, pageable: pageable || defaultPageable };
 }
 
 export function makeRepoCard(
@@ -200,6 +279,71 @@ export function makeRepoCard(
     sellingDigimon: 5,
   };
   return { ...base, ...overrides };
+}
+
+// Helper to create a standard set of repository cards for myCard tests
+export function makeRepoCardSet(): DetailDigimonRepository[] {
+  return [
+    makeRepoCard({
+      id: 1,
+      name: 'Agumon',
+      images: [{ href: 'agumon.jpg', transparent: false }],
+      level: 'Rookie',
+      type: 'Vaccine',
+      attribute: 'Fire',
+      fields: [],
+      description: 'A small dinosaur Digimon',
+      nextEvolutions: [],
+      isEvolution: false,
+      evolution: 0,
+      starterPack: 6,
+      total: 1,
+      category: 'Rookie',
+      sellingDigimon: 5,
+    }),
+    makeRepoCard({
+      id: 2,
+      name: 'Gabumon',
+      images: [{ href: 'gabumon.jpg', transparent: false }],
+      level: 'Rookie',
+      type: 'Data',
+      attribute: 'Ice',
+      fields: [],
+      description: 'A reptile Digimon with blue fur',
+      nextEvolutions: [],
+      isEvolution: false,
+      evolution: 0,
+      starterPack: 6,
+      total: 1,
+      category: 'Rookie',
+      sellingDigimon: 5,
+    }),
+    makeRepoCard({
+      id: 3,
+      name: 'Greymon',
+      images: [{ href: 'greymon.jpg', transparent: false }],
+      level: 'Champion',
+      type: 'Vaccine',
+      attribute: 'Fire',
+      fields: [],
+      description: 'A large dinosaur Digimon',
+      nextEvolutions: [],
+      isEvolution: false,
+      evolution: 0,
+      starterPack: 6,
+      total: 1,
+      category: 'Champion',
+      sellingDigimon: 10,
+    }),
+  ];
+}
+
+// Helper to apply starterPack+1 logic (used in myCard usecase)
+export function adjustStarterPack(cards: DetailDigimonRepository[]): DetailDigimonRepository[] {
+  return cards.map((card) => ({
+    ...card,
+    starterPack: card.isEvolution ? card.starterPack : card.starterPack + 1,
+  }));
 }
 
 // Re-export everything
