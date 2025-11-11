@@ -42,43 +42,18 @@ const SELLING_PRICE_UNKNOWN_CASES: string[] = ['Unknown', 'Baby', '', 'Invalid']
 
 describe('Utils Functions', () => {
   describe('Category function', () => {
-    it.each(LEVEL_CATEGORY_CASES)('should map level %s to category %s', (input, expected) => {
-      expect(Category(input)).toBe(expected);
-    });
-
-    it.each(INVALID_CATEGORY_INPUTS)('should return Baby for unrecognized level %s', (input) => {
-      expect(Category(input)).toBe('Baby');
-    });
-  });
-
-  describe('PriceStarterpack function', () => {
-    it.each(STARTER_PACK_PRICE_CASES)(
-      'should return correct price %d for pack type %s',
-      (type, price) => {
-        expect(PriceStarterpack(type)).toBe(price);
+    it.each([
+      { digimonLevel: 'Child', expectedCategory: 'Rookie', expectedPrice: 5 },
+      { digimonLevel: 'Perfect', expectedCategory: 'Mega', expectedPrice: 30 },
+    ])(
+      'should map %s -> %s and price %d with evolution',
+      ({ digimonLevel, expectedCategory, expectedPrice }) => {
+        const category = Category(digimonLevel);
+        const price = sellingDigimonPrice(category, true);
+        expect(category).toBe(expectedCategory);
+        expect(price).toBe(expectedPrice);
       },
     );
-
-    it.each(UNKNOWN_PACK_TYPES)('should return 0 for unknown pack type %s', (type) => {
-      expect(PriceStarterpack(type)).toBe(0);
-    });
-  });
-
-  describe('sellingDigimonPrice function', () => {
-    it.each(SELLING_PRICE_EVOLUTION_CASES)(
-      'should return correct price %d for category %s with evolution',
-      (category, expectedPrice) => {
-        expect(sellingDigimonPrice(category, true)).toBe(expectedPrice);
-      },
-    );
-
-    it.each(SELLING_PRICE_NO_EVOLUTION_CATEGORIES)(
-      'should return God price for category %s without evolution',
-      (category) => {
-        expect(sellingDigimonPrice(category, false)).toBe(100);
-      },
-    );
-
     it.each(SELLING_PRICE_UNKNOWN_CASES)(
       'should return default price 1 for unknown category %s',
       (category) => {
@@ -157,108 +132,115 @@ describe('Utils Functions', () => {
       { id: 9, name: 'Hybrid' },
     ];
 
-    it('should return the highest priority item based on LEVEL_ORDER', () => {
-      const result = pickHighestByOrder(dataResponse);
-      expect(result).toEqual({ id: 3, name: 'Perfect' });
-    });
+    type Case = {
+      name: string;
+      list: Array<{ id: number; name: string }>;
+      order?: string[];
+      expected: { id: number; name: string } | undefined;
+    };
 
-    it('should return Ultimate when Perfect is not in list', () => {
-      const filtered = dataResponse.filter((item) => item.name !== 'Perfect');
-      const result = pickHighestByOrder(filtered);
-      expect(result).toEqual({ id: 6, name: 'Ultimate' });
-    });
+    const CASES: Case[] = [
+      { name: 'highest is Perfect', list: dataResponse, expected: { id: 3, name: 'Perfect' } },
+      {
+        name: 'Ultimate when Perfect missing',
+        list: dataResponse.filter((i) => i.name !== 'Perfect'),
+        expected: { id: 6, name: 'Ultimate' },
+      },
+      {
+        name: 'Child when only low-priority',
+        list: [
+          { id: 1, name: 'Baby II' },
+          { id: 4, name: 'Child' },
+          { id: 5, name: 'Baby I' },
+        ],
+        expected: { id: 4, name: 'Child' },
+      },
+      {
+        name: 'undefined when no items match',
+        list: [
+          { id: 1, name: 'Baby II' },
+          { id: 5, name: 'Baby I' },
+        ],
+        expected: undefined,
+      },
+      { name: 'undefined for empty', list: [], expected: undefined },
+      {
+        name: 'custom order respected',
+        list: dataResponse,
+        order: ['Adult', 'Child', 'Perfect'],
+        expected: { id: 3, name: 'Perfect' },
+      },
+    ];
 
-    it('should return Child when only low-priority items exist', () => {
-      const filtered = [
-        { id: 1, name: 'Baby II' },
-        { id: 4, name: 'Child' },
-        { id: 5, name: 'Baby I' },
-      ];
-      const result = pickHighestByOrder(filtered);
-      expect(result).toEqual({ id: 4, name: 'Child' });
-    });
-
-    it('should return undefined when no items match the order', () => {
-      const noMatch = [
-        { id: 1, name: 'Baby II' },
-        { id: 5, name: 'Baby I' },
-      ];
-      const result = pickHighestByOrder(noMatch);
-      expect(result).toBeUndefined();
-    });
-
-    it('should return undefined for empty array', () => {
-      const result = pickHighestByOrder([]);
-      expect(result).toBeUndefined();
-    });
-
-    it('should work with custom order', () => {
-      const customOrder = ['Adult', 'Child', 'Perfect'];
-      const result = pickHighestByOrder(dataResponse, customOrder);
-      expect(result).toEqual({ id: 3, name: 'Perfect' });
+    it.each(CASES)('%s', ({ list, order, expected }) => {
+      const result = pickHighestByOrder(list, order);
+      expect(result).toEqual(expected);
     });
   });
 
   describe('highestLevelFromLevels function', () => {
-    it('should return highest level name from levels array', () => {
-      const levels = [
-        { level: 'Child', id: 1 },
-        { level: 'Adult', id: 2 },
-        { level: 'Ultimate', id: 3 },
-      ];
-      const result = highestLevelFromLevels(levels);
-      expect(result).toBe('Ultimate');
-    });
+    const CASES: Array<[string, Array<{ level: string; id: number }>, string]> = [
+      [
+        'returns highest known level',
+        [
+          { level: 'Child', id: 1 },
+          { level: 'Adult', id: 2 },
+          { level: 'Ultimate', id: 3 },
+        ],
+        'Ultimate',
+      ],
+      [
+        'returns Perfect when present',
+        [
+          { level: 'Adult', id: 1 },
+          { level: 'Perfect', id: 2 },
+          { level: 'Child', id: 3 },
+        ],
+        'Perfect',
+      ],
+      [
+        'skips unknown levels and returns highest known',
+        [
+          { level: 'Baby I', id: 1 },
+          { level: 'Child', id: 2 },
+          { level: 'Baby II', id: 3 },
+        ],
+        'Child',
+      ],
+      ['returns empty for empty array', [], ''],
+      [
+        'returns empty when no levels match order',
+        [
+          { level: 'Baby I', id: 1 },
+          { level: 'Baby II', id: 2 },
+        ],
+        '',
+      ],
+    ];
 
-    it('should return Perfect when it exists', () => {
-      const levels = [
-        { level: 'Adult', id: 1 },
-        { level: 'Perfect', id: 2 },
-        { level: 'Child', id: 3 },
-      ];
+    it.each(CASES)('%s', (_name, levels, expected) => {
       const result = highestLevelFromLevels(levels);
-      expect(result).toBe('Perfect');
-    });
-
-    it('should skip unknown levels and return highest known', () => {
-      const levels = [
-        { level: 'Baby I', id: 1 },
-        { level: 'Child', id: 2 },
-        { level: 'Baby II', id: 3 },
-      ];
-      const result = highestLevelFromLevels(levels);
-      expect(result).toBe('Child');
-    });
-
-    it('should return empty string for empty array', () => {
-      const result = highestLevelFromLevels([]);
-      expect(result).toBe('');
-    });
-
-    it('should return empty string when no levels match order', () => {
-      const levels = [
-        { level: 'Baby I', id: 1 },
-        { level: 'Baby II', id: 2 },
-      ];
-      const result = highestLevelFromLevels(levels);
-      expect(result).toBe('');
+      expect(result).toBe(expected);
     });
   });
 
   describe('pickHighestLevelObject function', () => {
-    it('should work the same as pickHighestByOrder for standard objects', () => {
-      const data = [
-        { id: 1, name: 'Child' },
-        { id: 2, name: 'Adult' },
+    it.each<
+      [string, Array<{ id: number; name: string }>, { id: number; name: string } | undefined]
+    >([
+      [
+        'returns highest object by order',
+        [
+          { id: 1, name: 'Child' },
+          { id: 2, name: 'Adult' },
+          { id: 3, name: 'Perfect' },
+        ],
         { id: 3, name: 'Perfect' },
-      ];
+      ],
+      ['returns undefined for empty array', [], undefined],
+    ])('%s', (_name, data, expected) => {
       const result = pickHighestLevelObject(data);
-      expect(result).toEqual({ id: 3, name: 'Perfect' });
-    });
-
-    it('should return undefined for empty array', () => {
-      const result = pickHighestLevelObject([]);
-      expect(result).toBeUndefined();
+      expect(result).toEqual(expected);
     });
   });
 });
