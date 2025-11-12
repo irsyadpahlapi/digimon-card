@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 import ActionButton from '../actionButton';
 
 // Mock LoadingSpinner
-jest.mock('../LoadingSpinner', () => {
+jest.mock('../loadingSpinner', () => {
   return function MockLoadingSpinner({
     size,
     color,

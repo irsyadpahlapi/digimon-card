@@ -9,7 +9,7 @@ jest.mock('next/navigation', () => ({
 }));
 
 // Mock the child components
-jest.mock('../LoadingSpinner', () => {
+jest.mock('../loadingSpinner', () => {
   return function MockLoadingSpinner({
     size,
     color,
@@ -25,7 +25,7 @@ jest.mock('../LoadingSpinner', () => {
   };
 });
 
-jest.mock('../GradientBackground', () => {
+jest.mock('../gradientBackground', () => {
   return function MockGradientBackground({
     children,
     variant,
