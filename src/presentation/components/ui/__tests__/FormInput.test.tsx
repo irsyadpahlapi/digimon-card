@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
-import FormInput from '../FormInput';
+import FormInput from '../formInput';
 
 describe('FormInput Component', () => {
   const defaultProps = {

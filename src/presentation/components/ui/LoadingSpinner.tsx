@@ -25,6 +25,9 @@ export default function LoadingSpinner({
 
   return (
     <output
+      data-testid="loading-spinner"
+      data-size={size}
+      data-color={color}
       className={`${sizeClasses[size]} border-4 ${colorClasses[color]} rounded-full animate-spin ${className}`}
       aria-label="Loading"
     />

@@ -344,6 +344,13 @@ export function adjustStarterPack(cards: DetailDigimonRepository[]): DetailDigim
   }));
 }
 
+// Helper to apply reverse and starterPack+1 logic (used in myCard usecase getListMyCard)
+export function adjustStarterPackAndReverse(
+  cards: DetailDigimonRepository[],
+): DetailDigimonRepository[] {
+  return adjustStarterPack(cards).reverse();
+}
+
 // Re-export everything
 export * from '@testing-library/react';
 export { customRender as render };

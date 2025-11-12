@@ -6,11 +6,11 @@ import { ProfileRepository } from '@/core/repositories/profile';
 import useLocalStorage from '@hooks/useLocalStorage';
 import { useAuthCheck } from '@/presentation/hooks/useAuthCheck';
 import { validateUsername, sanitizeInput } from '@/presentation/hooks/security';
-import GradientBackground from '@/presentation/components/ui/GradientBackground';
-import LogoBrand from '@/presentation/components/ui/LogoBrand';
-import FormInput from '@/presentation/components/ui/FormInput';
-import ActionButton from '@/presentation/components/ui/ActionButton';
-import AuthRedirectScreen from '@/presentation/components/ui/AuthRedirectScreen';
+import GradientBackground from '@/presentation/components/ui/gradientBackground';
+import LogoBrand from '@/presentation/components/ui/logoBrand';
+import FormInput from '@/presentation/components/ui/formInput';
+import ActionButton from '@/presentation/components/ui/actionButton';
+import AuthRedirectScreen from '@/presentation/components/ui/authRedirectScreen';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');

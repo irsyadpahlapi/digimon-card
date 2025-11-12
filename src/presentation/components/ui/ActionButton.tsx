@@ -1,6 +1,6 @@
 'use client';
 
-import LoadingSpinner from './LoadingSpinner';
+import LoadingSpinner from './loadingSpinner';
 import {
   GRADIENT_PRIMARY_BUTTON,
   GRADIENT_SUCCESS_BUTTON,

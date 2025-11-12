@@ -13,7 +13,7 @@ interface MockActionButtonProps
   size?: string;
 }
 
-jest.mock('@/presentation/components/ui/ActionButton', () => {
+jest.mock('@/presentation/components/ui/actionButton', () => {
   return function MockActionButton({
     children,
     onClick,

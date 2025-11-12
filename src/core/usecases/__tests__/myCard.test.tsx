@@ -1,5 +1,5 @@
 import { ListMyCard } from '../myCard';
-import { makeRepoCardSet, adjustStarterPack } from '@/__tests__/test-utils';
+import { makeRepoCardSet, adjustStarterPackAndReverse } from '@/__tests__/test-utils';
 
 // Mock the implementation
 const mockDigimonImpl = {
@@ -91,7 +91,7 @@ describe('ListMyCard Use Case', () => {
   describe('getListMyCard', () => {
     it('should return all cards when no filters are applied', async () => {
       const result = listMyCard.getListMyCard(mockCards, '', '');
-      const expectedCards = adjustStarterPack(mockCards);
+      const expectedCards = adjustStarterPackAndReverse(mockCards);
 
       expect(result).toEqual(expectedCards);
     });
@@ -100,7 +100,7 @@ describe('ListMyCard Use Case', () => {
       const rookieCards = mockCards.filter((card) => card.category === 'Rookie');
 
       const result = listMyCard.getListMyCard(mockCards, 'Rookie', '');
-      const expectedCards = adjustStarterPack(rookieCards);
+      const expectedCards = adjustStarterPackAndReverse(rookieCards);
 
       expect(result).toEqual(expectedCards);
     });
@@ -109,7 +109,7 @@ describe('ListMyCard Use Case', () => {
       const vaccineCards = mockCards.filter((card) => card.type === 'Vaccine');
 
       const result = listMyCard.getListMyCard(mockCards, '', 'Vaccine');
-      const expectedCards = adjustStarterPack(vaccineCards);
+      const expectedCards = adjustStarterPackAndReverse(vaccineCards);
 
       expect(result).toEqual(expectedCards);
     });

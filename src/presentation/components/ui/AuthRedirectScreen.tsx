@@ -2,8 +2,8 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import LoadingSpinner from './LoadingSpinner';
-import GradientBackground from './GradientBackground';
+import LoadingSpinner from './loadingSpinner';
+import GradientBackground from './gradientBackground';
 
 interface AuthRedirectScreenProps {
   variant?: 'toHome' | 'toLogin';
@@ -40,7 +40,7 @@ export default function AuthRedirectScreen({
   }, [router, redirectTo]);
 
   return (
-    <div className={className}>
+    <div className={className} data-testid="auth-redirect" data-variant={variant}>
       <GradientBackground variant={background}>
         <div className="flex flex-col items-center justify-center min-h-screen text-center px-6">
           <LoadingSpinner size="lg" color="white" />

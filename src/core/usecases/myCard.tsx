@@ -15,7 +15,7 @@ export class ListMyCard {
   ): DetailDigimonRepository[] {
     const filtered = this.filterDigimons(datas, filterCategory, filterType);
     const groupedMap = this.groupDigimons(filtered);
-    return Array.from(groupedMap.values());
+    return Array.from(groupedMap.values()).reverse();
   }
 
   private filterDigimons(

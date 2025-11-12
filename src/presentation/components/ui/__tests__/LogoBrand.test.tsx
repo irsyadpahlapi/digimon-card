@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import LogoBrand from '../LogoBrand';
+import LogoBrand from '../logoBrand';
 
 describe('LogoBrand Component', () => {
   describe('Basic Rendering', () => {

@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import AuthRedirectScreen from '../AuthRedirectScreen';
+import AuthRedirectScreen from '../authRedirectScreen';
 import { useRouter } from 'next/navigation';
 
 // Mock Next.js router

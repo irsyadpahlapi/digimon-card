@@ -31,7 +31,7 @@ describe('BuyStarterpack DataSource', () => {
     mockDigimonAPI = {
       getListDigimon: jest.fn(),
       getDigimonById: jest.fn(),
-    } as jest.Mocked<DigimonAPI>;
+    } as unknown as jest.Mocked<DigimonAPI>;
 
     MockedDigimonAPI.mockImplementation(() => mockDigimonAPI);
     buyStarterpack = new BuyStarterpack();

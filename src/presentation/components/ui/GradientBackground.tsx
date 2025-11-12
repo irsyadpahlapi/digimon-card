@@ -17,7 +17,11 @@ export default function GradientBackground({
   };
 
   return (
-    <div className={`min-h-screen ${gradients[variant]} ${className}`}>
+    <div
+      data-testid="gradient-background"
+      data-variant={variant}
+      className={`min-h-screen ${gradients[variant]} ${className}`}
+    >
       {variant === 'login' && (
         <>
           {/* Subtle Background Decoration */}

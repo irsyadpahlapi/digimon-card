@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import CardDetailModal from '../CardDetailModal';
+import CardDetailModal from '../cardDetailModal';
 import { DetailDigimonRepository } from '@/core/repositories/myCardRepository';
 
 describe('CardDetailModal Component', () => {
@@ -51,7 +51,7 @@ describe('CardDetailModal Component', () => {
     onEvolve: mockOnEvolve,
     onSell: mockOnSell,
     index: 0,
-    isEvolving: false,
+    evolvingToId: null,
     isSelling: false,
   };
 
@@ -177,9 +177,9 @@ describe('CardDetailModal Component', () => {
     expect(mockOnEvolve).toHaveBeenCalledWith(1, 2);
   });
 
-  it('should call onSell when sell button is clicked', async () => {
+  it('should call onSell when sell button is clicked (no evolutions)', async () => {
     const user = userEvent.setup();
-    renderModal();
+    renderModal({ item: buildCard({ nextEvolutions: [] }) });
 
     const sellButton = screen.getByText('Sell (10 coins)');
     await user.click(sellButton);
@@ -187,14 +187,13 @@ describe('CardDetailModal Component', () => {
     expect(mockOnSell).toHaveBeenCalledWith(1, 10);
   });
 
-  it('should disable buttons when isEvolving is true', () => {
-    renderModal({ isEvolving: true });
+  it('should disable evolve button but allow selling when evolvingToId is set (no evolutions)', () => {
+    renderModal({ evolvingToId: 2, item: buildCard({ nextEvolutions: [] }) });
 
-    const evolveButton = screen.getByRole('button', { name: /evolve.*options/i });
-    const sellButton = screen.getByRole('button', { name: /sell.*coins/i });
-
-    expect(evolveButton).toBeDisabled();
-    // Sell button is not disabled when isEvolving is true
+    const evolveButton = screen.queryByRole('button', { name: /evolve.*options/i });
+    // Evolve button absent because no evolutions
+    expect(evolveButton).toBeNull();
+    const sellButton = screen.getByText('Sell (10 coins)');
     expect(sellButton).not.toBeDisabled();
   });
 
@@ -205,27 +204,43 @@ describe('CardDetailModal Component', () => {
     const sellButton = screen.getByRole('button', { name: /selling/i });
 
     // Evolve button should NOT be disabled when only isSelling is true
-    // (disabled only if isEvolving || total < 3)
+    // (disabled only if evolvingToId is set || total < 3)
     expect(evolveButton).not.toBeDisabled();
     expect(sellButton).toBeDisabled();
   });
 
-  it('should show loading state for evolving', async () => {
-    // Render with isEvolving=true
-    renderModal({ isEvolving: true });
-
-    // Click the main evolve button to show evolution section
-    // Button should say "Evolve (2 options)" and be disabled when isEvolving=true
-    const evolveButton = screen.getByRole('button', { name: /evolve.*options/i });
-
-    // Verify button is disabled when evolving
-    expect(evolveButton).toBeDisabled();
-
-    // Evolution section won't show until button is clicked,
-    // but button is disabled, so we can't show the section.
-    // Instead, test a simpler scenario: verify selling button still works
+  it('should show selling button while evolving when no evolutions exist', async () => {
+    renderModal({ evolvingToId: 2, item: buildCard({ nextEvolutions: [] }) });
     const sellButton = screen.getByText('Sell (10 coins)');
     expect(sellButton).toBeInTheDocument();
+    expect(sellButton).not.toBeDisabled();
+  });
+
+  it('should show loading state only on the clicked evolution button', async () => {
+    const user = userEvent.setup();
+
+    // First render without evolving state to open the section
+    const { rerender } = renderModal({ evolvingToId: null });
+
+    // Open evolution section
+    const evolveButton = screen.getByRole('button', { name: /evolve.*options/i });
+    await user.click(evolveButton);
+    await waitFor(() => {
+      expect(screen.getByText('Choose Evolution')).toBeInTheDocument();
+    });
+
+    // Now rerender with evolvingToId set to Greymon's id (2)
+    rerender(<CardDetailModal {...defaultProps} evolvingToId={2} />);
+
+    // Check that Greymon button shows loading
+    await waitFor(() => {
+      const evolvingText = screen.getByText('Evolving...');
+      expect(evolvingText).toBeInTheDocument();
+    });
+
+    // Check that GeoGreymon button is still enabled (not loading)
+    const geoGreymonButton = screen.getByText('Evolve to GeoGreymon');
+    expect(geoGreymonButton).toBeInTheDocument();
   });
 
   it('should show loading state for selling', () => {

@@ -36,7 +36,7 @@ jest.mock('@/presentation/hooks/useAuthCheck', () => ({
 }));
 
 // Mock AuthRedirectScreen component
-jest.mock('@/presentation/components/ui/AuthRedirectScreen', () => {
+jest.mock('@/presentation/components/ui/authRedirectScreen', () => {
   return function MockAuthRedirectScreen({ variant }: { variant?: string }) {
     return (
       <div data-testid="auth-redirect" data-variant={variant}>

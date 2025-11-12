@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
-import ActionButton from '../ActionButton';
+import ActionButton from '../actionButton';
 
 // Mock LoadingSpinner
 jest.mock('../LoadingSpinner', () => {

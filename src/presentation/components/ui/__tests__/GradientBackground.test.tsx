@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import GradientBackground from '../GradientBackground';
+import GradientBackground from '../gradientBackground';
 
 describe('GradientBackground Component', () => {
   describe('Basic Rendering', () => {

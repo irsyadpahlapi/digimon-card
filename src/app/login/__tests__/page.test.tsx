@@ -33,7 +33,7 @@ interface MockFormInputProps extends Omit<React.InputHTMLAttributes<HTMLInputEle
   id: string;
 }
 
-jest.mock('@/presentation/components/ui/FormInput', () => {
+jest.mock('@/presentation/components/ui/formInput', () => {
   return function MockFormInput({
     label,
     placeholder,
@@ -67,7 +67,7 @@ interface MockActionButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEle
   loadingText?: string;
 }
 
-jest.mock('@/presentation/components/ui/ActionButton', () => {
+jest.mock('@/presentation/components/ui/actionButton', () => {
   return function MockActionButton({
     children,
     onClick,
@@ -91,13 +91,13 @@ jest.mock('@/presentation/components/ui/ActionButton', () => {
   };
 });
 
-jest.mock('@/presentation/components/ui/LogoBrand', () => {
+jest.mock('@/presentation/components/ui/logoBrand', () => {
   return function MockLogoBrand({ title }: { title?: string }) {
     return <div data-testid="logo-brand">{title || 'DigiCard'}</div>;
   };
 });
 
-jest.mock('@/presentation/components/ui/AuthRedirectScreen', () => {
+jest.mock('@/presentation/components/ui/authRedirectScreen', () => {
   return function MockAuthRedirectScreen({ variant }: { variant?: string }) {
     return (
       <div data-testid="auth-redirect" data-variant={variant}>
@@ -107,7 +107,7 @@ jest.mock('@/presentation/components/ui/AuthRedirectScreen', () => {
   };
 });
 
-jest.mock('@/presentation/components/ui/GradientBackground', () => {
+jest.mock('@/presentation/components/ui/gradientBackground', () => {
   return function MockGradientBackground({
     children,
     variant,

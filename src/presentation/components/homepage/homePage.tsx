@@ -6,13 +6,13 @@ import useLocalStorage from '@hooks/useLocalStorage';
 import { DetailDigimonRepository } from '@/core/repositories/myCardRepository';
 import { ListMyCard } from '@/core/usecases/myCard';
 import Card from '@components/listcard/card';
-import CardDetailModal from '@components/listcard/CardDetailModal';
+import CardDetailModal from '@components/listcard/cardDetailModal';
 import { ProfileRepository } from '@/core/repositories/profile';
 import { ListGatcha } from '@/core/usecases/listGatcha';
-import EmptyState from '@components/EmptyState';
-import FilterSection from '@components/FilterSection';
-import Header from '@components/Header';
-import Toast from '@components/Toast';
+import EmptyState from '@components/emptyState';
+import FilterSection from '@components/filterSection';
+import Header from '@components/header';
+import Toast from '@components/toast';
 import { checkRateLimit, sanitizeNumber } from '@/presentation/hooks/security';
 
 export default function HomePage() {
@@ -30,7 +30,7 @@ export default function HomePage() {
   const [selectedCard, setSelectedCard] = useState<DetailDigimonRepository | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [filterBy, setFilterBy] = useState({ none: 'Active', category: '', type: '' });
-  const [isEvolving, setIsEvolving] = useState(false);
+  const [evolvingToId, setEvolvingToId] = useState<number | null>(null); // Track which evolution is loading
   const [isSelling, setIsSelling] = useState(false);
   const [isBuying, setIsBuying] = useState<number | null>(null); // Track which pack is being bought
   const [toastMessage, setToastMessage] = useState('');
@@ -117,7 +117,7 @@ export default function HomePage() {
     const sanitizedId = sanitizeNumber(id, 1);
     const sanitizedNextEvolution = sanitizeNumber(nextEvolution, 1);
 
-    setIsEvolving(true);
+    setEvolvingToId(sanitizedNextEvolution); // Set which evolution card is loading
     try {
       // Add delay for smooth loading experience
       await new Promise((resolve) => setTimeout(resolve, 800));
@@ -131,13 +131,13 @@ export default function HomePage() {
 
       // Success feedback with slight delay, then close modal
       setTimeout(() => {
-        setIsEvolving(false);
+        setEvolvingToId(null);
         setIsModalOpen(false); // Close modal after evolution completes
       }, 300);
     } catch (error) {
       // Evolution failed - handle error properly
       console.error('Evolution failed:', error);
-      setIsEvolving(false);
+      setEvolvingToId(null);
 
       // Show error toast for user feedback
       setToastMessage('Evolution failed. Please try again.');
@@ -150,6 +150,27 @@ export default function HomePage() {
     // Check rate limit for selling (max 10 sells per minute)
     if (!checkRateLimit('sell', 10, 60000)) {
       setToastMessage('Too many sell attempts. Please wait a moment.');
+      setToastType('error');
+      setShowToast(true);
+      return;
+    }
+
+    // Find the card being sold to validate conditions
+    const card = MyCards.find((c) => c.id === id);
+    if (!card) {
+      setToastMessage('Card not found.');
+      setToastType('error');
+      setShowToast(true);
+      return;
+    }
+
+    // Business rule: can only sell if card is an evolution OR no further evolutions available
+    const hasNextEvolutions = Array.isArray(card.nextEvolutions) && card.nextEvolutions.length > 0;
+    const canSell = card.isEvolution || !hasNextEvolutions;
+    if (!canSell) {
+      setToastMessage(
+        'You can only sell this card after it evolves or if it has no evolution path.',
+      );
       setToastType('error');
       setShowToast(true);
       return;
@@ -341,7 +362,7 @@ export default function HomePage() {
         onClose={() => setIsModalOpen(false)}
         onEvolve={handleEvolve}
         onSell={handleSell}
-        isEvolving={isEvolving}
+        evolvingToId={evolvingToId}
         isSelling={isSelling}
       />
 

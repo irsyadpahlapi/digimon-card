@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import Toast from '../Toast';
+import Toast from '../toast';
 
 describe('Toast Component', () => {
   const mockOnClose = jest.fn();

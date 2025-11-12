@@ -76,16 +76,18 @@ export default function Card({ item, onClick }: Readonly<CardProps>) {
                 {item.type}
               </span>
             )}
-            {typeof item.evolution === 'number' && (
-              <span className="text-[10px] md:text-xs px-2 py-1 rounded-full border border-blue-200 bg-blue-50 text-blue-700">
-                {item.evolution} Evolution
-              </span>
-            )}
-            {typeof item.starterPack === 'number' && (
-              <span className="text-[10px] md:text-xs px-2 py-1 rounded-full border border-amber-200 bg-amber-50 text-amber-700">
-                {item.starterPack} Starter Pack
-              </span>
-            )}
+            <div className="flex flex-wrap gap-2">
+              {typeof item.evolution === 'number' && (
+                <span className="text-[10px] md:text-xs px-2 py-1 rounded-full border border-blue-200 bg-blue-50 text-blue-700">
+                  {item.evolution} Evolution
+                </span>
+              )}
+              {typeof item.starterPack === 'number' && (
+                <span className="text-[10px] md:text-xs px-2 py-1 rounded-full border border-amber-200 bg-amber-50 text-amber-700">
+                  {item.starterPack} Starter Pack
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </div>

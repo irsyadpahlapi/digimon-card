@@ -2,7 +2,7 @@
 import { StarterPackProps } from '@/core/entities/staterPack';
 import { borderMap, badgeMap, gradientMap } from '@/presentation/hooks/constant';
 import Image from 'next/image';
-import ActionButton from '@/presentation/components/ui/ActionButton';
+import ActionButton from '@/presentation/components/ui/actionButton';
 
 interface StarterPackComponentProps {
   readonly item: StarterPackProps['item'];
