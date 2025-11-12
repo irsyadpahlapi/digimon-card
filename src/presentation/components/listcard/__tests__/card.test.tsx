@@ -133,4 +133,104 @@ describe('Card Component', () => {
 
     expect(screen.getByText('TestMon')).toBeInTheDocument();
   });
+
+  it('should render rare card styling when total >= 3', () => {
+    const rareCard = makeRepoCard({
+      total: 3,
+    });
+
+    render(<Card item={rareCard} onClick={mockOnClick} />);
+
+    expect(screen.getByText('Agumon')).toBeInTheDocument();
+    expect(screen.getByText('3')).toBeInTheDocument();
+
+    // Should render shimmer effect for rare cards
+    const cardButton = screen.getByRole('button');
+    expect(cardButton.className).toContain('from-amber-50');
+  });
+
+  it('should render non-rare card styling when total < 3', () => {
+    const commonCard = makeRepoCard({
+      total: 1,
+    });
+
+    render(<Card item={commonCard} onClick={mockOnClick} />);
+
+    const cardButton = screen.getByRole('button');
+    expect(cardButton.className).toContain('bg-white');
+  });
+
+  it('should render shimmer effect only for rare cards', () => {
+    const rareCard = makeRepoCard({ total: 5 });
+
+    const { container } = render(<Card item={rareCard} onClick={mockOnClick} />);
+
+    // Check for shimmer div
+    const shimmerDiv = container.querySelector('.animate-shimmer');
+    expect(shimmerDiv).toBeInTheDocument();
+  });
+
+  it('should not render shimmer effect for common cards', () => {
+    const commonCard = makeRepoCard({ total: 1 });
+
+    const { container } = render(<Card item={commonCard} onClick={mockOnClick} />);
+
+    // Check that shimmer div does NOT exist
+    const shimmerDiv = container.querySelector('.animate-shimmer');
+    expect(shimmerDiv).not.toBeInTheDocument();
+  });
+
+  it('should render evolution badge when evolution is a number', () => {
+    const evolvedCard = makeRepoCard({
+      evolution: 2,
+    });
+
+    render(<Card item={evolvedCard} onClick={mockOnClick} />);
+
+    expect(screen.getByText('2 Evolution')).toBeInTheDocument();
+  });
+
+  it('should render starter pack badge when starterPack is a number', () => {
+    const starterCard = makeRepoCard({
+      starterPack: 5,
+    });
+
+    render(<Card item={starterCard} onClick={mockOnClick} />);
+
+    expect(screen.getByText('5 Starter Pack')).toBeInTheDocument();
+  });
+
+  it('should not render level badge when level is missing', () => {
+    const cardWithoutLevel = makeRepoCard({
+      level: undefined as unknown as string,
+    });
+
+    render(<Card item={cardWithoutLevel} onClick={mockOnClick} />);
+
+    // Should still render without crashing
+    expect(screen.getByText('Agumon')).toBeInTheDocument();
+  });
+
+  it('should not render type badge when type is missing', () => {
+    const cardWithoutType = makeRepoCard({
+      type: undefined as unknown as string,
+    });
+
+    render(<Card item={cardWithoutType} onClick={mockOnClick} />);
+
+    // Should still render without crashing
+    expect(screen.getByText('Agumon')).toBeInTheDocument();
+  });
+
+  it('should render category fallback when category is missing but level exists', () => {
+    const cardWithOnlyLevel = makeRepoCard({
+      category: undefined as unknown as string,
+      level: 'Rookie',
+    });
+
+    render(<Card item={cardWithOnlyLevel} onClick={mockOnClick} />);
+
+    // Should show level as fallback
+    expect(screen.getAllByText('Rookie')).toHaveLength(2);
+  });
 });

@@ -339,5 +339,114 @@ describe('DigimonAPI DataSource', () => {
         "Cannot read properties of undefined (reading 'ok')",
       );
     });
+
+    it('should handle HTTP error responses (status 404)', async () => {
+      mockFetch.mockResolvedValueOnce(
+        makeResponse({
+          json: jest.fn().mockResolvedValue({}) as unknown as Response['json'],
+          ok: false,
+          status: 404,
+        }),
+      );
+
+      await expect(digimonAPI.getListDigimon('Rookie')).rejects.toThrow('HTTP error! status: 404');
+    });
+
+    it('should handle HTTP error responses (status 500)', async () => {
+      mockFetch.mockResolvedValueOnce(
+        makeResponse({
+          json: jest.fn().mockResolvedValue({}) as unknown as Response['json'],
+          ok: false,
+          status: 500,
+        }),
+      );
+
+      await expect(digimonAPI.getDigimonById(1)).rejects.toThrow('HTTP error! status: 500');
+    });
+
+    it('should handle request timeout (AbortError)', async () => {
+      const abortError = new Error('The operation was aborted');
+      abortError.name = 'AbortError';
+
+      mockFetch.mockRejectedValueOnce(abortError);
+
+      await expect(digimonAPI.getListDigimon('Rookie')).rejects.toThrow(
+        'Request timeout - please try again',
+      );
+    });
+
+    it('should handle request timeout for getDigimonById', async () => {
+      const abortError = new Error('The operation was aborted');
+      abortError.name = 'AbortError';
+
+      mockFetch.mockRejectedValueOnce(abortError);
+
+      await expect(digimonAPI.getDigimonById(1)).rejects.toThrow(
+        'Request timeout - please try again',
+      );
+    });
+
+    it('should handle unknown error types', async () => {
+      // Mock fetch to throw a non-Error object
+      mockFetch.mockRejectedValueOnce('String error' as unknown as Error);
+
+      await expect(digimonAPI.getListDigimon('Rookie')).rejects.toThrow(
+        'An unknown error occurred',
+      );
+    });
+
+    it('should handle unknown error types for getDigimonById', async () => {
+      mockFetch.mockRejectedValueOnce({ weird: 'object' } as unknown as Error);
+
+      await expect(digimonAPI.getDigimonById(1)).rejects.toThrow('An unknown error occurred');
+    });
+
+    it('should handle invalid response format (null data)', async () => {
+      mockFetch.mockResolvedValueOnce(
+        makeResponse({
+          json: jest.fn().mockResolvedValue(null) as unknown as Response['json'],
+          ok: true,
+          status: 200,
+        }),
+      );
+
+      await expect(digimonAPI.getListDigimon('Rookie')).rejects.toThrow('Invalid response format');
+    });
+
+    it('should handle invalid response format (non-object data)', async () => {
+      mockFetch.mockResolvedValueOnce(
+        makeResponse({
+          json: jest.fn().mockResolvedValue('invalid string') as unknown as Response['json'],
+          ok: true,
+          status: 200,
+        }),
+      );
+
+      await expect(digimonAPI.getListDigimon('Rookie')).rejects.toThrow('Invalid response format');
+    });
+
+    it('should handle invalid response format for getDigimonById (null)', async () => {
+      mockFetch.mockResolvedValueOnce(
+        makeResponse({
+          json: jest.fn().mockResolvedValue(null) as unknown as Response['json'],
+          ok: true,
+          status: 200,
+        }),
+      );
+
+      await expect(digimonAPI.getDigimonById(1)).rejects.toThrow('Invalid response format');
+    });
+
+    it('should handle invalid response format for getDigimonById (number)', async () => {
+      mockFetch.mockResolvedValueOnce(
+        makeResponse({
+          json: jest.fn().mockResolvedValue(12345) as unknown as Response['json'],
+          ok: true,
+          status: 200,
+        }),
+      );
+
+      await expect(digimonAPI.getDigimonById(1)).rejects.toThrow('Invalid response format');
+    });
   });
 });

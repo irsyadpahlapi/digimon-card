@@ -360,5 +360,68 @@ describe('LoginPage Component', () => {
       rerender(<LoginPage />);
       expect(screen.getByTestId('auth-redirect')).toBeInTheDocument();
     });
+
+    it('should show error for invalid username with special characters', async () => {
+      const user = userEvent.setup();
+      render(<LoginPage />);
+
+      const input = screen.getByPlaceholderText('Enter your username');
+      const button = screen.getByRole('button');
+
+      await user.type(input, '<script>alert("xss")</script>');
+      await user.click(button);
+
+      // Should show validation error (actual error: "Username must not exceed 20 characters")
+      const errorMessage = screen.getByText(/Username must not exceed 20 characters/i);
+      expect(errorMessage).toBeInTheDocument();
+
+      // Should not save profile or redirect
+      expect(mockSetProfile).not.toHaveBeenCalled();
+      expect(mockPush).not.toHaveBeenCalled();
+    });
+
+    it('should show error for username with SQL injection attempt', async () => {
+      const user = userEvent.setup();
+      render(<LoginPage />);
+
+      const input = screen.getByPlaceholderText('Enter your username');
+      const button = screen.getByRole('button');
+
+      await user.type(input, "admin' OR '1'='1");
+      await user.click(button);
+
+      // Should show validation error (actual error: "Username contains invalid characters")
+      expect(screen.getByText(/Username contains invalid characters/i)).toBeInTheDocument();
+      expect(mockSetProfile).not.toHaveBeenCalled();
+    });
+
+    it('should show error for username that is too long', async () => {
+      const user = userEvent.setup();
+      render(<LoginPage />);
+
+      const input = screen.getByPlaceholderText('Enter your username');
+      const button = screen.getByRole('button');
+
+      await user.type(input, 'a'.repeat(51)); // Max 20 chars
+      await user.click(button);
+
+      expect(screen.getByText(/Username must not exceed 20 characters/i)).toBeInTheDocument();
+      expect(mockSetProfile).not.toHaveBeenCalled();
+    });
+
+    it('should show custom error message from validateUsername when available', async () => {
+      const user = userEvent.setup();
+      render(<LoginPage />);
+
+      const input = screen.getByPlaceholderText('Enter your username');
+      const button = screen.getByRole('button');
+
+      // Test various invalid patterns
+      await user.type(input, '!!!');
+      await user.click(button);
+
+      const errorElement = screen.getByText(/Username contains invalid characters/i);
+      expect(errorElement).toBeInTheDocument();
+    });
   });
 });

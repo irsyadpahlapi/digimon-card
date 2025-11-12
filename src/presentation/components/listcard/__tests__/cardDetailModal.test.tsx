@@ -330,4 +330,49 @@ describe('CardDetailModal Component', () => {
     // Simply unmount to ensure no errors occur during cleanup
     expect(() => unmount()).not.toThrow();
   });
+
+  it('should disable evolve button when total < 3 (not enough cards)', () => {
+    renderModal({ item: buildCard({ total: 2 }) });
+
+    const evolveButton = screen.getByRole('button', { name: /evolve.*options/i });
+
+    // Button should be disabled with gray styling
+    expect(evolveButton).toBeDisabled();
+    expect(evolveButton).toHaveClass('bg-gray-400');
+    expect(evolveButton).toHaveClass('cursor-not-allowed');
+  });
+
+  it('should disable evolve button when total is 1', () => {
+    renderModal({ item: buildCard({ total: 1 }) });
+
+    const evolveButton = screen.getByRole('button', { name: /evolve.*options/i });
+
+    expect(evolveButton).toBeDisabled();
+    expect(evolveButton).toHaveClass('bg-gray-400');
+  });
+
+  it('should enable evolve button when total >= 3', () => {
+    renderModal({ item: buildCard({ total: 3 }) });
+
+    const evolveButton = screen.getByRole('button', { name: /evolve.*options/i });
+
+    // Button should be enabled with gradient styling
+    expect(evolveButton).not.toBeDisabled();
+    expect(evolveButton).not.toHaveClass('bg-gray-400');
+  });
+
+  it('should show gray styling when evolve button is disabled due to insufficient cards', () => {
+    // Test the specific line 320: buttonClass = 'bg-gray-400 cursor-not-allowed'
+    renderModal({
+      item: buildCard({ total: 2 }),
+      evolvingToId: null, // Not evolving, not showing evolution section
+    });
+
+    const evolveButton = screen.getByRole('button', { name: /evolve.*options/i });
+
+    // Verify the disabled state and gray styling class
+    expect(evolveButton).toBeDisabled();
+    expect(evolveButton.className).toContain('bg-gray-400');
+    expect(evolveButton.className).toContain('cursor-not-allowed');
+  });
 });

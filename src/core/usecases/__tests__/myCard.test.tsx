@@ -135,6 +135,81 @@ describe('ListMyCard Use Case', () => {
       expect(agumon?.starterPack).toBe(8); // Should combine starterPack values
     });
 
+    it('should handle cards with zero evolution and starterPack values', () => {
+      const cardWithZeros = {
+        ...mockCards[0],
+        id: 99,
+        evolution: 0,
+        starterPack: 0,
+        isEvolution: false,
+      };
+
+      const result = listMyCard.getListMyCard([cardWithZeros], '', '');
+
+      const card = result.find((c) => c.id === 99);
+      expect(card?.evolution).toBe(0); // 0 + 0 = 0 (not evolution)
+      expect(card?.starterPack).toBe(1); // 0 + 1 = 1 (not evolution)
+    });
+
+    it('should handle evolution cards with isEvolution true (addEvolution = 1, addStarter = 0)', () => {
+      const evolutionCard = {
+        ...mockCards[0],
+        id: 200,
+        isEvolution: true,
+        evolution: 0,
+        starterPack: 0,
+      };
+
+      const result = listMyCard.getListMyCard([evolutionCard], '', '');
+
+      const card = result.find((c) => c.id === 200);
+      expect(card?.evolution).toBe(1); // isEvolution true: 0 + 1 = 1
+      expect(card?.starterPack).toBe(0); // isEvolution true: 0 + 0 = 0
+    });
+
+    it('should handle duplicate evolution cards combining values correctly', () => {
+      const evolutionCard = {
+        ...mockCards[0],
+        id: 300,
+        isEvolution: true,
+        evolution: 5,
+        starterPack: 3,
+      };
+
+      const duplicateEvolutions = [evolutionCard, evolutionCard, evolutionCard];
+
+      const result = listMyCard.getListMyCard(duplicateEvolutions, '', '');
+
+      const card = result.find((c) => c.id === 300);
+      expect(card?.total).toBe(3);
+      // Logic: first card sets {evolution: 5, starterPack: 3}
+      // Each subsequent card adds: (5 + 1) and (3 + 0)
+      // Total: 5 + (5+1) + (5+1) = 5 + 6 + 6 = 17? No...
+      // Actually: existing.evolution + addEvolution accumulates
+      // Card 1: {evolution: 5+1=6, starterPack: 3+0=3}
+      // Card 2 (duplicate): existing(6) + 1 = 7, existing(3) + 0 = 3
+      // Card 3 (duplicate): existing(7) + 1 = 8, existing(3) + 0 = 3
+      expect(card?.evolution).toBe(8); // 5 + 1 + 1 + 1 = 8
+      expect(card?.starterPack).toBe(3); // 3 + 0 + 0 + 0 = 3
+    });
+
+    it('should correctly increment evolution counter for evolution cards', () => {
+      const evolutionCard = {
+        ...mockCards[0],
+        id: 400,
+        isEvolution: true,
+        evolution: 2,
+        starterPack: 1,
+      };
+
+      const result = listMyCard.getListMyCard([evolutionCard], '', '');
+
+      const card = result.find((c) => c.id === 400);
+      // When isEvolution is true: addEvolution = 1, addStarter = 0
+      expect(card?.evolution).toBe(3); // 2 + 1 = 3
+      expect(card?.starterPack).toBe(1); // 1 + 0 = 1 (no increment for evolution cards)
+    });
+
     it('should filter correctly when category does not match', () => {
       const result = listMyCard.getListMyCard(mockCards, 'Ultimate', '');
 
@@ -378,6 +453,93 @@ describe('ListMyCard Use Case', () => {
 
       // Should remove exactly 3 cards, leaving 1 + 1 evolution
       expect(result).toHaveLength(2);
+    });
+
+    it('should handle evolution data with empty types array (fallback to empty string)', async () => {
+      const emptyTypesData = {
+        ...mockEvolutionData,
+        types: [], // Empty types array - triggers sortedTypes[0]?.type || ''
+      };
+
+      mockDigimonImpl.getDigimonById.mockResolvedValue(emptyTypesData);
+
+      const result = await listMyCard.digimonEvolution(mockCards, 1, 4);
+
+      // Should add evolved card with empty type
+      const evolvedCard = result.find((card) => card.id === 2 && card.isEvolution);
+      expect(evolvedCard).toBeDefined();
+      expect(evolvedCard?.type).toBe('');
+    });
+
+    it('should handle evolution data with empty attributes array (fallback to empty string)', async () => {
+      const emptyAttributesData = {
+        ...mockEvolutionData,
+        attributes: [], // Empty attributes - triggers sortedAttributes[0]?.attribute || ''
+      };
+
+      mockDigimonImpl.getDigimonById.mockResolvedValue(emptyAttributesData);
+
+      const result = await listMyCard.digimonEvolution(mockCards, 1, 4);
+
+      const evolvedCard = result.find((card) => card.id === 2 && card.isEvolution);
+      expect(evolvedCard).toBeDefined();
+      expect(evolvedCard?.attribute).toBe('');
+    });
+
+    it('should handle evolution data with empty descriptions array (fallback to empty string)', async () => {
+      const emptyDescriptionsData = {
+        ...mockEvolutionData,
+        descriptions: [], // Empty descriptions - triggers .at(-1)?.description || ''
+      };
+
+      mockDigimonImpl.getDigimonById.mockResolvedValue(emptyDescriptionsData);
+
+      const result = await listMyCard.digimonEvolution(mockCards, 1, 4);
+
+      const evolvedCard = result.find((card) => card.id === 2 && card.isEvolution);
+      expect(evolvedCard).toBeDefined();
+      expect(evolvedCard?.description).toBe('');
+    });
+
+    it('should handle evolution data with undefined level (fallback to empty string)', async () => {
+      const undefinedLevelData = {
+        ...mockEvolutionData,
+        level: undefined, // Undefined level - triggers levelName || ''
+      };
+
+      mockDigimonImpl.getDigimonById.mockResolvedValue(undefinedLevelData);
+
+      const result = await listMyCard.digimonEvolution(mockCards, 1, 4);
+
+      const evolvedCard = result.find((card) => card.id === 2 && card.isEvolution);
+      expect(evolvedCard).toBeDefined();
+      expect(evolvedCard?.level).toBe('');
+    });
+
+    it('should handle evolution data with all missing optional fields', async () => {
+      const minimalData = {
+        id: 2,
+        name: 'MinimalEvolution',
+        images: [{ href: 'test.jpg', transparent: false }],
+        levels: [],
+        types: [],
+        attributes: [],
+        fields: [],
+        descriptions: [],
+        nextEvolutions: [],
+        level: undefined,
+      };
+
+      mockDigimonImpl.getDigimonById.mockResolvedValue(minimalData);
+
+      const result = await listMyCard.digimonEvolution(mockCards, 1, 4);
+
+      const evolvedCard = result.find((card) => card.id === 2 && card.isEvolution);
+      expect(evolvedCard).toBeDefined();
+      expect(evolvedCard?.type).toBe('');
+      expect(evolvedCard?.attribute).toBe('');
+      expect(evolvedCard?.description).toBe('');
+      expect(evolvedCard?.level).toBe('');
     });
   });
 
