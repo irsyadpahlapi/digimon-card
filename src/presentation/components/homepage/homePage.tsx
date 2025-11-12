@@ -6,13 +6,13 @@ import useLocalStorage from '@hooks/useLocalStorage';
 import { DetailDigimonRepository } from '@/core/repositories/myCardRepository';
 import { ListMyCard } from '@/core/usecases/myCard';
 import Card from '@components/listcard/card';
-import CardDetailModal from '@components/listcard/cardDetailModal';
+import CardDetailModal from '@/presentation/components/listcard/cardDetailModal';
 import { ProfileRepository } from '@/core/repositories/profile';
 import { ListGatcha } from '@/core/usecases/listGatcha';
-import EmptyState from '@components/emptyState';
-import FilterSection from '@components/filterSection';
-import Header from '@components/header';
-import Toast from '@components/toast';
+import EmptyState from '@/presentation/components/emptyState';
+import FilterSection from '@/presentation/components/filterSection';
+import Header from '@/presentation/components/header';
+import Toast from '@/presentation/components/toast';
 import { checkRateLimit, sanitizeNumber } from '@/presentation/hooks/security';
 
 export default function HomePage() {

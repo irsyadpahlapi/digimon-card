@@ -84,18 +84,6 @@ jobs:
         with:
           fetch-depth: 0 # Shallow clones should be disabled for better analysis
 
-      - name: Clean old artifacts (coverage & caches)
-        run: |
-          echo "==> Cleaning old coverage & temp directories"
-          rm -rf coverage .nyc_output || true
-          echo "==> (Optional) cleaning local sonar scanner cache if forced"
-          if [ "${FORCE_SONAR_CLEAR}" = "true" ]; then
-            rm -rf ~/.sonar/cache || true
-            echo "Local Sonar cache cleared"
-          else
-            echo "Skipping local Sonar cache clear (set FORCE_SONAR_CLEAR=true to enable)"
-          fi
-
       - name: Setup Node.js
         uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4.0.3
         with:
@@ -116,11 +104,7 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Run tests with coverage
-        run: |
-          echo "==> Running tests with fresh coverage"
-          yarn test:ci
-          echo "==> Verifying coverage file exists"
-          test -f coverage/lcov.info && head -5 coverage/lcov.info || (echo "lcov.info missing" && exit 1)
+        run: yarn test:ci
 
       - name: Debug coverage artifacts
         run: |
@@ -141,11 +125,6 @@ jobs:
             -Dsonar.test.inclusions=**/*.test.ts,**/*.test.tsx,**/*.spec.ts,**/*.spec.tsx
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
             -Dsonar.sourceEncoding=UTF-8
-            -Dsonar.scm.revision=${{ github.sha }}
-            -Dsonar.css.file.suffixes=.css,.scss
-            -Dsonar.issue.ignore.multicriteria=e1
-            -Dsonar.issue.ignore.multicriteria.e1.ruleKey=typescript:S1848
-            -Dsonar.issue.ignore.multicriteria.e1.resourceKey=**/__tests__/**
 
   # 4. Build application
   build:
