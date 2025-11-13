@@ -86,9 +86,10 @@ DigiCard is an interactive card collection game where you can:
 
 - Browse available starter packs at the top of the homepage
 - Three types available:
-  - 🟢 **Rookie Pack** (100 coins) - Get 5-10 Rookie level Digimon
-  - 🟡 **Champion Pack** (200 coins) - Get 5-10 Champion level Digimon
-  - 🔴 **Ultimate Pack** (300 coins) - Get 5-10 Ultimate level Digimon
+  - 🟢 **Rookie Pack** (5 coins) - Get 5 cards: 4 Rookie, 1 Champion
+  - 🟡 **Champion Pack** (10 coins) - Get 5 cards: 2 Rookie, 2 Champion, 1 Ultimate
+  - 🔴 **Ultimate Pack** (15 coins) - Get 5 cards: 1 Rookie, 2 Champion, 2 Ultimate
+  - 🟣 **Mega Pack** (20 coins) - Get 5 cards: 1 Champion, 3 Ultimate, 1 Mega
 - Click "Buy Pack" button to purchase (requires sufficient coins)
 - Cards are automatically added to "My Cards" section
 
@@ -113,7 +114,6 @@ DigiCard is an interactive card collection game where you can:
 ### 5. **Evolution System**
 
 - Each Digimon can evolve to multiple next forms
-- Evolution costs vary based on target level
 - After evolution, the old card is replaced with the new one
 - Evolution is permanent and cannot be undone
 
@@ -148,6 +148,7 @@ yarn test:coverage    # Generate coverage report
 # Code Quality
 yarn lint             # Run ESLint
 yarn lint:report      # Generate ESLint report
+
 ```
 
 ### Project Structure
@@ -277,13 +278,11 @@ Run security audits to check for vulnerabilities:
 
 ```bash
 # Run npm audit for known vulnerabilities
-npm run security:audit
+yarn security:audit
 
 # Run both audit and ESLint checks
-npm run security:check
+yarn security:check
 
-# Automatically fix vulnerabilities
-npm run security:fix
 ```
 
 ### Reporting Vulnerabilities
