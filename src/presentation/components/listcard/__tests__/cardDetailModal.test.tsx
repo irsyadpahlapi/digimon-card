@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import CardDetailModal from '../cardDetailModal';
-import { DetailDigimonRepository } from '@/core/repositories/myCardRepository';
+import { DetailDigimonRepository } from '@/core/repositories/myCardRepository.d';
 
 describe('CardDetailModal Component', () => {
   const mockOnClose = jest.fn();

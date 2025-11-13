@@ -1,5 +1,5 @@
 import { BuyStarterpack } from '@data/datasources/buyStarterpackDataSource';
-import { DetailDigimonEntity } from '@entities/digimon';
+import { DetailDigimonEntity } from '@/core/entities/digimon.d';
 
 export class DigimonImpl {
   private readonly datasource: BuyStarterpack;

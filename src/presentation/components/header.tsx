@@ -4,13 +4,7 @@ import {
   GRADIENT_HEADER_TEXT,
   GRADIENT_COIN_BADGE,
 } from '@/presentation/styles/gradients';
-
-interface HeaderProps {
-  readonly userName?: string;
-  readonly title: string;
-  readonly coins?: number;
-  readonly showCoins?: boolean;
-}
+import { HeaderProps } from '@entities/digimon.d';
 
 export default function Header({
   userName = 'User',

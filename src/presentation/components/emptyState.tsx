@@ -1,14 +1,6 @@
 import React from 'react';
 import { BACKDROP_EMPTY_STATE, GRADIENT_HOMEPAGE_TEXT } from '@/presentation/styles/gradients';
-
-interface EmptyStateProps {
-  readonly title?: string;
-  readonly description?: string;
-  readonly actionText?: string;
-  readonly totalPacks?: number;
-  readonly cardsPerPack?: string;
-  readonly userCoins?: number;
-}
+import { EmptyStateProps } from '@entities/digimon.d';
 
 export default function EmptyState({
   title = 'No Cards Yet!',

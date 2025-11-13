@@ -1,4 +1,4 @@
-import type { Image, Field, NextEvolution } from '@/core/entities/digimon';
+import type { Image, Field, NextEvolution } from '@/core/entities/digimon.d';
 
 export interface DetailDigimonRepository {
   id: number;

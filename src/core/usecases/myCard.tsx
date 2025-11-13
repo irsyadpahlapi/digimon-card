@@ -1,4 +1,4 @@
-import { DetailDigimonRepository } from '@core/repositories/myCardRepository';
+import { DetailDigimonRepository } from '@/core/repositories/myCardRepository.d';
 import { DigimonImpl } from '@/data/repositories/digimonRepository';
 import { Category, sellingDigimonPrice, highestLevelFromLevels } from '@/presentation/hooks/utils';
 

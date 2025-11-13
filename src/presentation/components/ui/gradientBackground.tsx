@@ -1,10 +1,5 @@
 'use client';
-
-interface GradientBackgroundProps {
-  variant: 'homepage' | 'login';
-  children: React.ReactNode;
-  className?: string;
-}
+import { GradientBackgroundProps } from '@/core/entities/digimon.d';
 
 export default function GradientBackground({
   variant,

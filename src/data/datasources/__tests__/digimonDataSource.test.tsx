@@ -1,5 +1,5 @@
 import DigimonAPI from '../digimonDataSource';
-import { ListDigimonEntity, DetailDigimonEntity } from '../../../core/entities/digimon';
+import { ListDigimonEntity, DetailDigimonEntity } from '../../../core/entities/digimon.d';
 import { makeDetailDigimonEntity, makeListDigimonEntity } from '../../../__tests__/test-utils';
 
 // Mock global fetch

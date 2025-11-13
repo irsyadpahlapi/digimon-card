@@ -1,5 +1,5 @@
 import { ListGatcha } from '../listGatcha';
-import { DetailDigimonEntity } from '@/core/entities/digimon';
+import { DetailDigimonEntity } from '@/core/entities/digimon.d';
 import { makeDetailDigimonEntity } from '@/__tests__/test-utils';
 
 // Mock the repository

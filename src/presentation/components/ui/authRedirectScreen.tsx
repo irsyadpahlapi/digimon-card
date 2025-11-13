@@ -4,11 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import LoadingSpinner from './loadingSpinner';
 import GradientBackground from './gradientBackground';
-
-interface AuthRedirectScreenProps {
-  variant?: 'toHome' | 'toLogin';
-  className?: string;
-}
+import { AuthRedirectScreenProps } from '@/core/entities/digimon.d';
 
 export default function AuthRedirectScreen({
   variant = 'toHome',

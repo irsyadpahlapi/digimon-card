@@ -1,5 +1,5 @@
 import { ListGatchaImpl } from '@data/repositories/listGatchaRepository';
-import { DetailDigimonRepository } from '@core/repositories/myCardRepository';
+import { DetailDigimonRepository } from '@/core/repositories/myCardRepository.d';
 import { Category, sellingDigimonPrice, highestLevelFromLevels } from '@/presentation/hooks/utils';
 
 export class ListGatcha {

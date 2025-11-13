@@ -1,4 +1,4 @@
-import { ListDigimonEntity, DetailDigimonEntity } from '@entities/digimon';
+import { ListDigimonEntity, DetailDigimonEntity } from '@/core/entities/digimon.d';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://digi-api.com/api/v1/digimon';
 const API_TIMEOUT = 10000; // 10 seconds timeout

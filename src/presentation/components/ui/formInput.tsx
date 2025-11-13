@@ -1,21 +1,7 @@
 'use client';
 
 import React from 'react';
-
-interface FormInputProps {
-  id: string;
-  name: string;
-  type?: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  placeholder?: string;
-  label?: string;
-  icon?: React.ReactNode;
-  required?: boolean;
-  disabled?: boolean;
-  error?: string;
-  className?: string;
-}
+import { FormInputProps } from '@/core/entities/digimon.d';
 
 export default function FormInput({
   id,

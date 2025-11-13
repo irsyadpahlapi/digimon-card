@@ -1,6 +1,6 @@
 import { BuyStarterpack } from '../buyStarterpackDataSource';
 import DigimonAPI from '../digimonDataSource';
-import { DetailDigimonEntity, ListDigimonEntity } from '@/core/entities/digimon';
+import { DetailDigimonEntity, ListDigimonEntity } from '@/core/entities/digimon.d';
 import { makeDetailDigimonEntity, makeListDigimonEntity } from '@/__tests__/test-utils';
 
 // Mock DigimonAPI

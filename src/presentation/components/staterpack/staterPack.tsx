@@ -1,14 +1,8 @@
 'use client';
-import { StarterPackProps } from '@/core/entities/staterPack';
+import { StarterPackComponentProps } from '@/core/entities/staterPack.d';
 import { borderMap, badgeMap, gradientMap } from '@/presentation/hooks/constant';
 import Image from 'next/image';
 import ActionButton from '@/presentation/components/ui/actionButton';
-
-interface StarterPackComponentProps {
-  readonly item: StarterPackProps['item'];
-  readonly onBuy?: (item: StarterPackProps['item']) => void;
-  readonly isLoading?: boolean;
-}
 
 export default function StarterPack({
   item,

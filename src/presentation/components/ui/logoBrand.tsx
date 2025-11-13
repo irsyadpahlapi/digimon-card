@@ -2,15 +2,7 @@
 
 import Image from 'next/image';
 import { GRADIENT_LOGO_TEXT } from '@/presentation/styles/gradients';
-
-interface LogoBrandProps {
-  title?: string;
-  subtitle?: string;
-  imageSrc?: string;
-  imageAlt?: string;
-  size?: 'sm' | 'md' | 'lg';
-  className?: string;
-}
+import { LogoBrandProps } from '@/core/entities/digimon.d';
 
 export default function LogoBrand({
   title = 'DigiCard',

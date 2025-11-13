@@ -1,19 +1,5 @@
 import React from 'react';
-
-interface FilterSectionProps {
-  readonly filterBy: {
-    readonly none: string;
-    readonly category: string;
-    readonly type: string;
-  };
-  readonly isDropdownCategory: boolean;
-  readonly isDropdownType: boolean;
-  readonly categories: readonly string[];
-  readonly types: readonly string[];
-  readonly onFilterChange: (key: string, value: string) => void;
-  readonly onToggleCategory: () => void;
-  readonly onToggleType: () => void;
-}
+import { FilterSectionProps } from '@entities/digimon.d';
 
 export default function FilterSection({
   filterBy,

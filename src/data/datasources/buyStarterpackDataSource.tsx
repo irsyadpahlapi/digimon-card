@@ -1,5 +1,5 @@
 import DigimonAPI from '@data/datasources/digimonDataSource';
-import { DetailDigimonEntity } from '@entities/digimon';
+import { DetailDigimonEntity } from '@/core/entities/digimon.d';
 
 export class BuyStarterpack {
   // Get Random Rookies Digimon

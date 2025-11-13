@@ -1,10 +1,5 @@
 'use client';
-
-interface LoadingSpinnerProps {
-  size?: 'sm' | 'md' | 'lg';
-  color?: 'white' | 'primary' | 'orange';
-  className?: string;
-}
+import { LoadingSpinnerProps } from '@/core/entities/digimon.d';
 
 export default function LoadingSpinner({
   size = 'md',

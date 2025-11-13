@@ -1,4 +1,4 @@
-import { ProfileRepository } from '../profile';
+import { ProfileRepository } from '../profile.d';
 
 describe('ProfileRepository', () => {
   describe('ProfileRepository Interface', () => {

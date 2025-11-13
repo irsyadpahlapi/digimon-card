@@ -1,5 +1,4 @@
 'use client';
-import { DetailDigimonRepository } from '@/core/repositories/myCardRepository';
 import { useEffect, useState } from 'react';
 import {
   BACKDROP_CARD_MODAL_HEADER,
@@ -9,16 +8,7 @@ import {
   GRADIENT_BRAND_BUTTON,
 } from '@/presentation/styles/gradients';
 import Image from 'next/image';
-
-interface CardDetailModalProps {
-  item: DetailDigimonRepository | null;
-  isOpen: boolean;
-  onClose: () => void;
-  onEvolve: (id: number, nextEvolution: number) => void;
-  onSell: (index: number, coin: number) => void;
-  evolvingToId?: number | null; // Track which specific evolution is loading
-  isSelling?: boolean;
-}
+import { CardDetailModalProps } from '@/core/entities/digimon.d';
 
 export default function CardDetailModal({
   item,

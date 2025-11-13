@@ -1,13 +1,6 @@
 import React, { useEffect } from 'react';
 import { GRADIENT_SUCCESS_BUTTON } from '@/presentation/styles/gradients';
-
-interface ToastProps {
-  readonly message: string;
-  readonly type?: 'success' | 'error' | 'info';
-  readonly isVisible: boolean;
-  readonly onClose: () => void;
-  readonly duration?: number;
-}
+import { ToastProps } from '@entities/digimon.d';
 
 export default function Toast({
   message,

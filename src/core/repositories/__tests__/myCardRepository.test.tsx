@@ -1,4 +1,4 @@
-import { DetailDigimonRepository } from '../myCardRepository';
+import { DetailDigimonRepository } from '../myCardRepository.d';
 import {
   validatePropertyTypes,
   validateRequiredProperties,

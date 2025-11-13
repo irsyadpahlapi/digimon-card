@@ -1,11 +1,6 @@
 'use client';
 import Image from 'next/image';
-import { DetailDigimonRepository } from '@/core/repositories/myCardRepository';
-
-interface CardProps {
-  readonly item: DetailDigimonRepository;
-  readonly onClick?: () => void;
-}
+import { CardProps } from '@/core/entities/digimon.d';
 
 export default function Card({ item, onClick }: Readonly<CardProps>) {
   const imgSrc = item.images?.[0]?.href || 'https://via.placeholder.com/96x96?text=Digimon';

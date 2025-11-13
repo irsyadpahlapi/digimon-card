@@ -2,14 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ProfileRepository } from '@/core/repositories/profile';
+import { ProfileRepository } from '@/core/repositories/profile.d';
 import useLocalStorage from './useLocalStorage';
-
-interface AuthState {
-  isLoading: boolean;
-  isAuthenticated: boolean;
-  profile: ProfileRepository | null;
-}
+import { AuthState } from '@/core/entities/digimon.d';
 
 export function useAuthCheck() {
   const [authState, setAuthState] = useState<AuthState>({

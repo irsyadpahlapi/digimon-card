@@ -6,18 +6,7 @@ import {
   GRADIENT_SUCCESS_BUTTON,
   GRADIENT_WARNING_BUTTON,
 } from '@/presentation/styles/gradients';
-
-interface ActionButtonProps {
-  children: React.ReactNode;
-  onClick?: () => void;
-  type?: 'button' | 'submit' | 'reset';
-  variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger';
-  size?: 'sm' | 'md' | 'lg';
-  isLoading?: boolean;
-  disabled?: boolean;
-  className?: string;
-  loadingText?: string;
-}
+import { ActionButtonProps } from '@/core/entities/digimon.d';
 
 export default function ActionButton({
   children,

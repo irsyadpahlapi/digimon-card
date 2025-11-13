@@ -1,8 +1,8 @@
 import { render, RenderOptions } from '@testing-library/react';
 import { ReactElement } from 'react';
-import type { DetailDigimonEntity, ListDigimonEntity } from '@/core/entities/digimon';
+import type { DetailDigimonEntity, ListDigimonEntity } from '@/core/entities/digimon.d';
 import type { BuyStarterpack } from '@/data/datasources/buyStarterpackDataSource';
-import type { DetailDigimonRepository } from '@/core/repositories/myCardRepository';
+import type { DetailDigimonRepository } from '@/core/repositories/myCardRepository.d';
 
 // Custom render function that includes common providers
 const customRender = (ui: ReactElement, options?: Omit<RenderOptions, 'wrapper'>) => {

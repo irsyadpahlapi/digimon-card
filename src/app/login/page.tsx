@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ProfileRepository } from '@/core/repositories/profile';
+import { ProfileRepository } from '@/core/repositories/profile.d';
 import useLocalStorage from '@hooks/useLocalStorage';
 import { useAuthCheck } from '@/presentation/hooks/useAuthCheck';
 import { validateUsername, sanitizeInput } from '@/presentation/hooks/security';
