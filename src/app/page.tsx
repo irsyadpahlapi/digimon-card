@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { useAuthCheck } from '@/presentation/hooks/useAuthCheck';
 import AuthRedirectScreen from '@/presentation/components/ui/authRedirectScreen';
 
-const MapComponent = dynamic(() => import('@/presentation/components/homepage/homePage'), {
+const LayoutComponent = dynamic(() => import('@/presentation/components/homepage/homePage'), {
   ssr: false,
 });
 
@@ -30,7 +30,7 @@ export default function Homepage() {
 
   return (
     <div>
-      <MapComponent />
+      <LayoutComponent />
     </div>
   );
 }

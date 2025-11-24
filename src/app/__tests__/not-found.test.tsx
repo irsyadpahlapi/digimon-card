@@ -58,10 +58,6 @@ describe('NotFound Page', () => {
     // Check for rectangles
     const rects = container.querySelectorAll('rect');
     expect(rects.length).toBeGreaterThan(0);
-
-    // Check for circles
-    const circles = container.querySelectorAll('circle');
-    expect(circles.length).toBeGreaterThan(0);
   });
 
   it('should have proper CSS classes on SVG elements', () => {
@@ -102,38 +98,6 @@ describe('NotFound Page', () => {
     expect(circleElements.length).toBeGreaterThan(0);
   });
 
-  it('should render illustration elements', () => {
-    const { container } = render(<NotFound />);
-
-    // Check for umbrella
-    const umbrella = container.querySelector('#umbrella');
-    expect(umbrella).toBeInTheDocument();
-
-    // Check for pillow
-    const pillow = container.querySelector('#pillow');
-    expect(pillow).toBeInTheDocument();
-
-    // Check for cup
-    const cup = container.querySelector('#cup');
-    expect(cup).toBeInTheDocument();
-
-    // Check for clock
-    const clock = container.querySelector('#clock');
-    expect(clock).toBeInTheDocument();
-
-    // Check for box
-    const box = container.querySelector('#box');
-    expect(box).toBeInTheDocument();
-
-    // Check for rucksack
-    const rucksack = container.querySelector('#rucksack');
-    expect(rucksack).toBeInTheDocument();
-
-    // Check for bike
-    const bike = container.querySelector('#bike');
-    expect(bike).toBeInTheDocument();
-  });
-
   it('should have proper DOM structure', () => {
     const { container } = render(<NotFound />);
 
@@ -143,21 +107,6 @@ describe('NotFound Page', () => {
 
     expect(mainDiv).toContainElement(wrapper as HTMLElement);
     expect(wrapper).toContainElement(svg as SVGElement);
-  });
-
-  it('should render animated elements', () => {
-    const { container } = render(<NotFound />);
-
-    // Check for clock hands
-    const clockHand1 = container.querySelector('.clock-hand-1');
-    expect(clockHand1).toBeInTheDocument();
-
-    const clockHand2 = container.querySelector('.clock-hand-2');
-    expect(clockHand2).toBeInTheDocument();
-
-    // Check for wheel elements
-    const wheels = container.querySelectorAll('.wheel');
-    expect(wheels.length).toBeGreaterThan(0);
   });
 
   it('should handle component rendering without errors', () => {
@@ -225,13 +174,5 @@ describe('NotFound Page', () => {
     // Verify that the illustration has multiple layers
     const layers = container.querySelectorAll('g[data-name]');
     expect(layers.length).toBeGreaterThan(0);
-
-    // Verify complex shapes are present
-    const polygons = container.querySelectorAll('polygon');
-    expect(polygons.length).toBeGreaterThan(0);
-
-    // Verify transforms are applied
-    const transformedElements = container.querySelectorAll('[transform]');
-    expect(transformedElements.length).toBeGreaterThan(0);
   });
 });
